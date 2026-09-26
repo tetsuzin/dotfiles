@@ -14,3 +14,7 @@ indent_size = 2
 
 [*.md]
 trim_trailing_whitespace = false
+
+[common/dotfiles/HOME/.config/git/config]
+indent_style = tab
+tab_width = 4
