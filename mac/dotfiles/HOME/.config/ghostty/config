@@ -1,0 +1,19 @@
+# ウィンドウサイズ
+window-height = 32
+window-width = 96
+
+# フォント
+font-family = moralerspace neon
+font-feature = -dlig
+
+# 行間
+adjust-cell-height = 10%
+
+# テーマ
+theme = TokyoNight Night
+
+# ウィンドウ余白
+window-padding-x = 10
+window-padding-y = 10
+window-padding-balance = true
+

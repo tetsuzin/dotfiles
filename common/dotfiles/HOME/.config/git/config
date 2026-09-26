@@ -1,0 +1,64 @@
+[user]
+	name = tetsuzin
+	email = 230069+tetsuzin@users.noreply.github.com
+[core]
+	symlinks = true
+	editor = code --wait
+	pager = LESSCHARSET=utf-8 less
+	longpaths = true
+	autocrlf = true
+	ignorecase = false
+[init]
+	defaultBranch = master
+[column]
+	ui = auto
+[branch]
+	sort = -committerdate
+[diff]
+	algorithm = histogram
+	colorMoved = plain
+	mnemonicPrefix = true
+	renames = true
+[fetch]
+	prune = true
+	pruneTags = true
+	all = true
+[log]
+	# 日付フォーマットの指定
+	date = iso-local
+[help]
+	autocorrect = 1
+[gui]
+	encoding = utf-8
+[commit]
+	gpgSign = false
+[rerere]
+	enabled = true
+	autoupdate = true
+[rebase]
+	autoSquash = true
+	autoStash = true
+	updateRefs = true
+[color]
+	diff = auto
+	status = auto
+	branch = auto
+	interactive = auto
+	grep = auto
+	ui = auto
+[status]
+	color = auto
+
+[pull]
+	rebase = true
+[submodule]
+	recurse = true
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
+
+[credential]
+	helper =
+	helper = !gh auth git-credential

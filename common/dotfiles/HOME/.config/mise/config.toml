@@ -1,0 +1,10 @@
+[tools]
+bat = "latest"
+biome = "latest"
+claude = "latest"
+codex = "latest"
+dotnet = ["8", "10"]
+fzf = "latest"
+go = "latest"
+node = "latest"
+python = "3"
