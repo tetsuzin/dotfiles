@@ -7,19 +7,28 @@ source "${SCRIPT_DIR}/_functions"
 
 function usage() {
   cat <<'EOF'
-Usage: ./setup.sh switch [--debug] [--dry-run] [--update]
+Usage: ./setup.sh switch [--debug] [--dry-run] [--update | --update-only]
+
+Options:
+  --update       flake.lock を更新してから構成を適用する
+  --update-only  flake.lock の更新のみ行う
 EOF
 }
 
 debug=false
 dry_run=false
 update=false
+update_only=false
 
 while [[ $# -gt 0 ]]; do
   case $1 in
     --debug) debug=true ;;
     --dry-run) dry_run=true ;;
     --update) update=true ;;
+    --update-only)
+      update=true
+      update_only=true
+      ;;
     -h | --help)
       usage
       exit 0
@@ -32,13 +41,14 @@ while [[ $# -gt 0 ]]; do
 done
 
 [[ "${dry_run}" != "true" || "${update}" != "true" ]] ||
-  fail "--dry-run と --update は同時に指定できません"
+  fail "--dry-run は --update / --update-only と同時に指定できません"
 
 # shellcheck disable=SC2034 # _functions の log_debug が参照する
 LOG_DEBUG="${debug}"
 log_debug "--debug=${debug}"
 log_debug "--dry-run=${dry_run}"
 log_debug "--update=${update}"
+log_debug "--update-only=${update_only}"
 
 if [[ "${debug}" == "true" ]]; then
   set -x
@@ -61,16 +71,23 @@ check_nix
 
 NIX_DIR="${REPO_DIR}"
 
-resolve_flake_attr
-
 log_debug "OS_NAME: ${OS_NAME}"
 log_debug "NIX_DIR: ${NIX_DIR}"
-log_debug "FLAKE_ATTR: ${flake_attr}"
+
+if [[ "${update_only}" != "true" ]]; then
+  resolve_flake_attr
+  log_debug "FLAKE_ATTR: ${flake_attr}"
+fi
 
 if [[ "${update}" == "true" ]]; then
   echo
   log_step "flake.lock の更新"
   nix --extra-experimental-features 'nix-command flakes' flake update --flake "${NIX_DIR}"
+fi
+
+if [[ "${update_only}" == "true" ]]; then
+  log_info "flake.lock の更新が完了しました"
+  exit 0
 fi
 
 echo

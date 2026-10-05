@@ -15,6 +15,10 @@ Commands:
 
 必要環境: Nix 2.26 以上
 
+パッケージ更新:
+  ./setup.sh switch --update       更新して構成を適用
+  ./setup.sh switch --update-only  flake.lock の更新のみ
+
 OS (linux / mac) は自動判定し、共通処理と <os>/scripts/ 配下の OS 別処理を実行します。
 EOF
 }
