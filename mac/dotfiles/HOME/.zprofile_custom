@@ -1,0 +1,6 @@
+# shellcheck disable=SC2148
+
+export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
+
+# dotnet tools でインストールしたツールにパスを通す
+export PATH="$HOME/.dotnet/tools:$PATH"

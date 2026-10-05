@@ -47,23 +47,23 @@ fi
 [[ "${EUID}" -ne 0 ]] ||
   fail "root では実行しないでください。root 権限が必要な処理ではスクリプト内から sudo を使用します"
 
-[[ -n "${OS_DIR:-}" && -d "${OS_DIR}" ]] ||
-  fail "OS_DIR が設定されていません。./setup.sh switch から実行してください"
+[[ "${OS_NAME:-}" == "linux" || "${OS_NAME:-}" == "mac" ]] ||
+  fail "OS_NAME が設定されていません。./setup.sh switch から実行してください"
+
+REPO_DIR="$(dirname "${SCRIPT_DIR}")"
 
 # OS 固有の処理 (check_nix / resolve_flake_attr / run_activation /
 # post_activation_env / os_shell) を読み込む
 # shellcheck disable=SC1091
-source "${OS_DIR}/scripts/switch_hooks.sh"
+source "${REPO_DIR}/${OS_NAME}/scripts/switch_hooks.sh"
 
 check_nix
 
-DOTFILES_DIR="${OS_DIR}/dotfiles"
-NIX_DIR="${OS_DIR}/nix"
+NIX_DIR="${REPO_DIR}"
 
 resolve_flake_attr
 
-log_debug "OS_DIR: ${OS_DIR}"
-log_debug "DOTFILES_DIR: ${DOTFILES_DIR}"
+log_debug "OS_NAME: ${OS_NAME}"
 log_debug "NIX_DIR: ${NIX_DIR}"
 log_debug "FLAKE_ATTR: ${flake_attr}"
 
@@ -86,15 +86,20 @@ fi
 echo
 log_step "DotfilesLinker の実行"
 
-export DOTFILES_ROOT="${DOTFILES_DIR}"
 if [[ "${dry_run}" == "true" ]] && ! command -v DotfilesLinker &>/dev/null; then
   log_warning "DotfilesLinker は nix 構成の適用後に利用可能になるためスキップします"
-elif [[ "${dry_run}" == "true" ]]; then
-  DotfilesLinker --dry-run
 else
   command -v DotfilesLinker &>/dev/null ||
     fail "DotfilesLinker をPATHに反映できませんでした"
-  DotfilesLinker
+  for dotfiles_root in "${REPO_DIR}/common/dotfiles" "${REPO_DIR}/${OS_NAME}/dotfiles"; do
+    log_info "DOTFILES_ROOT: ${dotfiles_root}"
+    export DOTFILES_ROOT="${dotfiles_root}"
+    if [[ "${dry_run}" == "true" ]]; then
+      DotfilesLinker --dry-run
+    else
+      DotfilesLinker
+    fi
+  done
 fi
 
 echo

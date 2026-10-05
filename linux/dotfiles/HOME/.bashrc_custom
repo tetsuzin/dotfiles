@@ -1,0 +1,43 @@
+# WSL2 から Windows 側の SSH エージェントを利用するための設定
+if [ -f ~/.ssh/wsl2-ssh-agent ]; then
+  eval "$(~/.ssh/wsl2-ssh-agent)"
+fi
+
+# dotnet コマンドの補完を有効化
+if command -v dotnet &> /dev/null; then
+  eval "$(dotnet completions script bash)"
+fi
+
+# zoxide の有効化
+if command -v zoxide &> /dev/null; then
+  eval "$(zoxide init bash)"
+fi
+
+# Statship の有効化
+if command -v starship &> /dev/null; then
+  export STARSHIP_KUBERNETES_ENABLED=1
+
+  kubeon() {
+    export STARSHIP_KUBERNETES_ENABLED=1
+  }
+
+  kubeoff() {
+    unset STARSHIP_KUBERNETES_ENABLED
+  }
+
+  eval "$(starship init bash)"
+fi
+
+# alias
+alias ls='eza --group-directories-first'
+alias ll='eza -la --icons --group-directories-first --git'
+alias lt='eza --tree --level=2 --icons'
+
+alias k='kubectl'
+alias kx='kubectx'
+alias kn='kubens'
+
+# 起動時に実行
+if command -v fastfetch &> /dev/null; then
+  fastfetch
+fi
