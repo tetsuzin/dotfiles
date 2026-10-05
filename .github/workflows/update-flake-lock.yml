@@ -1,0 +1,55 @@
+name: Update flake.lock
+
+on:
+  workflow_dispatch:
+  schedule:
+    # 毎週月曜日 09:00 JST（cron は UTC）
+    - cron: "0 0 * * 1"
+
+permissions: {}
+
+concurrency:
+  group: update-flake-lock
+  cancel-in-progress: false
+
+jobs:
+  update:
+    name: Update Nix flake inputs
+    runs-on: ubuntu-26.04
+    timeout-minutes: 30
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Checkout default branch
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@13d8dd58da0234aa297dedd986986ccb8e7f3e24 # v31.11.1
+        with:
+          install_url: https://releases.nixos.org/nix/nix-2.35.2/install
+          github_access_token: ${{ github.token }}
+
+      - name: Update flake.lock
+        run: ./setup.sh switch --update-only
+
+      - name: Evaluate Linux, WSL and macOS configurations
+        run: |
+          nix eval --no-update-lock-file --json .#homeConfigurations --apply 'builtins.mapAttrs (_: config: config.activationPackage.drvPath)'
+          nix eval --no-update-lock-file --json .#darwinConfigurations --apply 'builtins.mapAttrs (_: config: config.system.drvPath)'
+
+      - name: Create or update pull request
+        uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8.1.1
+        with:
+          add-paths: flake.lock
+          branch: automation/flake-lock-update
+          base: ${{ github.event.repository.default_branch }}
+          commit-message: "Nix のパッケージ依存を更新"
+          title: "Nix のパッケージ依存を更新"
+          body: |
+            `./setup.sh switch --update-only` で共通の `flake.lock` を更新しました。
+
+            Linux・WSL・macOS の Nix 構成評価を確認しています。
+            マージ後、各環境で `./setup.sh switch` を実行して適用してください。
