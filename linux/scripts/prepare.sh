@@ -24,37 +24,6 @@ function install_system_packages() {
   sudo apt-get install -y "${packages[@]}"
 }
 
-function install_lix() {
-  local nix_version
-  local nix_version_output
-
-  if command -v nix &>/dev/null; then
-    nix_version_output="$(nix --version)"
-    nix_version="${nix_version_output%%$'\n'*}"
-    [[ "${nix_version_output}" == *Lix* ]] ||
-      fail "Lix 以外の Nix がインストールされています: ${nix_version}"
-    log_info "Lix はインストール済みです: ${nix_version}"
-    return
-  fi
-
-  log_step "Lix のインストール"
-  curl --proto '=https' --tlsv1.2 -sSf -L https://install.lix.systems/lix |
-    sh -s -- install --no-confirm
-
-  if [[ -e /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh ]]; then
-    # shellcheck disable=SC1091
-    source /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
-  fi
-
-  command -v nix &>/dev/null ||
-    fail "Lix をPATHに反映できませんでした。シェルを開き直して再実行してください"
-
-  nix_version_output="$(nix --version)"
-  nix_version="${nix_version_output%%$'\n'*}"
-  [[ "${nix_version_output}" == *Lix* ]] ||
-    fail "Lix のインストールを確認できませんでした: ${nix_version}"
-}
-
 [[ "${EUID}" -ne 0 ]] ||
   fail "root では実行しないでください。必要な処理ではスクリプト内から sudo を使用します"
 
@@ -65,8 +34,12 @@ source /etc/os-release
 
 command -v sudo &>/dev/null || fail "sudo が必要です"
 
+if command -v nix &>/dev/null; then
+  check_nix
+fi
+
 install_system_packages
-install_lix
+install_nix
 
 log_step "ホストの準備が完了しました"
 log_info "続けて ./setup.sh switch を実行してください"

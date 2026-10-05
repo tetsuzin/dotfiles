@@ -4,16 +4,6 @@
 
 os_shell="zsh"
 
-function check_nix() {
-  local nix_version
-
-  command -v nix &>/dev/null ||
-    fail "Nix が見つかりません。先に ./setup.sh prepare を実行してください"
-
-  nix_version="$(nix --version | head -n 1)"
-  log_debug "NIX: ${nix_version}"
-}
-
 function resolve_flake_attr() {
   host="$(scutil --get LocalHostName)"
   log_debug "HOST: ${host}"
@@ -24,7 +14,7 @@ function resolve_flake_attr() {
 function run_activation() {
   local system_path
   system_path="$(
-    nix build \
+    nix --extra-experimental-features 'nix-command flakes' build \
       --no-update-lock-file \
       --no-link \
       --print-out-paths \

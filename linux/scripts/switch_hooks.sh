@@ -4,19 +4,6 @@
 
 os_shell="bash"
 
-function check_nix() {
-  local nix_version_output nix_version
-
-  command -v nix &>/dev/null ||
-    fail "Lix が見つかりません。先に ./setup.sh prepare を実行してください"
-
-  nix_version_output="$(nix --version)"
-  nix_version="${nix_version_output%%$'\n'*}"
-  [[ "${nix_version_output}" == *Lix* ]] ||
-    fail "Lix 以外の Nix が使用されています: ${nix_version}"
-  log_debug "LIX: ${nix_version}"
-}
-
 function resolve_flake_attr() {
   local user flake_name
   user="$(id -un)"
@@ -35,7 +22,7 @@ function resolve_flake_attr() {
 function run_activation() {
   local activation_package
   activation_package="$(
-    nix build \
+    nix --extra-experimental-features 'nix-command flakes' build \
       --no-update-lock-file \
       --no-link \
       --print-out-paths \

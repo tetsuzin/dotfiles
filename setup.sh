@@ -13,6 +13,8 @@ Commands:
   prepare  ホストの準備 (パッケージマネージャと Nix 環境のインストール)
   switch   nix 構成の適用と dotfiles のリンク
 
+必要環境: Nix 2.26 以上
+
 OS (linux / mac) は自動判定し、共通処理と <os>/scripts/ 配下の OS 別処理を実行します。
 EOF
 }

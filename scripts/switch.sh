@@ -52,7 +52,7 @@ fi
 
 REPO_DIR="$(dirname "${SCRIPT_DIR}")"
 
-# OS 固有の処理 (check_nix / resolve_flake_attr / run_activation /
+# OS 固有の処理 (resolve_flake_attr / run_activation /
 # post_activation_env / os_shell) を読み込む
 # shellcheck disable=SC1091
 source "${REPO_DIR}/${OS_NAME}/scripts/switch_hooks.sh"
@@ -70,14 +70,14 @@ log_debug "FLAKE_ATTR: ${flake_attr}"
 if [[ "${update}" == "true" ]]; then
   echo
   log_step "flake.lock の更新"
-  nix flake update --flake "${NIX_DIR}"
+  nix --extra-experimental-features 'nix-command flakes' flake update --flake "${NIX_DIR}"
 fi
 
 echo
 log_step "nix 構成の適用"
 
 if [[ "${dry_run}" == "true" ]]; then
-  nix build --no-update-lock-file --dry-run "${flake_attr}"
+  nix --extra-experimental-features 'nix-command flakes' build --no-update-lock-file --dry-run "${flake_attr}"
 else
   run_activation
   post_activation_env
