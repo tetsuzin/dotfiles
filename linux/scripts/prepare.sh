@@ -34,10 +34,6 @@ source /etc/os-release
 
 command -v sudo &>/dev/null || fail "sudo が必要です"
 
-if command -v nix &>/dev/null; then
-  check_nix
-fi
-
 install_system_packages
 install_nix
 

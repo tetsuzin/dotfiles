@@ -50,30 +50,8 @@ function fail() {
   exit 1
 }
 
-function check_nix() {
-  local nix_version_output nix_version version_major version_minor
-  local version_pattern='^nix[[:space:]]+\([^)]*\)[[:space:]]+([0-9]+)\.([0-9]+)(\.|$)'
-
-  command -v nix &>/dev/null ||
-    fail "Nix が見つかりません。先に ./setup.sh prepare を実行してください"
-
-  nix_version_output="$(nix --version)"
-  nix_version="${nix_version_output%%$'\n'*}"
-  [[ "${nix_version_output}" != *Lix* ]] ||
-    fail "子 flake 入力を利用するため、Lix から Nix 2.26 以上へ移行してください: ${nix_version}"
-  [[ "${nix_version}" =~ ${version_pattern} ]] ||
-    fail "Nix のバージョンを判定できません: ${nix_version}"
-
-  version_major=$((10#${BASH_REMATCH[1]}))
-  version_minor=$((10#${BASH_REMATCH[2]}))
-  (( version_major > 2 || (version_major == 2 && version_minor >= 26) )) ||
-    fail "子 flake 入力には Nix 2.26 以上が必要です: ${nix_version}"
-  log_debug "NIX: ${nix_version}"
-}
-
 function install_nix() {
   if command -v nix &>/dev/null; then
-    check_nix
     log_info "Nix はインストール済みです: $(nix --version | head -n 1)"
     return
   fi
@@ -87,6 +65,7 @@ function install_nix() {
     source /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
   fi
 
-  check_nix
+  command -v nix &>/dev/null ||
+    fail "Nix をインストールしましたが、PATH で見つかりません"
   log_info "Nix をインストールしました: $(nix --version | head -n 1)"
 }

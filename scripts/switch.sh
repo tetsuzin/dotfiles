@@ -67,7 +67,8 @@ REPO_DIR="$(dirname "${SCRIPT_DIR}")"
 # shellcheck disable=SC1091
 source "${REPO_DIR}/${OS_NAME}/scripts/switch_hooks.sh"
 
-check_nix
+command -v nix &>/dev/null ||
+  fail "Nix が見つかりません。先に ./setup.sh prepare を実行してください"
 
 NIX_DIR="${REPO_DIR}"
 
