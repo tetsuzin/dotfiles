@@ -17,31 +17,6 @@ function check_xcode_clt() {
   fail "Xcode Command Line Tools が必要です。インストール完了後に再実行してください"
 }
 
-function install_nix() {
-  local nix_version
-
-  if command -v nix &>/dev/null; then
-    nix_version="$(nix --version | head -n 1)"
-    log_info "Nix はインストール済みです: ${nix_version}"
-    return
-  fi
-
-  log_step "Nix のインストール (Determinate Systems installer)"
-  curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix |
-    sh -s -- install --no-confirm
-
-  if [[ -e /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh ]]; then
-    # shellcheck disable=SC1091
-    source /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
-  fi
-
-  command -v nix &>/dev/null ||
-    fail "Nix をPATHに反映できませんでした。シェルを開き直して再実行してください"
-
-  nix_version="$(nix --version | head -n 1)"
-  log_info "Nix をインストールしました: ${nix_version}"
-}
-
 [[ "${EUID}" -ne 0 ]] ||
   fail "root では実行しないでください。必要な処理ではスクリプト内から sudo を使用します"
 

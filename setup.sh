@@ -13,6 +13,19 @@ Commands:
   prepare  ホストの準備 (パッケージマネージャと Nix 環境のインストール)
   switch   nix 構成の適用と dotfiles のリンク
 
+必要環境: Nix 2.26 以上
+
+パッケージ更新:
+  ./setup.sh switch --update       更新して構成を適用
+  ./setup.sh switch --update-only  flake.lock の更新のみ
+
+dotfiles のリンクのみ:
+  ./setup.sh switch --link-only
+  ./setup.sh switch --link-only --link-force=y  既存のファイルやディレクトリを上書き
+
+既存の dotfiles を上書き:
+  ./setup.sh switch --link-force=y
+
 OS (linux / mac) は自動判定し、共通処理と <os>/scripts/ 配下の OS 別処理を実行します。
 EOF
 }
