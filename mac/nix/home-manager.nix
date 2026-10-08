@@ -3,6 +3,7 @@
 {
   imports = [
     ../../common/nix/home-manager
+    ./packages.nix
   ];
 
   programs.zsh = {

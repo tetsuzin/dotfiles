@@ -17,22 +17,6 @@
         "type": "github"
       }
     },
-    "common": {
-      "inputs": {
-        "ezaThemes": "ezaThemes",
-        "home-manager": "home-manager",
-        "nixpkgs": "nixpkgs"
-      },
-      "locked": {
-        "path": "./common/nix/inputs",
-        "type": "path"
-      },
-      "original": {
-        "path": "./common/nix/inputs",
-        "type": "path"
-      },
-      "parent": []
-    },
     "ezaThemes": {
       "flake": false,
       "locked": {
@@ -52,7 +36,6 @@
     "home-manager": {
       "inputs": {
         "nixpkgs": [
-          "common",
           "nixpkgs"
         ]
       },
@@ -86,39 +69,9 @@
         "type": "github"
       }
     },
-    "linux": {
-      "inputs": {
-        "lazyvimStarter": "lazyvimStarter"
-      },
-      "locked": {
-        "path": "./linux/nix/inputs",
-        "type": "path"
-      },
-      "original": {
-        "path": "./linux/nix/inputs",
-        "type": "path"
-      },
-      "parent": []
-    },
-    "mac": {
-      "inputs": {
-        "nix-darwin": "nix-darwin",
-        "nix-homebrew": "nix-homebrew"
-      },
-      "locked": {
-        "path": "./mac/nix/inputs",
-        "type": "path"
-      },
-      "original": {
-        "path": "./mac/nix/inputs",
-        "type": "path"
-      },
-      "parent": []
-    },
     "nix-darwin": {
       "inputs": {
         "nixpkgs": [
-          "common",
           "nixpkgs"
         ]
       },
@@ -172,9 +125,12 @@
     },
     "root": {
       "inputs": {
-        "common": "common",
-        "linux": "linux",
-        "mac": "mac"
+        "ezaThemes": "ezaThemes",
+        "home-manager": "home-manager",
+        "lazyvimStarter": "lazyvimStarter",
+        "nix-darwin": "nix-darwin",
+        "nix-homebrew": "nix-homebrew",
+        "nixpkgs": "nixpkgs"
       }
     }
   },

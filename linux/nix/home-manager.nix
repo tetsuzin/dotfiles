@@ -6,6 +6,7 @@ let
 in {
   imports = [
     ../../common/nix/home-manager
+    ./packages.nix
   ];
 
   home.username = user;
