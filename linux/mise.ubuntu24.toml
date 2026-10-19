@@ -1,2 +1,0 @@
-[bootstrap.packages]
-"apt:libicu74" = "latest"

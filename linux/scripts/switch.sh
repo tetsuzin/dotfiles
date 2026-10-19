@@ -14,7 +14,7 @@ Usage: ./setup.sh switch [--debug] [--dry-run] [--link-force=y] [--update | --li
   --link-only     dotfiles の配置のみ実行する (外部テーマ等は事前取得が必要)
   --link-force=y  競合する dotfiles の置き換えを許可する
 
-Linux は Ubuntu 24 / 26 (x86_64)、mise 2026.10.14 以上に対応。
+Linux は Ubuntu 26 (x86_64)、mise 2026.10.14 以上に対応。
 --update-only は macOS の flake.lock 更新専用です。
 HELP
 }
@@ -54,20 +54,19 @@ check_mise_version
 # dry-run でも trust 状態だけは記録するが、ホスト構成は変更しない。
 cd "${SCRIPT_DIR}/.."
 mise trust mise.toml
-mise trust "mise.${mise_environment%%,*}.toml"
-if [[ "${mise_environment}" == *,wsl ]]; then
+if [[ ${#mise_args[@]} -gt 0 ]]; then
   mise trust mise.wsl.toml
 fi
 
 if [[ "${link_only}" == true ]]; then
-  mise -E "${mise_environment}" bootstrap --only dotfiles "${bootstrap_args[@]}"
+  mise "${mise_args[@]}" bootstrap --only dotfiles "${bootstrap_args[@]}"
 elif [[ "${update}" == true ]]; then
-  mise -E "${mise_environment}" bootstrap --update --skip task "${bootstrap_args[@]}"
-  mise -E "${mise_environment}" bootstrap packages upgrade --manager apt
-  mise -E "${mise_environment}" upgrade
-  mise -E "${mise_environment}" run bootstrap
+  mise "${mise_args[@]}" bootstrap --update --skip task "${bootstrap_args[@]}"
+  mise "${mise_args[@]}" bootstrap packages upgrade --manager apt
+  mise "${mise_args[@]}" upgrade
+  mise "${mise_args[@]}" run bootstrap
 else
-  mise -E "${mise_environment}" bootstrap "${bootstrap_args[@]}"
+  mise "${mise_args[@]}" bootstrap "${bootstrap_args[@]}"
 fi
 
 if [[ "${dry_run}" != true ]]; then

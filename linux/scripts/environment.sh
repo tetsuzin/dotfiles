@@ -9,12 +9,12 @@ function check_linux_environment() {
   source /etc/os-release
   [[ "${ID}" == "ubuntu" ]] || fail "Ubuntu 以外には対応していません: ${ID}"
   case "${VERSION_ID}" in
-    24.*) mise_environment=ubuntu24 ;;
-    26.*) mise_environment=ubuntu26 ;;
+    26.*) ;;
     *) fail "未対応の Ubuntu バージョンです: ${VERSION_ID}" ;;
   esac
+  mise_args=()
   if grep -qi microsoft /proc/version; then
-    mise_environment+=,wsl
+    mise_args=(-E wsl)
   fi
 }
 

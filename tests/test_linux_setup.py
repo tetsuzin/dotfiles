@@ -42,8 +42,9 @@ class LinuxSetupTest(unittest.TestCase):
       self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
     return result
 
-  def mise(self, *args, profile="ubuntu26"):
-    return self.run_cmd([MISE, "-C", str(ROOT / "linux"), "-E", profile, *args])
+  def mise(self, *args, profile=None):
+    environment = ["-E", profile] if profile else []
+    return self.run_cmd([MISE, "-C", str(ROOT / "linux"), *environment, *args])
 
   def test_dotfiles_are_idempotent_and_tools_are_global(self):
     self.mise("dotfiles", "apply", "--yes")
@@ -67,20 +68,15 @@ class LinuxSetupTest(unittest.TestCase):
     self.assertTrue(target.is_symlink())
 
   def test_wsl_tools_are_deployed_only_for_wsl(self):
-    self.mise("dotfiles", "apply", "--yes", profile="ubuntu24,wsl")
+    self.mise("dotfiles", "apply", "--yes", profile="wsl")
     self.assertEqual((self.home / ".config/mise/conf.d/wsl.toml").resolve(),
             ROOT / "linux/wsl-tools.toml")
     tools = self.run_cmd([MISE, "ls", "--current", "--json"], cwd=self.home)
     self.assertIn("github:mame/wsl2-ssh-agent", json.loads(tools.stdout))
 
-  def test_ubuntu_package_variants(self):
-    for profile, expected, excluded in [
-      ("ubuntu24", "libicu74", "libicu78"),
-      ("ubuntu26", "libicu78", "libicu74"),
-    ]:
-      result = self.mise("bootstrap", "packages", "status", "--json", profile=profile)
-      self.assertIn(expected, result.stdout)
-      self.assertNotIn(excluded, result.stdout)
+  def test_ubuntu_packages(self):
+    result = self.mise("bootstrap", "packages", "status", "--json")
+    self.assertIn("libicu78", result.stdout)
 
   def test_dry_run_does_not_deploy_files(self):
     self.mise("bootstrap", "--only", "dotfiles", "--dry-run")

@@ -12,6 +12,7 @@ include = [
 "apt:git" = "latest"
 "apt:less" = "latest"
 "apt:libatomic1" = "latest"
+"apt:libicu78" = "latest"
 "apt:libgssapi-krb5-2" = "latest"
 "apt:libsecret-1-0" = "latest"
 "apt:libssl3t64" = "latest"
