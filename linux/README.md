@@ -1,6 +1,6 @@
 # Linux セットアップ
 
-Ubuntu 26 の x86_64 と、その WSL 環境を対象に、mise と apt で環境を構築します。Linux では Nix・Home Manager・DotfilesLinker は不要です。macOS は従来の Nix 構成を使います。
+Ubuntu 26 と、その WSL 環境を対象に、mise と apt で環境を構築します。Linux では Nix・Home Manager・DotfilesLinker は不要です。macOS は従来の Nix 構成を使います。
 
 ## 初回セットアップ
 

@@ -3,16 +3,19 @@
 function check_linux_environment() {
   [[ "${EUID}" -ne 0 ]] || fail "root では実行しないでください"
   [[ "$(uname -s)" == "Linux" ]] || fail "Linux で実行してください"
-  [[ "$(uname -m)" == "x86_64" ]] || fail "対応アーキテクチャは x86_64 です"
   [[ -r /etc/os-release ]] || fail "/etc/os-release を読み込めません"
+
   # shellcheck disable=SC1091
   source /etc/os-release
   [[ "${ID}" == "ubuntu" ]] || fail "Ubuntu 以外には対応していません: ${ID}"
+
   case "${VERSION_ID}" in
     26.*) ;;
     *) fail "未対応の Ubuntu バージョンです: ${VERSION_ID}" ;;
   esac
+
   mise_args=()
+
   if grep -qi microsoft /proc/version; then
     mise_args=(-E wsl)
   fi

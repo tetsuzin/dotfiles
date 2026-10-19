@@ -14,7 +14,7 @@ Usage: ./setup.sh bootstrap [--debug] [--dry-run] [--link-force=y] [--update | -
   --link-only     dotfiles の配置のみ実行する (外部テーマ等は事前取得が必要)
   --link-force=y  競合する dotfiles の置き換えを許可する
 
-Linux は Ubuntu 26 (x86_64)、mise 2026.10.14 以上に対応。
+Linux は Ubuntu 26、mise 2026.10.14 以上に対応。
 --update-only は macOS の flake.lock 更新専用です。
 HELP
 }
