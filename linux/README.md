@@ -19,10 +19,11 @@ exec bash -l
 ## 設定の管理先
 
 - `mise.toml`: apt パッケージ、外部リポジトリ、dotfiles、追加処理。
-- `mise.wsl.toml` / `wsl-tools.toml`: WSL のみで使う SSH エージェント。
+- `mise.wsl.toml`: WSL の認証情報へのリンクと Windows ホームの指定。
+- `wsl-tools.toml`: WSL のみで使う SSH エージェント。
 - `dotfiles/HOME/.config/mise/conf.d/linux.toml`: Linux の CLI ツール。ホームにも配置され、どのディレクトリでも利用できます。
 - `../common/dotfiles/HOME/.config/mise/config.toml`: 従来からの共通ランタイム・ツール。
-- `scripts/post-bootstrap.sh`: krew プラグイン、WSL の認証情報へのリンク。
+- `mise.toml` の `krew:install` タスク: 未導入の krew プラグインを導入。`bootstrap` タスクから呼び出し、単独では `mise -C linux run krew:install` で実行できます。
 
 Git・curl などの基盤と共有ライブラリは apt、開発 CLI は mise が担当します。`nh` は Nix 専用のため導入しません。fastfetch は通常の配布バイナリを使います。
 
@@ -48,9 +49,13 @@ eza テーマと LazyVim starter は旧 flake.lock のコミットに固定し�
 4. 新しいログインシェルで `command -v mise git node nvim`、`dotnet --list-sdks`、`krew list` を確認します。通常の開発作業と WSL の SSH 連携も確認します。
 5. Nix が不要になったことを確認してから、導入方式に対応する公式手順で別途アンインストールします。セットアップは Nix の削除や既存プロファイルの解除を行いません。
 
+WSL の `~/.aws/credentials` と `~/.kube/config` が旧 Home Manager のリンクの場合は、リンク先と必要な内容を確認・退避してからリンクを外し、bootstrap で直接リンクを作成します。この移行処理は自動では行いません。
+
 旧 `.profile` や起動済みシェルに Nix の PATH 設定が残る場合があります。移行後に個別に確認してください。
 
-WSL の Windows ホームは `/mnt/c/Users/$(id -un)` が既定です。ユーザー名が異なる場合は `DOTFILES_WINDOWS_HOME=/mnt/c/Users/<name> ./setup.sh bootstrap` で指定します。ホスト側に存在する `.aws/credentials` と `.kube/config` を共有し、既存の独立した設定との競合時には停止します。
+WSL の Windows ホームは `/mnt/c/Users/$USER` が既定です。ユーザー名が異なる場合は `DOTFILES_WINDOWS_HOME=/mnt/c/Users/<name> ./setup.sh bootstrap` で指定します。`.aws/credentials` と `.kube/config` を mise の `[dotfiles]` で共有します。リンク元が存在しない場合はスキップせずエラーになります。利用しないリンクは `mise.wsl.local.toml` で対象を `enabled = false` にできます。既存ファイルとの競合は mise が検出し、`--link-force=y` を指定しない限り置き換えません。
+
+リンクは `--link-only` や `--dry-run`、mise の dotfiles status の対象になります。krew タスクの dry-run はスクリプトを表示し、個々のプラグインの導入状態までは確認しません。
 
 ## 検証
 
