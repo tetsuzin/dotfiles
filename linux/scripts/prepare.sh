@@ -23,6 +23,5 @@ if [[ ! -x "${HOME}/.local/bin/mise" ]] ||
   MISE_VERSION=2026.10.14 MISE_INSTALL_PATH="${HOME}/.local/bin/mise" sh "${installer}"
 fi
 hash -r
-check_mise_version
 
 log_info "準備が完了しました。続けて ./setup.sh bootstrap を実行してください"

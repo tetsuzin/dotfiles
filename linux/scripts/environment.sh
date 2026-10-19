@@ -17,10 +17,3 @@ function check_linux_environment() {
     mise_args=(-E wsl)
   fi
 }
-
-function check_mise_version() {
-  local current
-  current="$(mise --version | cut -d ' ' -f 1)"
-  [[ "$(printf '%s\n' 2026.10.14 "${current}" | sort -V | head -n 1)" == 2026.10.14 ]] ||
-    fail "mise 2026.10.14 以上が必要です。./setup.sh prepare を実行してください"
-}

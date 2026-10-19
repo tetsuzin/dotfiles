@@ -48,7 +48,6 @@ done
 check_linux_environment
 export PATH="${HOME}/.local/bin:${PATH}"
 command -v mise &>/dev/null || fail "先に ./setup.sh prepare を実行してください"
-check_mise_version
 
 # setup.sh の実行はこの checkout の設定を適用する明示的な操作。
 # dry-run でも trust 状態だけは記録するが、ホスト構成は変更しない。
