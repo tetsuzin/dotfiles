@@ -25,4 +25,4 @@ fi
 hash -r
 check_mise_version
 
-log_info "準備が完了しました。続けて ./setup.sh switch を実行してください"
+log_info "準備が完了しました。続けて ./setup.sh bootstrap を実行してください"

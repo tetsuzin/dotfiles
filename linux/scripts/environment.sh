@@ -1,5 +1,5 @@
 # shellcheck shell=bash
-# prepare / switch 共通の対応環境チェック。
+# prepare / bootstrap 共通の対応環境チェック。
 function check_linux_environment() {
   [[ "${EUID}" -ne 0 ]] || fail "root では実行しないでください"
   [[ "$(uname -s)" == "Linux" ]] || fail "Linux で実行してください"

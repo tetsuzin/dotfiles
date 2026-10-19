@@ -87,7 +87,7 @@ class LinuxSetupTest(unittest.TestCase):
     bin_dir = self.home / ".local/bin"
     bin_dir.mkdir(parents=True)
     (bin_dir / "mise").symlink_to(Path(MISE).resolve())
-    self.run_cmd(["bash", "setup.sh", "switch", "--link-only", "--dry-run"])
+    self.run_cmd(["bash", "setup.sh", "bootstrap", "--link-only", "--dry-run"])
     self.assertFalse((self.home / ".bashrc").exists())
 
   def test_interactive_bash_has_mise_and_krew_path(self):
@@ -100,10 +100,10 @@ class LinuxSetupTest(unittest.TestCase):
     self.run_cmd(["bash", "--noprofile", "--rcfile", str(self.home / ".bashrc"),
            "-ic", '[[ "$TEST_MISE_ACTIVATED" == yes && ":$PATH:" == *":$HOME/.krew/bin:"* ]]'])
 
-  def test_switch_rejects_incompatible_flags(self):
+  def test_bootstrap_rejects_incompatible_flags(self):
     for flags in [["--update", "--dry-run"], ["--update", "--link-only"],
            ["--update-only"], ["--unknown"]]:
-      result = self.run_cmd(["bash", "setup.sh", "switch", *flags], check=False)
+      result = self.run_cmd(["bash", "setup.sh", "bootstrap", *flags], check=False)
       self.assertNotEqual(result.returncode, 0)
       self.assertNotIn("Nix が見つかりません", result.stderr)
 
@@ -125,13 +125,13 @@ class LinuxSetupTest(unittest.TestCase):
       source.write_text("test\n")
     self.env.update(PATH=f"{bin_dir}:/usr/bin:/bin", DOTFILES_WINDOWS_HOME=str(windows_home))
     for _ in range(2):
-      self.run_cmd(["bash", "linux/scripts/bootstrap.sh"])
+      self.run_cmd(["bash", "linux/scripts/post-bootstrap.sh"])
     self.assertEqual(len((self.home / "plugins").read_text().splitlines()), 9)
     self.assertEqual((self.home / ".aws/credentials").resolve(), windows_home / ".aws/credentials")
     target = self.home / ".kube/config"
     target.unlink()
     target.write_text("private config\n")
-    result = self.run_cmd(["bash", "linux/scripts/bootstrap.sh"], check=False)
+    result = self.run_cmd(["bash", "linux/scripts/post-bootstrap.sh"], check=False)
     self.assertNotEqual(result.returncode, 0)
     self.assertEqual(target.read_text(), "private config\n")
 

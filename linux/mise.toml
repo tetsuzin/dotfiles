@@ -48,4 +48,4 @@ include = [
 
 [tasks.bootstrap]
 description = "krew プラグインと WSL のホスト連携を設定"
-run = "bash scripts/bootstrap.sh"
+run = "bash scripts/post-bootstrap.sh"
