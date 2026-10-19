@@ -1,0 +1,2 @@
+[tools]
+"github:mame/wsl2-ssh-agent" = { version = "0.9.7", asset_pattern = "wsl2-ssh-agent" }

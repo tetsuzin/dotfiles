@@ -10,14 +10,14 @@ function usage() {
 Usage: ./setup.sh <command> [args...]
 
 Commands:
-  prepare  ホストの準備 (パッケージマネージャと Nix 環境のインストール)
-  switch   nix 構成の適用と dotfiles のリンク
+  prepare  ホストの準備 (Linux: mise / macOS: Nix)
+  switch   環境の適用と dotfiles の配置
 
-必要環境: Nix 2.26 以上
+必要環境: Linux は mise 2026.10.14 以上、macOS は Nix 2.26 以上
 
 パッケージ更新:
   ./setup.sh switch --update       更新して構成を適用
-  ./setup.sh switch --update-only  flake.lock の更新のみ
+  ./setup.sh switch --update-only  macOS の flake.lock 更新のみ
 
 dotfiles のリンクのみ:
   ./setup.sh switch --link-only
@@ -48,6 +48,9 @@ case "${command}" in
   prepare | switch)
     log_info "OS: ${os_name}"
     if [[ "${command}" == "switch" ]]; then
+      if [[ "${os_name}" == linux ]]; then
+        exec "${SCRIPT_DIR}/linux/scripts/switch.sh" "$@"
+      fi
       OS_NAME="${os_name}" exec "${SCRIPT_DIR}/scripts/switch.sh" "$@"
     else
       exec "${SCRIPT_DIR}/${os_name}/scripts/prepare.sh" "$@"

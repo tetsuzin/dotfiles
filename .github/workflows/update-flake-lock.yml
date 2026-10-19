@@ -33,11 +33,10 @@ jobs:
           github_access_token: ${{ github.token }}
 
       - name: Update flake.lock
-        run: ./setup.sh switch --update-only
+        run: nix flake update
 
-      - name: Evaluate Linux, WSL and macOS configurations
+      - name: Evaluate macOS configurations
         run: |
-          nix eval --no-update-lock-file --json .#homeConfigurations --apply 'builtins.mapAttrs (_: config: config.activationPackage.drvPath)'
           nix eval --no-update-lock-file --json .#darwinConfigurations --apply 'builtins.mapAttrs (_: config: config.system.drvPath)'
 
       - name: Create or update pull request
@@ -49,7 +48,7 @@ jobs:
           commit-message: "Nix のパッケージ依存を更新"
           title: "Nix のパッケージ依存を更新"
           body: |
-            `./setup.sh switch --update-only` で共通の `flake.lock` を更新しました。
+            `nix flake update` で共通の `flake.lock` を更新しました。
 
-            Linux・WSL・macOS の Nix 構成評価を確認しています。
-            マージ後、各環境で `./setup.sh switch` を実行して適用してください。
+            macOS の Nix 構成評価を確認しています。
+            マージ後、macOS で `./setup.sh switch` を実行して適用してください。

@@ -1,0 +1,50 @@
+min_version = "2026.10.14"
+include = [
+  "../common/dotfiles/HOME/.config/mise/config.toml",
+  "dotfiles/HOME/.config/mise/conf.d/linux.toml",
+]
+
+[bootstrap.packages]
+"apt:bash-completion" = "latest"
+"apt:build-essential" = "latest"
+"apt:ca-certificates" = "latest"
+"apt:curl" = "latest"
+"apt:git" = "latest"
+"apt:less" = "latest"
+"apt:libatomic1" = "latest"
+"apt:libgssapi-krb5-2" = "latest"
+"apt:libsecret-1-0" = "latest"
+"apt:libssl3t64" = "latest"
+"apt:openssh-client" = "latest"
+"apt:openssh-server" = "latest"
+"apt:ripgrep" = "latest"
+"apt:unzip" = "latest"
+"apt:wget" = "latest"
+"apt:xz-utils" = "latest"
+"apt:zlib1g" = "latest"
+
+# 旧 flake.lock と同じリビジョンを維持する。
+[bootstrap.repos]
+"~/.local/share/dotfiles/eza-themes" = { url = "https://github.com/eza-community/eza-themes.git", ref = "21184b55bfe34e8473c8160f9de0c03e4f76857f" }
+"~/.local/share/dotfiles/lazyvim-starter" = { url = "https://github.com/LazyVim/starter.git", ref = "803bc181d7c0d6d5eeba9274d9be49b287294d99" }
+
+[dotfiles]
+"~/.config/act/actrc" = "../common/dotfiles/HOME/.config/act/actrc"
+"~/.config/git/config" = "../common/dotfiles/HOME/.config/git/config"
+"~/.config/mise/config.toml" = "../common/dotfiles/HOME/.config/mise/config.toml"
+"~/.config/mise/conf.d/linux.toml" = "dotfiles/HOME/.config/mise/conf.d/linux.toml"
+"~/.config/starship.toml" = "../common/dotfiles/HOME/.config/starship.toml"
+"~/.claude/settings.json" = "../common/dotfiles/HOME/.claude/settings.json"
+"~/.claude/CLAUDE.md" = "../common/dotfiles/HOME/.claude/CLAUDE.md"
+"~/.codex/AGENTS.md" = "../common/dotfiles/HOME/.codex/AGENTS.md"
+"~/.bashrc" = "dotfiles/HOME/.bashrc"
+"~/.bash_profile" = "dotfiles/HOME/.bash_profile"
+"~/.bashrc_custom" = "dotfiles/HOME/.bashrc_custom"
+"~/.bash_profile_custom" = "dotfiles/HOME/.bash_profile_custom"
+"~/.config/dotfiles/bashrc_base" = "dotfiles/bashrc_base"
+"~/.config/eza/theme.yaml" = "~/.local/share/dotfiles/eza-themes/themes/tokyonight.yml"
+"~/.config/nvim" = "~/.local/share/dotfiles/lazyvim-starter"
+
+[tasks.bootstrap]
+description = "krew プラグインと WSL のホスト連携を設定"
+run = "bash scripts/bootstrap.sh"

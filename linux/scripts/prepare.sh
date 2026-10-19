@@ -2,40 +2,27 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-# shellcheck disable=SC1091
 source "${SCRIPT_DIR}/../../scripts/_functions"
+source "${SCRIPT_DIR}/environment.sh"
 
-function install_system_packages() {
-  local -a packages=(
-    ca-certificates
-    curl
-    libatomic1
-    openssh-server
-  )
-
-  case "${VERSION_ID}" in
-    24.*) packages+=(libicu74) ;;
-    26.*) packages+=(libicu78) ;;
-    *) fail "未対応の Ubuntu バージョンです: ${VERSION_ID}" ;;
-  esac
-
-  log_step "システムパッケージのインストール"
-  sudo apt-get update
-  sudo apt-get install -y "${packages[@]}"
-}
-
-[[ "${EUID}" -ne 0 ]] ||
-  fail "root では実行しないでください。必要な処理ではスクリプト内から sudo を使用します"
-
-[[ -r /etc/os-release ]] || fail "/etc/os-release を読み込めません"
-# shellcheck disable=SC1091
-source /etc/os-release
-[[ "${ID}" == "ubuntu" ]] || fail "Ubuntu 以外の環境には対応していません: ${ID}"
-
+check_linux_environment
 command -v sudo &>/dev/null || fail "sudo が必要です"
 
-install_system_packages
-install_nix
+# mise 自体の取得に必要な最小限のパッケージ。
+# その他の OS パッケージは mise bootstrap で導入する。
+sudo apt-get update
+sudo apt-get install -y ca-certificates curl git
 
-log_step "ホストの準備が完了しました"
-log_info "続けて ./setup.sh switch を実行してください"
+export PATH="${HOME}/.local/bin:${PATH}"
+# Nix 版が PATH にあっても、Nix を削除できる独立した mise を導入する。
+if [[ ! -x "${HOME}/.local/bin/mise" ]] ||
+  [[ "$(printf '%s\n' 2026.10.14 "$("${HOME}/.local/bin/mise" --version | cut -d ' ' -f 1)" | sort -V | head -n 1)" != 2026.10.14 ]]; then
+  installer="$(mktemp)"
+  trap 'rm -f "${installer}"' EXIT
+  curl --proto '=https' --tlsv1.2 -fsSL https://mise.run -o "${installer}"
+  MISE_VERSION=2026.10.14 MISE_INSTALL_PATH="${HOME}/.local/bin/mise" sh "${installer}"
+fi
+hash -r
+check_mise_version
+
+log_info "準備が完了しました。続けて ./setup.sh switch を実行してください"

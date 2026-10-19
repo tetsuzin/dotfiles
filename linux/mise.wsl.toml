@@ -1,0 +1,4 @@
+include = ["wsl-tools.toml"]
+
+[dotfiles]
+"~/.config/mise/conf.d/wsl.toml" = "wsl-tools.toml"

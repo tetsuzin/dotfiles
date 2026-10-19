@@ -9,4 +9,6 @@ export PATH="$HOME/.dotnet/tools:$PATH"
 export PATH="$HOME/common_scripts:$PATH"
 
 # Windows 側の Docker に接続する
-export DOCKER_HOST="tcp://localhost:2375"
+if grep -qi microsoft /proc/version; then
+  export DOCKER_HOST="tcp://localhost:2375"
+fi

@@ -115,8 +115,8 @@ fi
 [[ "${EUID}" -ne 0 ]] ||
   fail "root では実行しないでください。root 権限が必要な処理ではスクリプト内から sudo を使用します"
 
-[[ "${OS_NAME:-}" == "linux" || "${OS_NAME:-}" == "mac" ]] ||
-  fail "OS_NAME が設定されていません。./setup.sh switch から実行してください"
+[[ "${OS_NAME:-}" == "mac" ]] ||
+  fail "この Nix ドライバは macOS 専用です。./setup.sh switch から実行してください"
 
 REPO_DIR="$(dirname "${SCRIPT_DIR}")"
 
