@@ -4,3 +4,5 @@
 .DS_Store
 result
 **/.ssh/config
+
+__pycache__/

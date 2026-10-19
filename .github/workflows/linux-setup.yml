@@ -1,0 +1,33 @@
+name: Test Linux setup
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    strategy:
+      matrix:
+        os: [ubuntu-24.04, ubuntu-26.04]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Install mise
+        env:
+          MISE_VERSION: 2026.10.14
+        run: |
+          curl -fsSL https://mise.run -o "$RUNNER_TEMP/install-mise.sh"
+          sh "$RUNNER_TEMP/install-mise.sh"
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+      - name: Check shell syntax
+        run: |
+          bash -n setup.sh
+          for script in linux/scripts/*.sh linux/dotfiles/HOME/.bash*; do
+            bash -n "$script"
+          done
+      - name: Test isolated configuration and dotfiles
+        run: python3 -B -m unittest discover -s tests -v
