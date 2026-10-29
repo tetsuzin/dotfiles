@@ -14,9 +14,8 @@ function check_linux_environment() {
     *) fail "未対応の Ubuntu バージョンです: ${VERSION_ID}" ;;
   esac
 
-  mise_args=()
-
+  # WSL では mise.wsl.toml も読む。
   if grep -qi microsoft /proc/version; then
-    mise_args=(-E wsl)
+    export MISE_ENV=wsl
   fi
 }

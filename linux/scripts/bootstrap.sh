@@ -53,19 +53,19 @@ command -v mise &>/dev/null || fail "先に ./setup.sh prepare を実行して�
 # dry-run でも trust 状態だけは記録するが、ホスト構成は変更しない。
 cd "${SCRIPT_DIR}/.."
 mise trust mise.toml
-if [[ ${#mise_args[@]} -gt 0 ]]; then
+if [[ -n "${MISE_ENV:-}" ]]; then
   mise trust mise.wsl.toml
 fi
 
 if [[ "${link_only}" == true ]]; then
-  mise "${mise_args[@]}" bootstrap --only dotfiles "${bootstrap_args[@]}"
+  mise bootstrap --only dotfiles "${bootstrap_args[@]}"
 elif [[ "${update}" == true ]]; then
-  mise "${mise_args[@]}" bootstrap --update --skip task "${bootstrap_args[@]}"
-  mise "${mise_args[@]}" bootstrap packages upgrade --manager apt
-  mise "${mise_args[@]}" upgrade
-  mise "${mise_args[@]}" run bootstrap
+  mise bootstrap --update --skip task "${bootstrap_args[@]}"
+  mise bootstrap packages upgrade --manager apt
+  mise upgrade
+  mise run bootstrap
 else
-  mise "${mise_args[@]}" bootstrap "${bootstrap_args[@]}"
+  mise bootstrap "${bootstrap_args[@]}"
 fi
 
 if [[ "${dry_run}" != true ]]; then
