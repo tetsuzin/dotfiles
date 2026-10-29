@@ -1,9 +1,9 @@
-include = ["wsl-tools.toml"]
+include = ["dotfiles/HOME/.config/mise/conf.d/wsl.toml"]
 
 [vars]
 windows_home = "{{ get_env(name='DOTFILES_WINDOWS_HOME', default='/mnt/c/Users/' ~ env.USER) }}"
 
 [dotfiles]
-"~/.config/mise/conf.d/wsl.toml" = "wsl-tools.toml"
+"~/.config/mise/conf.d/wsl.toml" = "dotfiles/HOME/.config/mise/conf.d/wsl.toml"
 "~/.aws/credentials" = "{{ vars.windows_home }}/.aws/credentials"
 "~/.kube/config" = "{{ vars.windows_home }}/.kube/config"

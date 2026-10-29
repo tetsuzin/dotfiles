@@ -70,7 +70,7 @@ class LinuxSetupTest(unittest.TestCase):
   def test_wsl_tools_are_deployed_only_for_wsl(self):
     self.mise("dotfiles", "apply", "--yes", profile="wsl")
     self.assertEqual((self.home / ".config/mise/conf.d/wsl.toml").resolve(),
-            ROOT / "linux/wsl-tools.toml")
+            ROOT / "linux/dotfiles/HOME/.config/mise/conf.d/wsl.toml")
     tools = self.run_cmd([MISE, "ls", "--current", "--json"], cwd=self.home)
     self.assertIn("github:mame/wsl2-ssh-agent", json.loads(tools.stdout))
 

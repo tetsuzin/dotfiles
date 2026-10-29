@@ -20,7 +20,7 @@ exec bash -l
 
 - `mise.toml`: apt パッケージ、外部リポジトリ、dotfiles、追加処理。
 - `mise.wsl.toml`: WSL の認証情報へのリンクと Windows ホームの指定。
-- `wsl-tools.toml`: WSL のみで使う SSH エージェント。
+- `dotfiles/HOME/.config/mise/conf.d/wsl.toml`: WSL のみで使う SSH エージェント。
 - `dotfiles/HOME/.config/mise/conf.d/linux.toml`: Linux の CLI ツール。ホームにも配置され、どのディレクトリでも利用できます。
 - `../common/dotfiles/HOME/.config/mise/config.toml`: 従来からの共通ランタイム・ツール。
 - `mise.toml` の `krew:install` タスク: 未導入の krew プラグインを導入。`bootstrap` タスクから呼び出し、単独では `mise -C linux run krew:install` で実行できます。
