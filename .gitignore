@@ -6,3 +6,4 @@ result
 **/.ssh/config
 
 __pycache__/
+*.local.toml
