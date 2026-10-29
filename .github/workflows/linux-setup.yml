@@ -2,7 +2,22 @@ name: Test Linux setup
 
 on:
   push:
+    branches: [main]
+    paths:
+      - linux/**
+      - common/dotfiles/**
+      - scripts/**
+      - setup.sh
+      - tests/**
+      - .github/workflows/linux-setup.yml
   pull_request:
+    paths:
+      - linux/**
+      - common/dotfiles/**
+      - scripts/**
+      - setup.sh
+      - tests/**
+      - .github/workflows/linux-setup.yml
 
 permissions:
   contents: read
