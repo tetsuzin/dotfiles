@@ -45,7 +45,7 @@ done
 [[ "${update}" != true || "${dry_run}" != true ]] || fail "--update と --dry-run は併用できません"
 [[ "${update}" != true || "${link_only}" != true ]] || fail "--update と --link-only は併用できません"
 
-check_linux_environment
+check_environment
 export PATH="${HOME}/.local/bin:${PATH}"
 command -v mise &>/dev/null || fail "先に ./setup.sh prepare を実行してください"
 

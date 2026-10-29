@@ -5,7 +5,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "${SCRIPT_DIR}/../../scripts/_functions"
 source "${SCRIPT_DIR}/environment.sh"
 
-check_linux_environment
+check_environment
 command -v sudo &>/dev/null || fail "sudo が必要です"
 
 # mise 自体の取得に必要な最小限のパッケージ。
