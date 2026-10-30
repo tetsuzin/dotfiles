@@ -61,13 +61,14 @@ WSL の Windows ホームは `/mnt/c/Users/tetsuzin` に固定しています。
 ## 検証
 
 ```bash
-python3 -B -m unittest discover -s tests -v
+dotnet run tests/LinuxSetup.cs
+dotnet run tests/LinuxSetup.cs -- -method '*Wsl*'   # 名前で絞り込み
 ```
 
-mise 2026.10.14 以上を PATH に置くか、`TEST_MISE_BIN` に実行ファイルを指定します。テストは一時ホームで配置・再適用・競合保護・Ubuntu の依存パッケージと WSL 設定を確認します。apt の適用やツールのダウンロードは行いません。
+.NET 10 SDK のファイルベースアプリとして実行します。初回は xUnit の NuGet 復元が必要です。mise 2026.10.14 以上を PATH に置くか、`TEST_MISE_BIN` に実行ファイルを指定します。テストは一時ホームで配置・再適用・競合保護・Ubuntu の依存パッケージと WSL 設定を確認します。apt の適用やツールのダウンロードは行いません。
 
-`tests/test_linux_setup.py` は、設定ファイルとスクリプトの論理が壊れていないかを確認する回帰テストです。一時ディレクトリを HOME にし、`MISE_OFFLINE=true` でネットワークを遮断した上で `mise -C linux` を直接呼び出します。eza テーマと LazyVim starter はダミーで代用し、krew や grep などの外部コマンドは PATH 先頭に置いたスタブで差し替えます。本番に近い環境で bootstrap を通す確認ではありません。
+`tests/LinuxSetup.cs` は、設定ファイルとスクリプトの論理が壊れていないかを確認する回帰テストです。一時ディレクトリを HOME にし、`MISE_OFFLINE=true` でネットワークを遮断した上で `mise -C linux` を直接呼び出します。eza テーマと LazyVim starter はダミーで代用し、krew や grep などの外部コマンドは PATH 先頭に置いたスタブで差し替えます。本番に近い環境で bootstrap を通す確認ではありません。
 
-テストは Python 標準の unittest で書いています。CI と手元の Ubuntu に追加導入なしで動き、一時ホームの隔離と後始末、失敗時の stdout と stderr の表示、JSON の読み取りが標準で揃うためです。bash でも書けますが、同じ長さでこれらの利点を失うだけなので採用していません。
+テストは .NET 10 のファイルベースアプリとして 1 ファイルの C# で書き、`#:package` 指示子で xUnit v3 を使っています。dotnet は mise の共通ツールに含まれるため追加導入はなく、一時ホームの隔離と後始末、子プロセスの実行、JSON の読み取りは標準ライブラリで揃います。xUnit はテストごとにクラスのインスタンスを作って `Dispose` を呼ぶので、一時ホームの後始末もそれに任せています。
 
 `.github/workflows/linux-setup.yml` は Ubuntu 26.04 のランナーで、シェルの構文チェックと上記のテストを実行します。main への push と PR のときだけ動き、対象は linux、common/dotfiles、scripts、tests、setup.sh とワークフロー自身の変更に限定しています。作業ブランチへの push だけでは実行されません。

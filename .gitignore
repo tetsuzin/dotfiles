@@ -5,6 +5,4 @@
 result
 **/.ssh/config
 
-__pycache__/
 *.local.toml
-linux/mise.wsl.local.toml
