@@ -1,28 +1,9 @@
 min_version = "2026.10.14"
 include = [
+  "packages.toml",
   "../common/dotfiles/HOME/.config/mise/config.toml",
   "dotfiles/HOME/.config/mise/conf.d/linux.toml",
 ]
-
-[bootstrap.packages]
-"apt:bash-completion" = "latest"
-"apt:build-essential" = "latest"
-"apt:ca-certificates" = "latest"
-"apt:curl" = "latest"
-"apt:git" = "latest"
-"apt:less" = "latest"
-"apt:libatomic1" = "latest"
-"apt:libicu78" = "latest"
-"apt:libgssapi-krb5-2" = "latest"
-"apt:libsecret-1-0" = "latest"
-"apt:libssl3t64" = "latest"
-"apt:openssh-client" = "latest"
-"apt:openssh-server" = "latest"
-"apt:ripgrep" = "latest"
-"apt:unzip" = "latest"
-"apt:wget" = "latest"
-"apt:xz-utils" = "latest"
-"apt:zlib1g" = "latest"
 
 # 旧 flake.lock と同じリビジョンを維持する。
 [bootstrap.repos]

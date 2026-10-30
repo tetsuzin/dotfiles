@@ -18,7 +18,8 @@ exec bash -l
 
 ## 設定の管理先
 
-- `mise.toml`: apt パッケージ、外部リポジトリ、dotfiles、追加処理。
+- `mise.toml`: 外部リポジトリ、dotfiles、追加処理。
+- `packages.toml`: apt パッケージ。sudo が必要なのはこのファイルの適用だけです。
 - `mise.wsl.toml`: WSL の認証情報へのリンクと Windows ホームの指定。
 - `dotfiles/HOME/.config/mise/conf.d/wsl.toml`: WSL のみで使う SSH エージェント。
 - `dotfiles/HOME/.config/mise/conf.d/linux.toml`: Linux の CLI ツール。ホームにも配置され、どのディレクトリでも利用できます。
