@@ -46,10 +46,12 @@ macOS は従来どおり Nix (flake + nix-darwin + Home Manager) を使う。
 - [ ] `settings.json` の差分を別コミットに分離する
 - [x] `mise.wsl.toml` の Windows ホーム指定を固定パスにし、`mise.wsl.local.toml` で上書きできるようにする
 - [x] テストを C# (.NET 10 ファイルベースアプリ + xUnit v3) に移行し、壊れていた krew と WSL リンクのテストを `mise run --skip-tools krew:install` と `mise.wsl.local.toml` で書き直す (2026-10-30)
-- [ ] この WSL で `./setup.sh prepare` を実行し mise 2026.10 系を `~/.local/bin/mise` に導入する
-- [ ] `./setup.sh bootstrap --dry-run` と `--only packages,repos --dry-run` で計画を確認し、README の記述を実態に合わせる
+- [x] この WSL に mise 2026.10.14 を `~/.local/bin/mise` に導入する (2026-10-30)。sudo が非対話で使えなかったため apt 部分は飛ばし、prepare.sh と同じ手順で mise だけ入れた
+- [x] Home Manager の `.bashrc` `.bash_profile` を repo のリンクに置き換え、新しいログインシェルで `~/.local/bin/mise` が使われることを確認 (2026-10-30)。退避は `~/hm-backup/`。ロールバックは `~/.local/state/nix/profiles/home-manager/activate`
+  - `~/.profile` は repo の管理外なので Home Manager のリンクのまま。Nix の PATH は `/etc/profile.d/nix.sh` が引き続き追加するため、未導入の CLI (eza、starship、nvim など) は当面 Nix 版が動く
+- [x] `[bootstrap.repos]` の取得と `--link-only` の dry-run / 適用を確認 (2026-10-30)
+- [ ] sudo が使える対話シェルで `./setup.sh bootstrap` を実行し、apt パッケージと mise ツールを導入する。その後 `mise ls` の missing が消えることを確認
 - [x] `dotnet run tests/LinuxSetup.cs` をローカルで通す (2026-10-30、9 件成功)
-- [ ] 既存設定を退避してから `./setup.sh bootstrap` を本適用する (README の「既存の Home Manager 環境から移行」に従う)
 - [ ] 新しいログインシェルで `command -v mise git node nvim`、`dotnet --list-sdks`、`krew list`、WSL の SSH 連携を確認する
 - [ ] Nix が不要になったことを確認してから、公式手順で Nix をアンインストールする
 - [ ] PR の base ブランチを決めて PR を作成する
