@@ -12,7 +12,7 @@ Ubuntu 26 と、その WSL 環境を対象に、mise と apt で環境を構築�
 exec bash -l
 ```
 
-`prepare` は apt で取得用の最小限の依存を入れ、独立した mise を `~/.local/bin/mise` に導入します。必要バージョンは 2026.10.14 以上です。
+`prepare` は apt で取得用の最小限の依存を入れ、独立した mise の最新版を `~/.local/bin/mise` に導入します。導入済みなら `mise self-update` で更新します。必要バージョンは 2026.10.14 以上で、`mise.toml` の `min_version` が検査します。
 
 `bootstrap` は Ubuntu 26 であることを確認し、WSL の場合は追加設定を選択します。apt パッケージ、外部リポジトリ、dotfiles、ツール、krew プラグインの順に適用します。apt の操作には sudo が必要です。リポジトリの設定はこの操作で mise に trust されます。
 
