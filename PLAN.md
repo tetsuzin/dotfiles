@@ -19,13 +19,13 @@ macOS は従来どおり Nix (flake + nix-darwin + Home Manager) を使う。
 | 宣言 | `linux/packages.toml`: `[bootstrap.packages]` (apt、sudo が必要)。`linux/mise.toml`: `[bootstrap.repos]` (eza-themes / LazyVim starter を旧 flake.lock のコミットに固定)、`[dotfiles]`、`krew:install` タスク |
 | WSL 差分 | `linux/mise.wsl.toml`: Windows ホームの `.aws/credentials` と `.kube/config` をリンク。`linux/wsl-tools.toml`: wsl2-ssh-agent |
 | ツール | `linux/dotfiles/HOME/.config/mise/conf.d/linux.toml` (Linux CLI)、`common/dotfiles/HOME/.config/mise/config.toml` (ランタイム) |
-| 検証 | `tests/test_linux_setup.py`、CI `.github/workflows/linux-setup.yml` (ubuntu-26.04) |
+| 検証 | `tests/LinuxSetup.cs` (.NET 10 ファイルベースアプリ + xUnit v3)、CI `.github/workflows/linux-setup.yml` (ubuntu-26.04) |
 
 必要バージョン: mise 2026.10.14 以上 (`linux/mise.toml` の `min_version` で管理)。
 
 ## 既知の問題
 
-1. **テストが壊れている**
+1. **(修正済み 2026-10-30)** テストが壊れていた
    `tests/test_linux_setup.py` の `test_krew_and_wsl_links_are_idempotent` が `linux/scripts/post-bootstrap.sh` を呼んでいるが、このスクリプトはコミット 6e1899b で削除済み。CI で確実に失敗する。
    krew 処理は `mise.toml` の `krew:install` タスクに、WSL リンクは `mise.wsl.toml` の `[dotfiles]` に移っている。
 2. **ローカルで検証できていない**
@@ -45,12 +45,10 @@ macOS は従来どおり Nix (flake + nix-darwin + Home Manager) を使う。
 - [x] `[bootstrap.packages]` を `linux/packages.toml` に分離する (2026-10-30)。include 先でもマージされ、`mise trust mise.toml` でディレクトリごと trust されるため追加の trust は不要
 - [ ] `settings.json` の差分を別コミットに分離する
 - [x] `mise.wsl.toml` の Windows ホーム指定を固定パスにし、`mise.wsl.local.toml` で上書きできるようにする
-- [ ] 壊れたテストを書き直す
-  - krew: `krew` スタブを PATH に置き `mise run krew:install` を 2 回実行して冪等性を確認
-  - WSL リンク: `test_wsl_tools_are_deployed_only_for_wsl` が一時的な `mise.wsl.local.toml` でリンク先を確認済み。競合時の保護の確認を追加する
+- [x] テストを C# (.NET 10 ファイルベースアプリ + xUnit v3) に移行し、壊れていた krew と WSL リンクのテストを `mise run --skip-tools krew:install` と `mise.wsl.local.toml` で書き直す (2026-10-30)
 - [ ] この WSL で `./setup.sh prepare` を実行し mise 2026.10 系を `~/.local/bin/mise` に導入する
 - [ ] `./setup.sh bootstrap --dry-run` と `--only packages,repos --dry-run` で計画を確認し、README の記述を実態に合わせる
-- [ ] `python3 -B -m unittest discover -s tests -v` をローカルで通す
+- [x] `dotnet run tests/LinuxSetup.cs` をローカルで通す (2026-10-30、9 件成功)
 - [ ] 既存設定を退避してから `./setup.sh bootstrap` を本適用する (README の「既存の Home Manager 環境から移行」に従う)
 - [ ] 新しいログインシェルで `command -v mise git node nvim`、`dotnet --list-sdks`、`krew list`、WSL の SSH 連携を確認する
 - [ ] Nix が不要になったことを確認してから、公式手順で Nix をアンインストールする
