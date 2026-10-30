@@ -54,7 +54,7 @@ WSL の `~/.aws/credentials` と `~/.kube/config` が旧 Home Manager のリン�
 
 旧 `.profile` や起動済みシェルに Nix の PATH 設定が残る場合があります。移行後に個別に確認してください。
 
-WSL の Windows ホームは `/mnt/c/Users/$USER` が既定です。ユーザー名が異なる場合は `DOTFILES_WINDOWS_HOME=/mnt/c/Users/<name> ./setup.sh bootstrap` で指定します。`.aws/credentials` と `.kube/config` を mise の `[dotfiles]` で共有します。リンク元が存在しない場合はスキップせずエラーになります。Windows 側に存在しないファイルへのリンクを除外するには、`linux/mise.wsl.local.toml` に同じリンク先のエントリを `enabled = false` 付きで書きます。例: `"~/.kube/config" = { source = "{{ vars.windows_home }}/.kube/config", enabled = false }`。既存ファイルとの競合は mise が検出し、`--link-force=y` を指定しない限り置き換えません。
+WSL の Windows ホームは `/mnt/c/Users/tetsuzin` に固定しています。mise の `[dotfiles]` はリンク元でテンプレートや環境変数を展開しないためです。ユーザー名が異なる場合やリンクを除外する場合は、git 管理外の `linux/mise.wsl.local.toml` に同じリンク先のエントリを書いて上書きします。例: `"~/.aws/credentials" = "/mnt/c/Users/<name>/.aws/credentials"`、除外は `"~/.kube/config" = { enabled = false }`。`.aws/credentials` と `.kube/config` を `[dotfiles]` で共有し、リンク元が存在しない場合はスキップせずエラーになります。既存ファイルとの競合は mise が検出し、`--link-force=y` を指定しない限り置き換えません。
 
 リンクは `--link-only` や `--dry-run`、mise の dotfiles status の対象になります。krew タスクの dry-run はスクリプトを表示し、個々のプラグインの導入状態までは確認しません。
 

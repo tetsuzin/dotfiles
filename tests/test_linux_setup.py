@@ -67,8 +67,24 @@ class LinuxSetupTest(unittest.TestCase):
     self.mise("dotfiles", "apply", "--yes", "--force")
     self.assertTrue(target.is_symlink())
 
+  def override_windows_home(self):
+    """Windows ホームを一時ディレクトリに向ける mise.wsl.local.toml を置く。"""
+    local = ROOT / "linux/mise.wsl.local.toml"
+    if local.exists():
+      self.skipTest(f"{local} が存在するため上書きしません")
+    windows_home = self.home / "windows"
+    for name in [".aws/credentials", ".kube/config"]:
+      (windows_home / name).parent.mkdir(parents=True, exist_ok=True)
+      (windows_home / name).write_text("test\n")
+    local.write_text("[dotfiles]\n" + "".join(
+      f'"~/{name}" = "{windows_home / name}"\n' for name in [".aws/credentials", ".kube/config"]))
+    self.addCleanup(local.unlink)
+    return windows_home
+
   def test_wsl_tools_are_deployed_only_for_wsl(self):
+    windows_home = self.override_windows_home()
     self.mise("dotfiles", "apply", "--yes", profile="wsl")
+    self.assertEqual((self.home / ".aws/credentials").resolve(), windows_home / ".aws/credentials")
     self.assertEqual((self.home / ".config/mise/conf.d/wsl.toml").resolve(),
             ROOT / "linux/dotfiles/HOME/.config/mise/conf.d/wsl.toml")
     tools = self.run_cmd([MISE, "ls", "--current", "--json"], cwd=self.home)
