@@ -34,9 +34,9 @@ macOS は従来どおり Nix (flake + nix-darwin + Home Manager) を使う。
    `common/dotfiles/HOME/.claude/settings.json` に `model: fable` と `modelSettings` を追加した未コミット差分がある。移行とは無関係。
 4. **origin/main と共通祖先がない**
    `git merge-base HEAD origin/main` が空。`backup/monorepo-before-rebase-20260926` があるため履歴を書き換えた結果と思われる。PR の base をどうするか決める必要がある。
-5. **`mise.wsl.toml` の `{{ vars.windows_home }}` が展開されない** (mise 2026.10.14 で確認)
+5. **(修正済み 2026-10-30)** `mise.wsl.toml` の `{{ vars.windows_home }}` が展開されない (mise 2026.10.14 で確認)
    `[dotfiles]` のリンク元がテンプレート文字列のまま `linux/{{ vars.windows_home }}/.aws/credentials` と解釈され、`sources do not exist` で `-E wsl` の `dotfiles apply` と `bootstrap` が失敗する。WSL ホストでは `./setup.sh bootstrap --link-only` も同じ理由で失敗する。
-   `test_wsl_tools_are_deployed_only_for_wsl` と `test_setup_entrypoint_without_nix` (WSL 上で実行時) がこれで落ちる。`[vars]` を使わず `get_env` を直接書くか、`[dotfiles]` でテンプレートが使える構文を確認して直す。
+   `test_wsl_tools_are_deployed_only_for_wsl` と `test_setup_entrypoint_without_nix` (WSL 上で実行時) がこれで落ちる。`[dotfiles]` のリンク元はテンプレートも環境変数も展開しないため、`/mnt/c/Users/tetsuzin` に固定し、差分は git 管理外の `mise.wsl.local.toml` で上書きする方式にした。
 6. **README の未検証記述**
    `linux/README.md` の `mise -C linux bootstrap --only packages,repos --dry-run` など、`--only` の指定値や dry-run の挙動は実機で未確認。
 
@@ -44,10 +44,10 @@ macOS は従来どおり Nix (flake + nix-darwin + Home Manager) を使う。
 
 - [x] `[bootstrap.packages]` を `linux/packages.toml` に分離する (2026-10-30)。include 先でもマージされ、`mise trust mise.toml` でディレクトリごと trust されるため追加の trust は不要
 - [ ] `settings.json` の差分を別コミットに分離する
-- [ ] `mise.wsl.toml` の Windows ホーム指定を mise が展開できる形に直す
+- [x] `mise.wsl.toml` の Windows ホーム指定を固定パスにし、`mise.wsl.local.toml` で上書きできるようにする
 - [ ] 壊れたテストを書き直す
   - krew: `krew` スタブを PATH に置き `mise run krew:install` を 2 回実行して冪等性を確認
-  - WSL リンク: `DOTFILES_WINDOWS_HOME` を一時ディレクトリに向け `-E wsl` で `dotfiles apply` を実行し、リンク先と競合時の保護を確認
+  - WSL リンク: `test_wsl_tools_are_deployed_only_for_wsl` が一時的な `mise.wsl.local.toml` でリンク先を確認済み。競合時の保護の確認を追加する
 - [ ] この WSL で `./setup.sh prepare` を実行し mise 2026.10 系を `~/.local/bin/mise` に導入する
 - [ ] `./setup.sh bootstrap --dry-run` と `--only packages,repos --dry-run` で計画を確認し、README の記述を実態に合わせる
 - [ ] `python3 -B -m unittest discover -s tests -v` をローカルで通す
