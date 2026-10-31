@@ -22,7 +22,7 @@ exec bash -l
 - `mise/conf.d/packages.toml`: 外部から取得するもの。apt パッケージと外部リポジトリ。sudo が必要なのは apt パッケージだけです。
 - `mise/conf.d/dotfiles.toml`: ホームに配置するシンボリックリンク。リンク元の相対パスはこのファイルの位置が基準です。
 - `mise/conf.d/tasks.toml`: 追加処理のタスク。
-- `mise.wsl.toml`: WSL の認証情報へのリンクと Windows ホームの指定。
+- `mise/conf.d/wsl/mise.wsl.toml`: WSL の認証情報へのリンクと Windows ホームの指定。`-E wsl` のときだけ読み込まれます。フォルダは独立した config root のため bootstrap.sh が個別に trust します。
 - `dotfiles/HOME/.config/mise/conf.d/wsl.toml`: WSL のみで使う SSH エージェント。
 - `dotfiles/HOME/.config/mise/conf.d/linux.toml`: Linux の CLI ツール。ホームにも配置され、どのディレクトリでも利用できます。
 - `../common/dotfiles/HOME/.config/mise/config.toml`: 従来からの共通ランタイム・ツール。
@@ -56,7 +56,7 @@ WSL の `~/.aws/credentials` と `~/.kube/config` が旧 Home Manager のリン�
 
 旧 `.profile` や起動済みシェルに Nix の PATH 設定が残る場合があります。移行後に個別に確認してください。
 
-WSL の Windows ホームは `/mnt/c/Users/tetsuzin` に固定しています。mise の `[dotfiles]` はリンク元でテンプレートや環境変数を展開しないためです。ユーザー名が異なる場合やリンクを除外する場合は、git 管理外の `linux/mise.wsl.local.toml` に同じリンク先のエントリを書いて上書きします。例: `"~/.aws/credentials" = "/mnt/c/Users/<name>/.aws/credentials"`、除外は `"~/.kube/config" = { enabled = false }`。`.aws/credentials` と `.kube/config` を `[dotfiles]` で共有し、リンク元が存在しない場合はスキップせずエラーになります。既存ファイルとの競合は mise が検出し、`--link-force=y` を指定しない限り置き換えません。
+WSL の Windows ホームは `/mnt/c/Users/tetsuzin` に固定しています。mise の `[dotfiles]` はリンク元でテンプレートや環境変数を展開しないためです。ユーザー名が異なる場合やリンクを除外する場合は、git 管理外の `linux/mise/conf.d/wsl/mise.wsl.local.toml` に同じリンク先のエントリを書いて上書きします。例: `"~/.aws/credentials" = "/mnt/c/Users/<name>/.aws/credentials"`、除外は `"~/.kube/config" = { enabled = false }`。`.aws/credentials` と `.kube/config` を `[dotfiles]` で共有し、リンク元が存在しない場合はスキップせずエラーになります。既存ファイルとの競合は mise が検出し、`--link-force=y` を指定しない限り置き換えません。
 
 リンクは `--link-only` や `--dry-run`、mise の dotfiles status の対象になります。krew タスクの dry-run はスクリプトを表示し、個々のプラグインの導入状態までは確認しません。
 

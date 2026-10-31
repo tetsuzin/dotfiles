@@ -53,8 +53,9 @@ command -v mise &>/dev/null || fail "先に ./setup.sh prepare を実行して�
 # dry-run でも trust 状態だけは記録するが、ホスト構成は変更しない。
 cd "${SCRIPT_DIR}/.."
 mise trust mise.toml
+# フォルダフラグメントは独立した config root なので個別に trust する。
 if [[ -n "${MISE_ENV:-}" ]]; then
-  mise trust mise.wsl.toml
+  mise trust mise/conf.d/wsl/mise.wsl.toml
 fi
 
 if [[ "${link_only}" == true ]]; then
