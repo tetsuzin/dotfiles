@@ -48,7 +48,7 @@ eza テーマと LazyVim starter は既定ブランチに追従し、`--update` 
 2. `./setup.sh prepare` で Nix に依存しない mise を導入します。
 3. `./setup.sh bootstrap` を実行します。競合するファイルは自動で上書きしません。退避後に必要な場合のみ `--link-force=y` を指定します。
 4. 新しいログインシェルで `command -v mise git node nvim`、`dotnet --list-sdks`、`krew list` を確認します。通常の開発作業と WSL の SSH 連携も確認します。
-5. Nix が不要になったことを確認してから、導入方式に対応する公式手順で別途アンインストールします。セットアップは Nix の削除や既存プロファイルの解除を行いません。
+5. Nix が不要になったことを確認してから、導入方式に対応する公式手順で別途アンインストールします。セットアップは Nix の削除や既存プロファイルの解除を行いません。アンインストール後は `mise reshim` を実行します。shims は Nix 版 mise へのリンクとして作られているため、そのままではログインシェルからツールが見えなくなります。
 
 WSL の `~/.aws/credentials` と `~/.kube/config` が旧 Home Manager のリンクの場合は、リンク先と必要な内容を確認・退避してからリンクを外し、bootstrap で直接リンクを作成します。この移行処理は自動では行いません。
 
