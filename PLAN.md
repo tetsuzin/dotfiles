@@ -16,8 +16,8 @@ macOS は従来どおり Nix (flake + nix-darwin + Home Manager) を使う。
 | ホスト準備 | `linux/scripts/prepare.sh`: apt 最小依存 + `~/.local/bin/mise` を導入 |
 | 本体 | `linux/scripts/bootstrap.sh`: `mise trust` → `mise bootstrap` (WSL は `-E wsl`) |
 | 環境判定 | `linux/scripts/environment.sh`: Ubuntu 26 / 非 root / WSL 判定 |
-| 宣言 | `linux/packages.toml`: `[bootstrap.packages]` (apt、sudo が必要)。`linux/mise.toml`: `[bootstrap.repos]` (eza-themes / LazyVim starter を旧 flake.lock のコミットに固定)、`[dotfiles]`、`krew:install` タスク |
-| WSL 差分 | `linux/mise.wsl.toml`: Windows ホームの `.aws/credentials` と `.kube/config` をリンク。`linux/wsl-tools.toml`: wsl2-ssh-agent |
+| 宣言 | `linux/mise.toml`: `min_version` と共通ツールの `include`。`linux/mise/conf.d/packages.toml`: `[bootstrap.packages]` (apt、sudo が必要) と `[bootstrap.repos]` (eza-themes / LazyVim starter、既定ブランチ追従)。`linux/mise/conf.d/dotfiles.toml`: `[dotfiles]`。`linux/mise/conf.d/tasks.toml`: `krew:install` タスク |
+| WSL 差分 | `linux/mise/conf.d/wsl/mise.wsl.toml` (フォルダフラグメント、`-E wsl` のみ): Windows ホームの `.aws/credentials` と `.kube/config` をリンク、`conf.d/wsl.toml` (wsl2-ssh-agent) を include |
 | ツール | `linux/dotfiles/HOME/.config/mise/conf.d/linux.toml` (Linux CLI)、`common/dotfiles/HOME/.config/mise/config.toml` (ランタイム) |
 | 検証 | `tests/LinuxSetup.cs` (.NET 10 ファイルベースアプリ + xUnit v3)、CI `.github/workflows/linux-setup.yml` (ubuntu-26.04) |
 
@@ -43,6 +43,7 @@ macOS は従来どおり Nix (flake + nix-darwin + Home Manager) を使う。
 ## 作業手順
 
 - [x] `[bootstrap.packages]` を `linux/packages.toml` に分離する (2026-10-30)。include 先でもマージされ、`mise trust mise.toml` でディレクトリごと trust されるため追加の trust は不要
+- [x] `[dotfiles]`、`[tasks]`、`[bootstrap.*]` を `linux/mise/conf.d/` に分離する (2026-10-31)。`include` は dotfiles と tasks を受け付けないため、同一ディレクトリの設定として読まれる `mise/conf.d/*.toml` に揃える。`mise.wsl.toml` は `mise/conf.d/wsl/` のフォルダフラグメントにし、`-E wsl` のときだけ読む挙動を維持。単一ファイルのフラグメントは `mise trust mise.toml` の `linux/` trust に含まれるが、フォルダフラグメントは独立した config root で個別に trust が必要 (実機で確認)。bootstrap.sh の trust 先を `mise/conf.d/wsl/mise.wsl.toml` に変更。相対パスはフラグメントの位置が基準になるため `../../` を付ける
 - [ ] `settings.json` の差分を別コミットに分離する
 - [x] `mise.wsl.toml` の Windows ホーム指定を固定パスにし、`mise.wsl.local.toml` で上書きできるようにする
 - [x] テストを C# (.NET 10 ファイルベースアプリ + xUnit v3) に移行し、壊れていた krew と WSL リンクのテストを `mise run --skip-tools krew:install` と `mise.wsl.local.toml` で書き直す (2026-10-30)
@@ -52,8 +53,11 @@ macOS は従来どおり Nix (flake + nix-darwin + Home Manager) を使う。
 - [x] `[bootstrap.repos]` の取得と `--link-only` の dry-run / 適用を確認 (2026-10-30)
 - [ ] sudo が使える対話シェルで `./setup.sh bootstrap` を実行し、apt パッケージと mise ツールを導入する。その後 `mise ls` の missing が消えることを確認
 - [x] `dotnet run tests/LinuxSetup.cs` をローカルで通す (2026-10-30、9 件成功)
-- [ ] 新しいログインシェルで `command -v mise git node nvim`、`dotnet --list-sdks`、`krew list`、WSL の SSH 連携を確認する
-- [ ] Nix が不要になったことを確認してから、公式手順で Nix をアンインストールする
+- [x] Home Manager が残した `/nix/store` へのリンクを整理 (2026-10-30)。`.aws/credentials` と `.kube/config` は Windows 側への直接リンクに作り直し、`.profile` は `/etc/skel` の既定に戻し、`.ssh/wsl2-ssh-agent`、`.config/environment.d/10-home-manager.conf`、`.local/state/.keep` を削除
+- [x] 新しいログインシェルで `command -v mise git node nvim`、`dotnet --list-sdks`、`krew list`、WSL の SSH 連携を確認 (2026-10-30)
+- [x] 公式手順で Nix をアンインストール (2026-10-30)。shims が Nix 版 mise へのリンクだったため全ツールが見えなくなり、`mise reshim` で復旧。README の移行手順に追記
+  - `/etc/systemd/system/nix-daemon@.service` が `/nix` への dangling リンクとして残っている。sudo で削除する
+  - `~/hm-backup/` は問題が無いことを確認したら削除する
 - [ ] PR の base ブランチを決めて PR を作成する
 
 ## 注意
