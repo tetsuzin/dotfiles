@@ -1,4 +1,11 @@
-# apt で導入する OS パッケージ。sudo が必要なのはこのファイルの適用だけ。
+# mise bootstrap が外部から取得するもの。sudo が必要なのは apt パッケージだけ。
+
+# 既定ブランチに追従し、bootstrap --update で fast-forward する。
+[bootstrap.repos]
+"~/.local/share/dotfiles/eza-themes" = { url = "https://github.com/eza-community/eza-themes.git" }
+"~/.local/share/dotfiles/lazyvim-starter" = { url = "https://github.com/LazyVim/starter.git" }
+
+# apt で導入する OS パッケージ。
 [bootstrap.packages]
 "apt:bash-completion" = "latest"
 "apt:build-essential" = "latest"

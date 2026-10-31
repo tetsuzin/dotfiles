@@ -18,13 +18,15 @@ exec bash -l
 
 ## 設定の管理先
 
-- `mise.toml`: 外部リポジトリ、dotfiles、追加処理。
-- `packages.toml`: apt パッケージ。sudo が必要なのはこのファイルの適用だけです。
+- `mise.toml`: 必要バージョンと共通ツール設定の読み込みだけ。`mise/conf.d/*.toml` は同じディレクトリの設定として自動で読み込まれ、このファイルの trust に含まれます。
+- `mise/conf.d/packages.toml`: 外部から取得するもの。apt パッケージと外部リポジトリ。sudo が必要なのは apt パッケージだけです。
+- `mise/conf.d/dotfiles.toml`: ホームに配置するシンボリックリンク。リンク元の相対パスはこのファイルの位置が基準です。
+- `mise/conf.d/tasks.toml`: 追加処理のタスク。
 - `mise.wsl.toml`: WSL の認証情報へのリンクと Windows ホームの指定。
 - `dotfiles/HOME/.config/mise/conf.d/wsl.toml`: WSL のみで使う SSH エージェント。
 - `dotfiles/HOME/.config/mise/conf.d/linux.toml`: Linux の CLI ツール。ホームにも配置され、どのディレクトリでも利用できます。
 - `../common/dotfiles/HOME/.config/mise/config.toml`: 従来からの共通ランタイム・ツール。
-- `mise.toml` の `krew:install` タスク: 未導入の krew プラグインを導入。`bootstrap` タスクから呼び出し、単独では `mise -C linux run krew:install` で実行できます。
+- `mise/conf.d/tasks.toml` の `krew:install` タスク: 未導入の krew プラグインを導入。`bootstrap` タスクから呼び出し、単独では `mise -C linux run krew:install` で実行できます。
 
 Git・curl などの基盤と共有ライブラリは apt、開発 CLI は mise が担当します。`nh` は Nix 専用のため導入しません。fastfetch は通常の配布バイナリを使います。
 
