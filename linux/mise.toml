@@ -5,10 +5,10 @@ include = [
   "dotfiles/HOME/.config/mise/conf.d/linux.toml",
 ]
 
-# 旧 flake.lock と同じリビジョンを維持する。
+# 既定ブランチに追従し、bootstrap --update で fast-forward する。
 [bootstrap.repos]
-"~/.local/share/dotfiles/eza-themes" = { url = "https://github.com/eza-community/eza-themes.git", ref = "21184b55bfe34e8473c8160f9de0c03e4f76857f" }
-"~/.local/share/dotfiles/lazyvim-starter" = { url = "https://github.com/LazyVim/starter.git", ref = "803bc181d7c0d6d5eeba9274d9be49b287294d99" }
+"~/.local/share/dotfiles/eza-themes" = { url = "https://github.com/eza-community/eza-themes.git" }
+"~/.local/share/dotfiles/lazyvim-starter" = { url = "https://github.com/LazyVim/starter.git" }
 
 [dotfiles]
 "~/.config/act/actrc" = "../common/dotfiles/HOME/.config/act/actrc"

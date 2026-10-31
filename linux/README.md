@@ -40,7 +40,7 @@ Git・curl などの基盤と共有ライブラリは apt、開発 CLI は mise 
 
 初回は外部リポジトリが存在せず、全体の dry-run がテーマ等のリンク元不足で停止することがあります。取得予定だけを確認する場合は `mise -C linux bootstrap --only packages,repos --dry-run` を使います。WSL では `mise -C linux -E wsl bootstrap --only packages,repos --dry-run` を使います。
 
-eza テーマと LazyVim starter は旧 flake.lock のコミットに固定しています。更新する場合は `mise.toml` の `ref` を変更します。ツールの `latest` と apt の依存解決は flake.lock と同じ固定・ロールバックを提供しません。
+eza テーマと LazyVim starter は既定ブランチに追従し、`--update` で fast-forward されます。checkout 内に未コミットの変更があると更新は止まります。ツールの `latest` と apt の依存解決を含め、flake.lock と同じ固定・ロールバックは提供しません。
 
 ## 既存の Home Manager 環境から移行
 
