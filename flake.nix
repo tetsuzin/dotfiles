@@ -1,5 +1,5 @@
 {
-  description = "Nix configuration of tetsuzin (linux / wsl / mac)";
+  description = "Nix configuration of tetsuzin (macOS)";
 
   inputs = {
     # 共通の依存
@@ -10,12 +10,6 @@
     };
     ezaThemes = {
       url = "github:eza-community/eza-themes";
-      flake = false;
-    };
-
-    # Linux / WSL の依存
-    lazyvimStarter = {
-      url = "github:LazyVim/starter";
       flake = false;
     };
 
@@ -34,5 +28,5 @@
         user = "tetsuzin";
       };
     in
-    import ./linux/nix args // import ./mac/nix args;
+    import ./mac/nix args;
 }

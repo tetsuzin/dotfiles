@@ -1,0 +1,45 @@
+name: Test Linux setup
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - linux/**
+      - common/dotfiles/**
+      - scripts/**
+      - setup.sh
+      - tests/**
+      - .github/workflows/linux-setup.yml
+  pull_request:
+    paths:
+      - linux/**
+      - common/dotfiles/**
+      - scripts/**
+      - setup.sh
+      - tests/**
+      - .github/workflows/linux-setup.yml
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-26.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Install mise
+        env:
+          MISE_VERSION: 2026.10.14
+        run: |
+          curl -fsSL https://mise.run -o "$RUNNER_TEMP/install-mise.sh"
+          sh "$RUNNER_TEMP/install-mise.sh"
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+      - name: Check shell syntax
+        run: |
+          bash -n setup.sh
+          for script in linux/scripts/*.sh linux/dotfiles/HOME/.bash*; do
+            bash -n "$script"
+          done
+      - name: Test isolated configuration and dotfiles
+        run: mise exec dotnet@10 -- dotnet run tests/LinuxSetup.cs
