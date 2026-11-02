@@ -1,11 +1,9 @@
 ﻿#Requires -Version 5.1
-# Windows ホストの準備。scoop と mise (winget) を導入する。
+# Windows ホストの準備。scoop と mise (公式スクリプト) を導入する。
 # Git は clone の時点で必要なため、ここでは扱わず scoop の宣言 (packages.toml) で管理する。
 # 入口は setup.cmd prepare。直接実行する場合: powershell -ExecutionPolicy Bypass -File windows\scripts\prepare.ps1
 $ErrorActionPreference = 'Stop'
 
-# winget が「更新なし」「導入済み」で返す終了コード。
-$WingetNoUpdate = -1978335189
 
 $devMode = (Get-ItemProperty 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModelUnlock' -ErrorAction SilentlyContinue).AllowDevelopmentWithoutDevLicense
 if ($devMode -ne 1) {
@@ -22,10 +20,18 @@ if (-not (Test-Path "$scoopRoot\buckets\extras")) {
   scoop bucket add extras
 }
 
-# 公式が Windows で推奨する winget を使う。導入済みなら更新も兼ねる。
-winget install --id jdx.mise --exact --accept-source-agreements --accept-package-agreements
-if ($LASTEXITCODE -ne 0 -and $LASTEXITCODE -ne $WingetNoUpdate) {
-  throw "mise の導入に失敗しました (exit $LASTEXITCODE)"
+# Linux の prepare.sh と同じく、公式スクリプトで ~\.local\bin に独立した mise を導入する。
+# 導入済みなら self-update で最新版にする。スクリプトはユーザーの Path に ~\.local\bin を追加する。
+$mise = "$env:USERPROFILE\.local\bin\mise.exe"
+if (Test-Path $mise) {
+  & $mise self-update --yes
+} else {
+  Invoke-RestMethod -Uri 'https://mise.run/powershell' | Invoke-Expression
+}
+if (-not (Test-Path $mise)) { throw 'mise の導入に失敗しました' }
+$other = Get-Command mise -ErrorAction SilentlyContinue | Where-Object { $_.Source -ne $mise }
+if ($other) {
+  Write-Warning "別の方法で導入された mise が PATH にあります: $($other.Source)。1 台に 1 つの導入方法に揃えてください"
 }
 
 Write-Host '準備が完了しました。新しいターミナルを開き、.\setup.cmd bootstrap を実行してください'

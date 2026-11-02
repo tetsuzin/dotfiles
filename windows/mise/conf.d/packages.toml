@@ -5,9 +5,6 @@
 
 # winget:
 
-## mise 本体
-"winget:jdx.mise" = "latest"
-
 ## パスワード管理ツール
 "winget:Bitwarden.Bitwarden" = "latest"
 "winget:Bitwarden.CLI" = "latest"

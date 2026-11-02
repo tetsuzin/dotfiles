@@ -23,14 +23,14 @@ cd dotfiles
 
 `setup.cmd` は `prepare` を PowerShell で実行し、それ以外のコマンドを Git Bash の `setup.sh` に転送します。Git Bash は `git --exec-path` から特定するため、WSL の bash が選ばれることはありません。Git Bash から直接 `./setup.sh prepare` や `./setup.sh bootstrap` を実行しても同じです。
 
-`prepare` は scoop 本体と extras バケットが無ければ導入し、mise を winget で導入または更新します。公式が Windows で推奨する winget に揃え、`mise self-update` は使いません。winget の mise は公式リリースより数日遅れることがあります。必要バージョンは 2026.10.12 以上で、`mise.toml` の `min_version` が検査します。
+`prepare` は scoop 本体と extras バケットが無ければ導入し、Linux と同じく公式スクリプトで独立した mise の最新版を `~\.local\bin` に導入します。導入済みなら `mise self-update` で更新します。スクリプトはユーザーの Path に `~\.local\bin` を追加します。必要バージョンは 2026.10.12 以上で、`mise.toml` の `min_version` が検査します。
 
 `bootstrap` は winget / scoop パッケージ、dotfiles、ツールの順に適用します。管理者権限は不要ですが、インストーラが UAC プロンプトを出すことがあります。dotfiles はシンボリックリンクで配置するため、開発者モード (設定 > システム > 開発者向け) を有効にしておきます。リポジトリの設定はこの操作で mise に trust されます。
 
 ## 設定の管理先
 
 - `mise.toml`: 必要バージョンと共通ツール設定の読み込みだけ。`mise/conf.d/*.toml` は同じディレクトリの設定として自動で読み込まれ、このファイルの trust に含まれます。
-- `mise/conf.d/packages.toml`: OS パッケージ。winget は PowerShell 7、Windows Terminal、mise 本体。scoop は Git、7-Zip、less、sudo、zellij などユーザー領域の CLI と GUI ツール。extras バケットのものは `scoop:extras/<name>` と書きますが、scoop は名前だけで照合するためバケットは prepare.ps1 が追加します。
+- `mise/conf.d/packages.toml`: OS パッケージ。winget は PowerShell 7、Windows Terminal、GUI アプリ。scoop は Git、7-Zip、less、sudo、zellij などユーザー領域の CLI と GUI ツール。extras バケットのものは `scoop:extras/<name>` と書きますが、scoop は名前だけで照合するためバケットは prepare.ps1 が追加します。
 - `mise/conf.d/dotfiles.toml`: ホームに配置するシンボリックリンク。`~` は `C:\Users\<name>` に解決され、リンク元の相対パスはこのファイルの位置が基準です。
 - `dotfiles/HOME/.config/mise/conf.d/windows.toml`: Windows の CLI ツール。ホームにも配置され、どのディレクトリでも利用できます。
 - `dotfiles/HOME/Documents/PowerShell/Microsoft.PowerShell_profile.ps1`: PowerShell 7 のプロファイル。mise の activate と starship の初期化を含みます。
@@ -55,10 +55,14 @@ mise は `~` を常に実際のユーザープロファイルに解決するた�
 ## 既存の環境から移行
 
 1. `mise -C windows bootstrap status` で、winget / scoop パッケージと dotfiles の現状を確認します。scoop で入れたものは winget からは見えず、その逆も同じなので、宣言したマネージャと実際の導入元が違うものは二重に導入されます。先に整理するか、`packages.toml` の該当行を直します。
-2. `.\setup.cmd prepare` を実行します。scoop 版の mise が入っている場合は、winget 版と重複しないよう `scoop uninstall mise` で外します。導入済みのツールのデータ (`~\AppData\Local\mise`) は残るため再ダウンロードは不要です。
+2. `.\setup.cmd prepare` を実行します。scoop や winget で入れた mise が残っていると警告が出るので、`scoop uninstall mise` や `winget uninstall jdx.mise` で外し、1 つの導入方法に揃えます。導入済みのツールのデータ (`~\AppData\Local\mise`) は残るため再ダウンロードは不要です。
 3. `.\setup.cmd bootstrap --dry-run` で変更予定を確認し、`.\setup.cmd bootstrap` を実行します。`~/.config/starship.toml`、`~/.claude/settings.json`、`~/.config/mise/config.toml`、PowerShell プロファイルなどの既存ファイルは自動で上書きしません。退避後に必要な場合のみ `--link-force=y` を指定します。
 4. 新しい PowerShell で `Get-Command mise`、`mise doctor`、`mise ls` を確認します。shims が古い mise を指している場合は `mise reshim` を実行します。
 5. mise の `[tools]` に移したツール (act、gh、jq、shfmt、starship など) は scoop 側を `scoop uninstall` で外します。残したままでも動きますが、PATH の順序で古い方が実行されることがあります。
+
+## mise のアンインストール
+
+セットアップは mise の削除を行いません。`mise implode --dry-run` で削除対象を確認してから `mise implode` を実行すると、本体 (`~\.local\bin\mise.exe`)、導入したツール、状態、キャッシュが消えます。`~\.config\mise` はリポジトリへのリンクなので残します。PowerShell プロファイルの `mise activate` の行と、ユーザーの Path に追加された `~\.local\bin` は手で外します。
 
 ## 検証
 
