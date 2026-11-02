@@ -1,109 +1,31 @@
 ﻿#Requires -Version 5.1
-<#
-.SYNOPSIS
-  Windows ホストの準備。scoop と Git、winget で mise を導入する。
-.DESCRIPTION
-  ./setup.sh prepare から呼ばれるほか、Git Bash が無い初回は PowerShell から直接実行する:
-    powershell -ExecutionPolicy Bypass -File windows\scripts\prepare.ps1
-  その他の OS パッケージと開発 CLI は ./setup.sh bootstrap (mise bootstrap) が導入する。
-#>
-[CmdletBinding()]
-param()
-
+# Windows ホストの準備。scoop と mise (winget) を導入する。
+# Git は clone の時点で必要なため、ここでは扱わず scoop の宣言 (packages.toml) で管理する。
+# 初回は PowerShell から直接実行する: powershell -ExecutionPolicy Bypass -File windows\scripts\prepare.ps1
 $ErrorActionPreference = 'Stop'
 
-function Write-Step([string] $Message) { Write-Host "[STEP ] $Message" -ForegroundColor Green }
-function Write-Info([string] $Message) { Write-Host "[INFO ] $Message" -ForegroundColor Green }
-function Write-Warn([string] $Message) { Write-Host "[WARN ] $Message" -ForegroundColor Yellow }
-function Fail([string] $Message) { Write-Host "[ERROR] $Message" -ForegroundColor Red; exit 1 }
-
-# winget upgrade が「更新なし」で返す終了コード (APPINSTALLER_CLI_ERROR_UPDATE_NOT_APPLICABLE)。
+# winget が「更新なし」「導入済み」で返す終了コード。
 $WingetNoUpdate = -1978335189
 
-function Install-WingetPackage([string] $Id, [string] $Command) {
-  if (Get-Command $Command -ErrorAction SilentlyContinue) {
-    Write-Info "$Command は導入済みです: $((Get-Command $Command).Source)"
-    return $false
-  }
-  Write-Info "$Id を winget で導入します"
-  winget install --id $Id --exact --accept-source-agreements --accept-package-agreements
-  if ($LASTEXITCODE -ne 0) { Fail "$Id の導入に失敗しました (exit $LASTEXITCODE)" }
-  return $true
-}
-
-function Update-WingetPackage([string] $Id) {
-  winget upgrade --id $Id --exact --accept-source-agreements --accept-package-agreements
-  if ($LASTEXITCODE -eq 0 -or $LASTEXITCODE -eq $WingetNoUpdate) { return }
-  Fail "$Id の更新に失敗しました (exit $LASTEXITCODE)"
-}
-
-$principal = [Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()
-if ($principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
-  Fail '管理者権限では実行しないでください。インストーラが必要な場合は UAC で個別に昇格します'
-}
-if (-not (Get-Command winget -ErrorAction SilentlyContinue)) {
-  Fail 'winget が見つかりません。Microsoft Store から「アプリ インストーラー」を導入してください'
-}
-
-Write-Step 'シンボリックリンクの作成権限の確認'
 $devMode = (Get-ItemProperty 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModelUnlock' -ErrorAction SilentlyContinue).AllowDevelopmentWithoutDevLicense
-if ($devMode -eq 1) {
-  Write-Info '開発者モードが有効です。dotfiles をシンボリックリンクで配置できます'
-} else {
-  Write-Warn '開発者モードが無効です。設定 > システム > 開発者向け で有効にしないと bootstrap の dotfiles 配置に失敗します'
+if ($devMode -ne 1) {
+  Write-Warning '開発者モードが無効です。dotfiles をシンボリックリンクで配置するには 設定 > システム > 開発者向け で有効にしてください'
 }
 
-Write-Step 'scoop の導入'
-# ユーザー領域の CLI は scoop で管理する。本体の導入は公式スクリプトに従う。
-$installedScoop = $false
-if (Get-Command scoop -ErrorAction SilentlyContinue) {
-  Write-Info "scoop は導入済みです: $((Get-Command scoop).Source)"
-} else {
-  Write-Info 'scoop を導入します'
+if (-not (Get-Command scoop -ErrorAction SilentlyContinue)) {
   Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser -Force
   Invoke-RestMethod -Uri 'https://get.scoop.sh' | Invoke-Expression
-  if (-not (Get-Command scoop -ErrorAction SilentlyContinue)) { Fail 'scoop の導入に失敗しました' }
-  $installedScoop = $true
 }
-# packages.toml が参照するバケット。scoop はバケットを自動では追加しない。
-$buckets = @(scoop bucket list 6>$null | ForEach-Object { $_.Name })
-foreach ($bucket in 'extras') {
-  if ($buckets -contains $bucket) {
-    Write-Info "scoop バケット $bucket は追加済みです"
-  } else {
-    Write-Info "scoop バケット $bucket を追加します"
-    scoop bucket add $bucket
-    if ($LASTEXITCODE -ne 0) { Fail "scoop バケット $bucket の追加に失敗しました" }
-  }
+# packages.toml が参照するバケット。mise はバケットを追加しないためここで行う。
+$scoopRoot = if ($env:SCOOP) { $env:SCOOP } else { "$env:USERPROFILE\scoop" }
+if (-not (Test-Path "$scoopRoot\buckets\extras")) {
+  scoop bucket add extras
 }
 
-Write-Step 'Git for Windows の導入'
-# setup.sh は Git Bash で動くため、Git は bootstrap より前に必要。
-$installedGit = $false
-if (Get-Command git -ErrorAction SilentlyContinue) {
-  Write-Info "git は導入済みです: $((Get-Command git).Source)"
-} else {
-  Write-Info 'git を scoop で導入します'
-  scoop install git
-  if ($LASTEXITCODE -ne 0) { Fail 'git の導入に失敗しました' }
-  $installedGit = $true
+# 公式が Windows で推奨する winget を使う。導入済みなら更新も兼ねる。
+winget install --id jdx.mise --exact --accept-source-agreements --accept-package-agreements
+if ($LASTEXITCODE -ne 0 -and $LASTEXITCODE -ne $WingetNoUpdate) {
+  throw "mise の導入に失敗しました (exit $LASTEXITCODE)"
 }
 
-Write-Step 'mise の導入'
-# 公式が Windows で推奨する winget を使う。更新も winget に任せ、mise self-update は使わない。
-$mise = Get-Command mise -ErrorAction SilentlyContinue
-if ($mise -and $mise.Source -notlike "$env:LOCALAPPDATA\Microsoft\WinGet\*") {
-  Write-Warn "winget 以外で導入された mise が PATH にあります: $($mise.Source)"
-  Write-Warn '1 台に 1 つの導入方法に揃えてください (例: scoop uninstall mise)。古い方が実行されることがあります'
-}
-$installedMise = Install-WingetPackage -Id 'jdx.mise' -Command 'mise'
-if (-not $installedMise) {
-  Write-Info 'mise を winget で更新します'
-  Update-WingetPackage -Id 'jdx.mise'
-}
-
-Write-Step '準備が完了しました'
-if ($installedScoop -or $installedGit -or $installedMise) {
-  Write-Info 'PATH の変更を反映するため、新しいターミナルを開いてください'
-}
-Write-Info '続けて Git Bash で ./setup.sh bootstrap を実行してください'
+Write-Host '準備が完了しました。新しいターミナルを開き、Git Bash で ./setup.sh bootstrap を実行してください'

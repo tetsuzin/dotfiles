@@ -4,7 +4,7 @@ Windows 11 を対象に、mise と winget、scoop で環境を構築します。
 
 ## 初回セットアップ
 
-Git Bash が無い状態では、PowerShell からホストの準備だけを先に行います。
+Git が無い状態では、PowerShell から scoop と Git を入れてリポジトリを clone し、ホストの準備を行います。Git は以降も scoop の宣言 (`packages.toml`) で管理します。
 
 ```powershell
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
@@ -21,7 +21,7 @@ powershell -ExecutionPolicy Bypass -File dotfiles\windows\scripts\prepare.ps1
 ./setup.sh bootstrap
 ```
 
-`prepare` は scoop 本体と extras バケット、scoop の Git、winget の mise を導入し、導入済みなら winget で mise を更新します。公式が Windows で推奨する winget に揃え、`mise self-update` は使いません。winget の mise は公式リリースより数日遅れることがあります。必要バージョンは 2026.10.12 以上で、`mise.toml` の `min_version` が検査します。
+`prepare` は scoop 本体と extras バケットが無ければ導入し、mise を winget で導入または更新します。公式が Windows で推奨する winget に揃え、`mise self-update` は使いません。winget の mise は公式リリースより数日遅れることがあります。必要バージョンは 2026.10.12 以上で、`mise.toml` の `min_version` が検査します。
 
 `bootstrap` は winget / scoop パッケージ、dotfiles、ツールの順に適用します。管理者権限は不要ですが、インストーラが UAC プロンプトを出すことがあります。dotfiles はシンボリックリンクで配置するため、開発者モード (設定 > システム > 開発者向け) を有効にしておきます。リポジトリの設定はこの操作で mise に trust されます。
 
@@ -53,7 +53,7 @@ mise は `~` を常に実際のユーザープロファイルに解決するた�
 ## 既存の環境から移行
 
 1. `mise -C windows bootstrap status` で、winget / scoop パッケージと dotfiles の現状を確認します。scoop で入れたものは winget からは見えず、その逆も同じなので、宣言したマネージャと実際の導入元が違うものは二重に導入されます。先に整理するか、`packages.toml` の該当行を直します。
-2. `./setup.sh prepare` を実行します。scoop 版の mise が PATH に残っていると警告が出るので `scoop uninstall mise` で外します。導入済みのツールのデータ (`~\AppData\Local\mise`) は残るため再ダウンロードは不要です。
+2. `./setup.sh prepare` を実行します。scoop 版の mise が入っている場合は、winget 版と重複しないよう `scoop uninstall mise` で外します。導入済みのツールのデータ (`~\AppData\Local\mise`) は残るため再ダウンロードは不要です。
 3. `./setup.sh bootstrap --dry-run` で変更予定を確認し、`./setup.sh bootstrap` を実行します。`~/.config/starship.toml`、`~/.claude/settings.json`、`~/.config/mise/config.toml`、PowerShell プロファイルなどの既存ファイルは自動で上書きしません。退避後に必要な場合のみ `--link-force=y` を指定します。
 4. 新しい PowerShell で `Get-Command mise`、`mise doctor`、`mise ls` を確認します。shims が古い mise を指している場合は `mise reshim` を実行します。
 5. mise の `[tools]` に移したツール (act、gh、jq、shfmt、starship など) は scoop 側を `scoop uninstall` で外します。残したままでも動きますが、PATH の順序で古い方が実行されることがあります。
