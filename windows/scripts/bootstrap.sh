@@ -10,7 +10,7 @@ function usage() {
 Usage: ./setup.sh bootstrap [--debug] [--dry-run] [--link-force=y] [--update | --link-only]
 
   --dry-run       変更予定を表示する
-  --update        宣言した winget パッケージと mise ツールを更新して適用する
+  --update        宣言した winget / scoop パッケージと mise ツールを更新して適用する
   --link-only     dotfiles の配置のみ実行する
   --link-force=y  競合する dotfiles の置き換えを許可する
 
@@ -60,7 +60,7 @@ if [[ "${link_only}" == true ]]; then
   mise bootstrap --only dotfiles "${bootstrap_args[@]}"
 elif [[ "${update}" == true ]]; then
   mise bootstrap --update "${bootstrap_args[@]}"
-  mise bootstrap packages upgrade --manager winget
+  mise bootstrap packages upgrade
   mise upgrade
 else
   mise bootstrap "${bootstrap_args[@]}"
