@@ -1,7 +1,7 @@
 ﻿#Requires -Version 5.1
 # Windows ホストの準備。scoop と mise (winget) を導入する。
 # Git は clone の時点で必要なため、ここでは扱わず scoop の宣言 (packages.toml) で管理する。
-# 初回は PowerShell から直接実行する: powershell -ExecutionPolicy Bypass -File windows\scripts\prepare.ps1
+# 入口は setup.cmd prepare。直接実行する場合: powershell -ExecutionPolicy Bypass -File windows\scripts\prepare.ps1
 $ErrorActionPreference = 'Stop'
 
 # winget が「更新なし」「導入済み」で返す終了コード。
@@ -28,4 +28,4 @@ if ($LASTEXITCODE -ne 0 -and $LASTEXITCODE -ne $WingetNoUpdate) {
   throw "mise の導入に失敗しました (exit $LASTEXITCODE)"
 }
 
-Write-Host '準備が完了しました。新しいターミナルを開き、Git Bash で ./setup.sh bootstrap を実行してください'
+Write-Host '準備が完了しました。新しいターミナルを開き、.\setup.cmd bootstrap を実行してください'

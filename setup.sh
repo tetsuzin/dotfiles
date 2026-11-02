@@ -16,6 +16,7 @@ Commands:
 
 必要環境: Linux は mise 2026.10.14 以上、Windows は Git Bash と mise 2026.10.12 以上、
 macOS は Nix 2.26 以上
+Windows では setup.cmd <command> でも実行できます (prepare は PowerShell、他は Git Bash に転送)。
 
 Linux / Windows:
   ./setup.sh bootstrap

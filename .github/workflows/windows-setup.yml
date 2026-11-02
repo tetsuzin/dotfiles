@@ -8,6 +8,7 @@ on:
       - common/dotfiles/**
       - scripts/**
       - setup.sh
+      - setup.cmd
       - .github/workflows/windows-setup.yml
   pull_request:
     paths:
@@ -15,6 +16,7 @@ on:
       - common/dotfiles/**
       - scripts/**
       - setup.sh
+      - setup.cmd
       - .github/workflows/windows-setup.yml
 
 permissions:
@@ -59,3 +61,6 @@ jobs:
       - name: Dry-run dotfiles via setup.sh
         shell: bash
         run: ./setup.sh bootstrap --link-only --dry-run
+      - name: Dry-run dotfiles via setup.cmd
+        shell: cmd
+        run: .\setup.cmd bootstrap --link-only --dry-run
