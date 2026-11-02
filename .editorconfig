@@ -15,6 +15,10 @@ indent_size = 2
 [*.md]
 trim_trailing_whitespace = false
 
+# Windows PowerShell 5.1 は BOM が無いと UTF-8 として読まない
+[*.ps1]
+charset = utf-8-bom
+
 [common/dotfiles/HOME/.config/git/config]
 indent_style = tab
 tab_width = 4

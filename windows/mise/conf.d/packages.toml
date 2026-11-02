@@ -1,0 +1,9 @@
+# mise bootstrap が winget で導入する OS パッケージ。
+# sudo は不要だが、インストーラが UAC プロンプトを出すことがある。
+# 開発 CLI は dotfiles/HOME/.config/mise/conf.d/windows.toml の [tools] が担当する。
+[bootstrap.packages]
+"winget:7zip.7zip" = "latest"
+"winget:Git.Git" = "latest"
+"winget:jdx.mise" = "latest"
+"winget:Microsoft.PowerShell" = "latest"
+"winget:Microsoft.WindowsTerminal" = "latest"

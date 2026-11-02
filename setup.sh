@@ -10,13 +10,14 @@ function usage() {
 Usage: ./setup.sh <command> [args...]
 
 Commands:
-  prepare    ホストの準備 (Linux: mise / macOS: Nix)
-  bootstrap  Linux の環境適用と dotfiles の配置
+  prepare    ホストの準備 (Linux / Windows: mise, macOS: Nix)
+  bootstrap  Linux / Windows の環境適用と dotfiles の配置
   switch     macOS の Nix 構成適用と dotfiles の配置
 
-必要環境: Linux は mise 2026.10.14 以上、macOS は Nix 2.26 以上
+必要環境: Linux は mise 2026.10.14 以上、Windows は Git Bash と mise 2026.10.12 以上、
+macOS は Nix 2.26 以上
 
-Linux:
+Linux / Windows:
   ./setup.sh bootstrap
   ./setup.sh bootstrap --update
   ./setup.sh bootstrap --link-only
@@ -28,7 +29,7 @@ macOS:
 
 どちらも --dry-run で変更予定を確認できます。
 既存の dotfiles を置き換える場合は --link-force=y を指定します。
-OS (linux / mac) は自動判定します。
+OS (linux / mac / windows) は自動判定します。
 EOF
 }
 
@@ -43,20 +44,28 @@ shift
 case "$(uname -s)" in
   Linux) os_name="linux" ;;
   Darwin) os_name="mac" ;;
+  MINGW* | MSYS*) os_name="windows" ;;
   *) fail "未対応の OS です: $(uname -s)" ;;
 esac
 
 case "${command}" in
   prepare)
     log_info "OS: ${os_name}"
+    if [[ "${os_name}" == windows ]]; then
+      # Windows の prepare は winget を使うため PowerShell で実行する。
+      # PowerShell 7 (pwsh) が無い初回は Windows PowerShell 5.1 で動かす。
+      powershell="$(command -v pwsh || command -v powershell.exe)"
+      exec "${powershell}" -NoProfile -ExecutionPolicy Bypass \
+        -File "$(cygpath -w "${SCRIPT_DIR}/windows/scripts/prepare.ps1")" "$@"
+    fi
     exec "${SCRIPT_DIR}/${os_name}/scripts/prepare.sh" "$@"
     ;;
   bootstrap)
-    [[ "${os_name}" == linux ]] || fail "macOS では ./setup.sh switch を使ってください"
-    exec "${SCRIPT_DIR}/linux/scripts/bootstrap.sh" "$@"
+    [[ "${os_name}" != mac ]] || fail "macOS では ./setup.sh switch を使ってください"
+    exec "${SCRIPT_DIR}/${os_name}/scripts/bootstrap.sh" "$@"
     ;;
   switch)
-    [[ "${os_name}" == mac ]] || fail "Linux では ./setup.sh bootstrap を使ってください"
+    [[ "${os_name}" == mac ]] || fail "Linux / Windows では ./setup.sh bootstrap を使ってください"
     OS_NAME="${os_name}" exec "${SCRIPT_DIR}/scripts/switch.sh" "$@"
     ;;
   -h | --help)
