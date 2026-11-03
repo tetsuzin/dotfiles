@@ -1,0 +1,45 @@
+# mise bootstrap が導入する OS パッケージ。管理者権限は不要だが、
+# インストーラが UAC プロンプトを出すことがある。
+# 開発 CLI は dotfiles/HOME/.config/mise/conf.d/windows.toml の [tools] が担当する。
+[bootstrap.packages]
+
+# winget:
+
+## パスワード管理ツール
+"winget:Bitwarden.Bitwarden" = "latest"
+"winget:Bitwarden.CLI" = "latest"
+
+## ターミナル・シェル
+"winget:Microsoft.WindowsTerminal" = "latest"
+"winget:Microsoft.PowerShell" = "latest"
+"winget:Microsoft.Coreutils" = "latest"
+
+## テキストエディター・IDE
+"winget:Microsoft.VisualStudioCode" = "latest"
+"winget:Microsoft.Edit" = "latest"
+"winget:Emurasoft.EmEditor" = "latest"
+
+## リバースエンジニアリングツール
+"winget:icsharpcode.ILSpy" = "latest"
+
+## その他ツール系
+"winget:Logitech.OptionsPlus" = "latest"
+"winget:M2Team.NanaZip" = "latest"
+"winget:CPUID.CPU-Z" = "latest"
+"winget:CrystalDewWorld.CrystalDiskInfo" = "latest"
+"winget:CrystalDewWorld.CrystalDiskMark" = "latest"
+
+# scoop: ユーザー領域に入る CLI と GUI ツール。Git は Git Bash の提供元でもある。
+# バケットは prepare.ps1 が追加する。scoop はバケット接頭辞を無視して名前で照合する。
+"scoop:aria2" = "latest"
+"scoop:duckdb" = "latest"
+"scoop:git" = "latest"
+"scoop:git-lfs" = "latest"
+"scoop:gh" = "latest"
+"scoop:gzip" = "latest"
+"scoop:less" = "latest"
+"scoop:redis" = "latest"
+"scoop:sudo" = "latest"
+"scoop:which" = "latest"
+"scoop:zellij" = "latest"
+"scoop:extras/rustdesk" = "latest"

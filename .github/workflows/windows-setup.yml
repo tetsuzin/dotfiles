@@ -1,0 +1,66 @@
+name: Test Windows setup
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - windows/**
+      - common/dotfiles/**
+      - scripts/**
+      - setup.sh
+      - setup.cmd
+      - .github/workflows/windows-setup.yml
+  pull_request:
+    paths:
+      - windows/**
+      - common/dotfiles/**
+      - scripts/**
+      - setup.sh
+      - setup.cmd
+      - .github/workflows/windows-setup.yml
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: windows-2025
+    timeout-minutes: 15
+    env:
+      MISE_TRUSTED_CONFIG_PATHS: ${{ github.workspace }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Install mise
+        shell: pwsh
+        env:
+          MISE_VERSION: 2026.10.12
+        run: |
+          irm https://mise.run/powershell | iex
+          Add-Content $env:GITHUB_PATH "$HOME\.local\bin"
+      - name: Check shell syntax
+        shell: bash
+        run: |
+          bash -n setup.sh
+          bash -n windows/scripts/bootstrap.sh
+      - name: Check PowerShell syntax
+        shell: pwsh
+        run: |
+          $tokens = $null; $errors = $null
+          foreach ($file in 'windows/scripts/prepare.ps1', 'windows/dotfiles/HOME/Documents/PowerShell/Microsoft.PowerShell_profile.ps1') {
+            [System.Management.Automation.Language.Parser]::ParseFile($file, [ref]$tokens, [ref]$errors) | Out-Null
+            if ($errors.Count -gt 0) { $errors | Out-String | Write-Error; exit 1 }
+          }
+      - name: Load configuration
+        shell: pwsh
+        run: |
+          mise -C windows config ls
+          mise -C windows bootstrap status
+      - name: Dry-run tools
+        shell: pwsh
+        run: mise -C windows install --dry-run
+      - name: Dry-run dotfiles via setup.sh
+        shell: bash
+        run: ./setup.sh bootstrap --link-only --dry-run
+      - name: Dry-run dotfiles via setup.cmd
+        shell: cmd
+        run: .\setup.cmd bootstrap --link-only --dry-run
