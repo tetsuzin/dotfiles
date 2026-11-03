@@ -1,20 +1,40 @@
 {
-  "autoUpdatesChannel": "latest",
   "theme": "auto",
+  "autoUpdatesChannel": "latest",
+  "effortLevel": "medium",
+  "model": "claude-fable-5-1",
   "attribution": {
     "commit": "",
     "pr": ""
   },
+  "permissions": {
+    "allow": [
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(npm run lint)",
+      "Bash(npm run test:unit)"
+    ],
+    "deny": [
+      "Bash(rm -rf *)",
+      "Bash(sudo *)",
+      "Bash(curl *)",
+      "Bash(wget *)"
+    ]
+  },
   "enabledPlugins": {
     "superpowers@claude-plugins-official": true,
-    "ponytail@ponytail": true
+    "ponytail@ponytail": true,
+    "eli5@claude-community": true
   },
   "extraKnownMarketplaces": {
+    "claude-plugins-official": {
+      "source": { "source": "github", "repo": "anthropics/claude-plugins-official" }
+    },
+    "claude-community": {
+      "source": { "source": "github", "repo": "anthropics/claude-plugins-community" }
+    },
     "ponytail": {
-      "source": {
-        "source": "github",
-        "repo": "DietrichGebert/ponytail"
-      }
+      "source": { "source": "github", "repo": "DietrichGebert/ponytail" }
     }
   }
 }
