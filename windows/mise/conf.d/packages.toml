@@ -12,6 +12,7 @@
 ## ターミナル・シェル
 "winget:Microsoft.WindowsTerminal" = "latest"
 "winget:Microsoft.PowerShell" = "latest"
+"winget:Microsoft.Coreutils" = "latest"
 
 ## テキストエディター・IDE
 "winget:Microsoft.VisualStudioCode" = "latest"
