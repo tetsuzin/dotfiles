@@ -29,6 +29,9 @@ mise activate pwsh | Out-String | Invoke-Expression
 # プロンプト表示 (設定は ~/.config/starship.toml)
 Invoke-Expression (&starship init powershell)
 
+# zoxide の z / zi コマンドを有効化
+Invoke-Expression (& { (zoxide init powershell | Out-String) })
+
 # bash と sh を WSL (System32) ではなく Git Bash に解決させる。git も shim を経由しない
 $Env:PATH = "$HOME\scoop\apps\git\current\bin;" + $Env:PATH
 
