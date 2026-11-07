@@ -15,6 +15,8 @@
 "brew:wget" = "latest"
 "brew:container" = "latest"
 "brew:bitwarden-cli" = "latest"
+# mise の btop は Linux 向けバイナリしか無いため Homebrew で入れる。
+"brew:btop" = "latest"
 
 # brew-cask: GUI アプリとフォント。
 

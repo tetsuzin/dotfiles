@@ -3,7 +3,6 @@
 act = "latest"
 aws-cli = "latest"
 aws-vault = "latest"
-btop = "latest"
 docker-cli = "latest"
 "npm:eclint" = "latest"
 eza = "latest"
