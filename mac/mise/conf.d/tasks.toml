@@ -1,0 +1,16 @@
+# mise bootstrap の最後に実行する追加設定。
+[tasks.bootstrap]
+description = "ツール導入後の追加設定"
+depends = ["krew:install"]
+
+[tasks."krew:install"]
+description = "未導入の krew プラグインをインストール"
+shell = "bash -c"
+run = """
+set -euo pipefail
+for plugin in krew explore fuzzy iexec images lineage ktop neat rolesum; do
+  if ! krew list 2>/dev/null | grep -qx "${plugin}"; then
+    krew install "${plugin}"
+  fi
+done
+"""

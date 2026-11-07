@@ -1,0 +1,48 @@
+# mise bootstrap が外部から取得するもの。Homebrew の prefix が無い初回だけ sudo が必要。
+
+# 既定ブランチに追従し、bootstrap --update で fast-forward する。
+[bootstrap.repos]
+"~/.local/share/dotfiles/eza-themes" = { url = "https://github.com/eza-community/eza-themes.git" }
+
+# Homebrew で導入する OS パッケージ。mise 本体は prepare.sh が公式スクリプトで入れるためここには書かない。
+# Homebrew はバージョン固定に対応しないため、値は常に "latest"。
+[bootstrap.packages]
+
+# brew: CLI。Git は Xcode CLT のものより新しい版を使う。
+"brew:git" = "latest"
+"brew:git-lfs" = "latest"
+"brew:curl" = "latest"
+"brew:wget" = "latest"
+"brew:container" = "latest"
+"brew:bitwarden-cli" = "latest"
+
+# brew-cask: GUI アプリとフォント。
+
+## ブラウザ
+"brew-cask:google-chrome" = "latest"
+
+## ターミナル
+"brew-cask:ghostty" = "latest"
+"brew-cask:warp" = "latest"
+
+## エディタ
+"brew-cask:visual-studio-code" = "latest"
+
+## ネットワークツール
+"brew-cask:tailscale-app" = "latest"
+"brew-cask:wifiman" = "latest"
+
+## ユーティリティ
+"brew-cask:raycast" = "latest"
+"brew-cask:keyboardcleantool" = "latest"
+"brew-cask:battery" = "latest"
+
+## チャット
+"brew-cask:discord" = "latest"
+"brew-cask:slack" = "latest"
+
+## エンターテインメント
+"brew-cask:spotify" = "latest"
+
+## フォント (ghostty の設定が参照する)
+"brew-cask:font-moralerspace" = "latest"
