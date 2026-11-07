@@ -168,7 +168,7 @@ sealed class TestHome : IDisposable
   /// <summary>Windows ホームを一時ディレクトリに向ける mise.wsl.local.toml を置く。</summary>
   public string OverrideWindowsHome()
   {
-    var local = Path.Combine(Root, "linux/mise/conf.d/wsl/mise.wsl.local.toml");
+    var local = Path.Combine(Root, "ubuntu/mise/conf.d/wsl/mise.wsl.local.toml");
     if (File.Exists(local)) Assert.Skip($"{local} が存在するため上書きしません");
     var windowsHome = At("windows");
     string[] names = [".aws/credentials", ".kube/config"];
@@ -189,7 +189,7 @@ sealed class TestHome : IDisposable
   public RunResult Mise(string[] args, bool check = true, string? profile = null)
   {
     string[] environment = profile == null ? [] : ["-E", profile];
-    return Run([MiseBin, "-C", Path.Combine(Root, "linux"), .. environment, .. args], check);
+    return Run([MiseBin, "-C", Path.Combine(Root, "ubuntu"), .. environment, .. args], check);
   }
 
   public RunResult Run(string[] command, bool check = true, string? cwd = null)

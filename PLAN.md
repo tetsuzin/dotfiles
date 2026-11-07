@@ -13,20 +13,20 @@ macOS は従来どおり Nix (flake + nix-darwin + Home Manager) を使う。
 | 役割 | ファイル |
 |---|---|
 | 入口 | `setup.sh` (`prepare` / `bootstrap` / `switch`、OS 自動判定) |
-| ホスト準備 | `linux/scripts/prepare.sh`: apt 最小依存 + `~/.local/bin/mise` を導入 |
-| 本体 | `linux/scripts/bootstrap.sh`: `mise trust` → `mise bootstrap` (WSL は `-E wsl`) |
-| 環境判定 | `linux/scripts/environment.sh`: Ubuntu 26 / 非 root / WSL 判定 |
-| 宣言 | `linux/mise.toml`: `min_version` と共通ツールの `include`。`linux/mise/conf.d/packages.toml`: `[bootstrap.packages]` (apt、sudo が必要) と `[bootstrap.repos]` (eza-themes / LazyVim starter、既定ブランチ追従)。`linux/mise/conf.d/dotfiles.toml`: `[dotfiles]`。`linux/mise/conf.d/tasks.toml`: `krew:install` タスク |
-| WSL 差分 | `linux/mise/conf.d/wsl/mise.wsl.toml` (フォルダフラグメント、`-E wsl` のみ): Windows ホームの `.aws/credentials` と `.kube/config` をリンク、`conf.d/wsl.toml` (wsl2-ssh-agent) を include |
+| ホスト準備 | `ubuntu/scripts/prepare.sh`: apt 最小依存 + `~/.local/bin/mise` を導入 |
+| 本体 | `ubuntu/scripts/bootstrap.sh`: `mise trust` → `mise bootstrap` (WSL は `-E wsl`) |
+| 環境判定 | `ubuntu/scripts/environment.sh`: Ubuntu 26 / 非 root / WSL 判定 |
+| 宣言 | `ubuntu/mise.toml`: `min_version` と共通ツールの `include`。`ubuntu/mise/conf.d/packages.toml`: `[bootstrap.packages]` (apt、sudo が必要) と `[bootstrap.repos]` (eza-themes / LazyVim starter、既定ブランチ追従)。`ubuntu/mise/conf.d/dotfiles.toml`: `[dotfiles]`。`ubuntu/mise/conf.d/tasks.toml`: `krew:install` タスク |
+| WSL 差分 | `ubuntu/mise/conf.d/wsl/mise.wsl.toml` (フォルダフラグメント、`-E wsl` のみ): Windows ホームの `.aws/credentials` と `.kube/config` をリンク、`conf.d/wsl.toml` (wsl2-ssh-agent) を include |
 | ツール | `dotfiles/.config/mise/conf.d/linux.toml` (Linux CLI)、`dotfiles/.config/mise/config.toml` (ランタイム) |
 | 検証 | `tests/LinuxSetup.cs` (.NET 10 ファイルベースアプリ + xUnit v3)、CI `.github/workflows/linux-setup.yml` (ubuntu-26.04) |
 
-必要バージョン: mise 2026.10.14 以上 (`linux/mise.toml` の `min_version` で管理)。
+必要バージョン: mise 2026.10.14 以上 (`ubuntu/mise.toml` の `min_version` で管理)。
 
 ## 既知の問題
 
 1. **(修正済み 2026-10-30)** テストが壊れていた
-   `tests/test_linux_setup.py` の `test_krew_and_wsl_links_are_idempotent` が `linux/scripts/post-bootstrap.sh` を呼んでいるが、このスクリプトはコミット 6e1899b で削除済み。CI で確実に失敗する。
+   `tests/test_linux_setup.py` の `test_krew_and_wsl_links_are_idempotent` が `ubuntu/scripts/post-bootstrap.sh` を呼んでいるが、このスクリプトはコミット 6e1899b で削除済み。CI で確実に失敗する。
    krew 処理は `mise.toml` の `krew:install` タスクに、WSL リンクは `mise.wsl.toml` の `[dotfiles]` に移っている。
 2. **ローカルで検証できていない**
    この WSL の mise は Nix profile の 2026.9.18 で、`~/.local/bin/mise` は未導入。`mise bootstrap` サブコマンドや `[bootstrap.*]` セクションなど 2026.10 系の挙動は未確認。
@@ -35,15 +35,15 @@ macOS は従来どおり Nix (flake + nix-darwin + Home Manager) を使う。
 4. **origin/main と共通祖先がない**
    `git merge-base HEAD origin/main` が空。`backup/monorepo-before-rebase-20260926` があるため履歴を書き換えた結果と思われる。PR の base をどうするか決める必要がある。
 5. **(修正済み 2026-10-30)** `mise.wsl.toml` の `{{ vars.windows_home }}` が展開されない (mise 2026.10.14 で確認)
-   `[dotfiles]` のリンク元がテンプレート文字列のまま `linux/{{ vars.windows_home }}/.aws/credentials` と解釈され、`sources do not exist` で `-E wsl` の `dotfiles apply` と `bootstrap` が失敗する。WSL ホストでは `./setup.sh bootstrap --link-only` も同じ理由で失敗する。
+   `[dotfiles]` のリンク元がテンプレート文字列のまま `ubuntu/{{ vars.windows_home }}/.aws/credentials` と解釈され、`sources do not exist` で `-E wsl` の `dotfiles apply` と `bootstrap` が失敗する。WSL ホストでは `./setup.sh bootstrap --link-only` も同じ理由で失敗する。
    `test_wsl_tools_are_deployed_only_for_wsl` と `test_setup_entrypoint_without_nix` (WSL 上で実行時) がこれで落ちる。`[dotfiles]` のリンク元はテンプレートも環境変数も展開しないため、`/mnt/c/Users/tetsuzin` に固定し、差分は git 管理外の `mise.wsl.local.toml` で上書きする方式にした。
 6. **README の未検証記述**
-   `linux/README.md` の `mise -C linux bootstrap --only packages,repos --dry-run` など、`--only` の指定値や dry-run の挙動は実機で未確認。
+   `ubuntu/README.md` の `mise -C ubuntu bootstrap --only packages,repos --dry-run` など、`--only` の指定値や dry-run の挙動は実機で未確認。
 
 ## 作業手順
 
-- [x] `[bootstrap.packages]` を `linux/packages.toml` に分離する (2026-10-30)。include 先でもマージされ、`mise trust mise.toml` でディレクトリごと trust されるため追加の trust は不要
-- [x] `[dotfiles]`、`[tasks]`、`[bootstrap.*]` を `linux/mise/conf.d/` に分離する (2026-10-31)。`include` は dotfiles と tasks を受け付けないため、同一ディレクトリの設定として読まれる `mise/conf.d/*.toml` に揃える。`mise.wsl.toml` は `mise/conf.d/wsl/` のフォルダフラグメントにし、`-E wsl` のときだけ読む挙動を維持。単一ファイルのフラグメントは `mise trust mise.toml` の `linux/` trust に含まれるが、フォルダフラグメントは独立した config root で個別に trust が必要 (実機で確認)。bootstrap.sh の trust 先を `mise/conf.d/wsl/mise.wsl.toml` に変更。相対パスはフラグメントの位置が基準になるため `../../` を付ける
+- [x] `[bootstrap.packages]` を `ubuntu/packages.toml` に分離する (2026-10-30)。include 先でもマージされ、`mise trust mise.toml` でディレクトリごと trust されるため追加の trust は不要
+- [x] `[dotfiles]`、`[tasks]`、`[bootstrap.*]` を `ubuntu/mise/conf.d/` に分離する (2026-10-31)。`include` は dotfiles と tasks を受け付けないため、同一ディレクトリの設定として読まれる `mise/conf.d/*.toml` に揃える。`mise.wsl.toml` は `mise/conf.d/wsl/` のフォルダフラグメントにし、`-E wsl` のときだけ読む挙動を維持。単一ファイルのフラグメントは `mise trust mise.toml` の `ubuntu/` trust に含まれるが、フォルダフラグメントは独立した config root で個別に trust が必要 (実機で確認)。bootstrap.sh の trust 先を `mise/conf.d/wsl/mise.wsl.toml` に変更。相対パスはフラグメントの位置が基準になるため `../../` を付ける
 - [ ] `settings.json` の差分を別コミットに分離する
 - [x] `mise.wsl.toml` の Windows ホーム指定を固定パスにし、`mise.wsl.local.toml` で上書きできるようにする
 - [x] テストを C# (.NET 10 ファイルベースアプリ + xUnit v3) に移行し、壊れていた krew と WSL リンクのテストを `mise run --skip-tools krew:install` と `mise.wsl.local.toml` で書き直す (2026-10-30)

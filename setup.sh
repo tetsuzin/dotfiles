@@ -23,7 +23,7 @@ Windows では setup.cmd <command> でも実行できます (prepare は PowerSh
 
 どれも --dry-run で変更予定を確認できます。
 既存の dotfiles を置き換える場合は --link-force=y を指定します。
-OS (linux / mac / windows) は自動判定します。
+OS (ubuntu / mac / windows) は自動判定します。
 EOF
 }
 
@@ -36,7 +36,7 @@ command="$1"
 shift
 
 case "$(uname -s)" in
-  Linux) os_name="linux" ;;
+  Linux) os_name="ubuntu" ;;
   Darwin) os_name="mac" ;;
   MINGW* | MSYS*) os_name="windows" ;;
   *) fail "未対応の OS です: $(uname -s)" ;;
