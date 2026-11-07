@@ -15,7 +15,6 @@ Usage: ./setup.sh bootstrap [--debug] [--dry-run] [--link-force=y] [--update | -
   --link-force=y  競合する dotfiles の置き換えを許可する
 
 Linux は Ubuntu 26、mise 2026.10.14 以上に対応。
---update-only は macOS の flake.lock 更新専用です。
 HELP
 }
 
@@ -33,7 +32,6 @@ while [[ $# -gt 0 ]]; do
     --update) update=true ;;
     --link-only) link_only=true ;;
     --link-force=y) bootstrap_args+=(--force-dotfiles) ;;
-    --update-only) fail "Linux では --update-only は使いません。更新には --update を指定してください" ;;
     -h | --help)
       usage
       exit 0

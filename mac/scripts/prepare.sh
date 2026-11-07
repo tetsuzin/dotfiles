@@ -2,31 +2,36 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-# shellcheck disable=SC1091
 source "${SCRIPT_DIR}/../../scripts/_functions"
+source "${SCRIPT_DIR}/environment.sh"
 
-function check_xcode_clt() {
-  log_step "Xcode Command Line Tools の確認"
+check_environment
 
-  if xcode-select -p &>/dev/null; then
-    log_info "Xcode Command Line Tools はインストール済みです: $(xcode-select -p)"
-    return
-  fi
-
+# Homebrew と git が必要とする。
+if ! xcode-select -p &>/dev/null; then
   xcode-select --install || true
   fail "Xcode Command Line Tools が必要です。インストール完了後に再実行してください"
-}
+fi
 
-[[ "${EUID}" -ne 0 ]] ||
-  fail "root では実行しないでください。必要な処理ではスクリプト内から sudo を使用します"
+# OS パッケージの導入元。mise bootstrap は Homebrew 本体を入れないためここで行う。
+# nix-homebrew が入れた Homebrew は git リポジトリを持たず brew 本体が Nix store にあるため、
+# 公式インストーラで同じ prefix に入れ直す。Cellar と Caskroom は保持される。
+if [[ ! -d /opt/homebrew/.git ]]; then
+  /bin/bash -c "$(curl --proto '=https' --tlsv1.2 -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+fi
+eval "$(/opt/homebrew/bin/brew shellenv)"
 
-[[ "$(uname -s)" == "Darwin" ]] ||
-  fail "macOS 以外の環境には対応していません: $(uname -s)"
-[[ "$(uname -m)" == "arm64" ]] ||
-  fail "未対応のアーキテクチャです: $(uname -m)"
+export PATH="${HOME}/.local/bin:${PATH}"
+# Nix や Homebrew 版が PATH にあっても、独立した mise を最新版で導入する。
+# 必要な最低バージョンは mac/mise.toml の min_version が検査する。
+if [[ -x "${HOME}/.local/bin/mise" ]]; then
+  "${HOME}/.local/bin/mise" self-update --yes
+else
+  installer="$(mktemp)"
+  trap 'rm -f "${installer}"' EXIT
+  curl --proto '=https' --tlsv1.2 -fsSL https://mise.run -o "${installer}"
+  MISE_INSTALL_PATH="${HOME}/.local/bin/mise" sh "${installer}"
+fi
+hash -r
 
-check_xcode_clt
-install_nix
-
-log_step "ホストの準備が完了しました"
-log_info "続けて ./setup.sh switch を実行してください"
+log_info "準備が完了しました。続けて ./setup.sh bootstrap を実行してください"

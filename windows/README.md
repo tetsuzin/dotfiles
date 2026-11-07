@@ -48,7 +48,7 @@ Git の設定は `~/.config/git/config` に配置します。`~/.gitconfig` が�
 .\setup.cmd bootstrap --link-only
 ```
 
-通常の適用は不足しているパッケージを導入します。`--update` は宣言した winget / scoop パッケージと mise ツールを更新します。scoop でバージョンを固定した項目は更新されません。`--update-only` は macOS の flake.lock 更新用で、Windows では使用しません。
+通常の適用は不足しているパッケージを導入します。`--update` は宣言した winget / scoop パッケージと mise ツールを更新します。scoop でバージョンを固定した項目は更新されません。
 
 mise は `~` を常に実際のユーザープロファイルに解決するため、Linux のテストのような一時ホームでの隔離は行えません。変更内容は `--dry-run` か、`mise -C windows bootstrap status` と `mise -C windows dotfiles diff` で事前に確認します。
 

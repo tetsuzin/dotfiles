@@ -1,0 +1,5 @@
+min_version = "2026.11.2"
+include = [
+  "../common/dotfiles/HOME/.config/mise/config.toml",
+  "dotfiles/HOME/.config/mise/conf.d/mac.toml",
+]

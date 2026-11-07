@@ -1,0 +1,58 @@
+name: Test macOS setup
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - mac/**
+      - common/dotfiles/**
+      - scripts/**
+      - setup.sh
+      - .github/workflows/mac-setup.yml
+  pull_request:
+    paths:
+      - mac/**
+      - common/dotfiles/**
+      - scripts/**
+      - setup.sh
+      - .github/workflows/mac-setup.yml
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: macos-15
+    timeout-minutes: 15
+    env:
+      MISE_TRUSTED_CONFIG_PATHS: ${{ github.workspace }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Install mise
+        env:
+          MISE_VERSION: 2026.11.2
+        run: |
+          curl -fsSL https://mise.run -o "$RUNNER_TEMP/install-mise.sh"
+          sh "$RUNNER_TEMP/install-mise.sh"
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+      - name: Check shell syntax
+        run: |
+          bash -n setup.sh
+          for script in mac/scripts/*.sh; do
+            bash -n "$script"
+          done
+          for script in mac/dotfiles/HOME/.z*; do
+            zsh -n "$script"
+          done
+      - name: Load configuration
+        run: |
+          mise -C mac config ls
+          mise -C mac bootstrap packages status
+          mise -C mac bootstrap macos defaults status
+          mise -C mac bootstrap files status
+      - name: Dry-run tools
+        run: mise -C mac install --dry-run
+      - name: Fetch external repositories
+        run: mise -C mac bootstrap --only repos
+      - name: Dry-run dotfiles via setup.sh
+        run: ./setup.sh bootstrap --link-only --dry-run
