@@ -54,16 +54,17 @@ command -v mise &>/dev/null || fail "先に ./setup.sh prepare を実行して�
 cd "${SCRIPT_DIR}/.."
 mise trust mise.toml
 
+# macOS 標準の bash 3.2 は set -u で空配列の展開がエラーになるため ${arr[@]+"${arr[@]}"} で渡す。
 if [[ "${link_only}" == true ]]; then
-  mise bootstrap --only dotfiles "${bootstrap_args[@]}"
+  mise bootstrap --only dotfiles ${bootstrap_args[@]+"${bootstrap_args[@]}"}
 elif [[ "${update}" == true ]]; then
-  mise bootstrap --update --skip task "${bootstrap_args[@]}"
+  mise bootstrap --update --skip task ${bootstrap_args[@]+"${bootstrap_args[@]}"}
   mise bootstrap packages upgrade --manager brew
   mise bootstrap packages upgrade --manager brew-cask
   mise upgrade
   mise run bootstrap
 else
-  mise bootstrap "${bootstrap_args[@]}"
+  mise bootstrap ${bootstrap_args[@]+"${bootstrap_args[@]}"}
 fi
 
 if [[ "${dry_run}" != true ]]; then
