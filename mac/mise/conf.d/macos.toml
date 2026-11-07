@@ -14,6 +14,7 @@ show_all_files = true
 "NSGlobalDomain" = { AppleShowAllExtensions = true }
 
 # sudo で Touch ID を使う。root 所有のため mise が sudo で書き込む。
+# nix-darwin 環境では /etc/static へのシンボリックリンクなので replace で実ファイルに置き換える。
 [bootstrap.files."/etc/pam.d/sudo_local"]
 content = """
 auth       sufficient     pam_tid.so
@@ -21,3 +22,4 @@ auth       sufficient     pam_tid.so
 owner = "root"
 group = "wheel"
 mode = "0444"
+replace = true
