@@ -3,7 +3,7 @@
 # 開発 CLI は dotfiles/HOME/.config/mise/conf.d/windows.toml の [tools] が担当する。
 [bootstrap.packages]
 
-# winget:
+# WinGet:
 
 ## パスワード管理ツール
 "winget:Bitwarden.Bitwarden" = "latest"
@@ -19,15 +19,30 @@
 "winget:Microsoft.Edit" = "latest"
 "winget:Emurasoft.EmEditor" = "latest"
 
-## リバースエンジニアリングツール
+## 開発系ツール
+"winget:Fork.Fork" = "latest"
+"winget:LINQPad.LINQPad.9" = "latest"
 "winget:icsharpcode.ILSpy" = "latest"
+"winget:KirillOsenkov.MSBuildStructuredLogViewer" = "latest"
+"winget:DevToys-app.DevToys" = "latest"
+"winget:Microsoft.WinDbg" = "latest"
 
-## その他ツール系
+## ハードウェア関連
 "winget:Logitech.OptionsPlus" = "latest"
-"winget:M2Team.NanaZip" = "latest"
 "winget:CPUID.CPU-Z" = "latest"
+"winget:TechPowerUp.GPU-Z" = "latest"
 "winget:CrystalDewWorld.CrystalDiskInfo" = "latest"
 "winget:CrystalDewWorld.CrystalDiskMark" = "latest"
+"winget:WinDirStat.WinDirStat" = "latest"
+
+## メディア系
+"winget:MPC-BE.MPC-BE" = "latest"
+"winget:neelabo.NeeView" = "latest"
+
+## その他ツール系
+"winget:Tailscale.Tailscale" = "latest"
+"winget:Microsoft.PowerToys" = "latest"
+"winget:M2Team.NanaZip" = "latest"
 
 # scoop: ユーザー領域に入る CLI と GUI ツール。Git は Git Bash の提供元でもある。
 # バケットは prepare.ps1 が追加する。scoop はバケット接頭辞を無視して名前で照合する。
