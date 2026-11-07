@@ -1,5 +1,0 @@
-min_version = "2026.10.14"
-include = [
-  "../common/dotfiles/HOME/.config/mise/config.toml",
-  "dotfiles/HOME/.config/mise/conf.d/linux.toml",
-]

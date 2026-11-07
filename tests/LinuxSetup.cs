@@ -18,7 +18,7 @@ public sealed class LinuxSetupTests : IDisposable
     t.Mise("dotfiles", "apply", "--yes");
     t.Mise("dotfiles", "apply", "--yes");
     t.Mise("dotfiles", "status", "--missing");
-    AssertLinksTo(t.At(".bashrc"), Path.Combine(TestHome.Root, "linux/dotfiles/HOME/.bashrc"));
+    AssertLinksTo(t.At(".bashrc"), Path.Combine(TestHome.Root, "dotfiles/.bashrc"));
     Assert.True(!File.Exists(t.At(".config/mise/conf.d/wsl.toml")), "wsl.toml は WSL 以外で配置しない");
     var configs = t.Run([TestHome.MiseBin, "config", "ls", "--json"], cwd: t.Home);
     Assert.Contains("conf.d/linux.toml", configs.Stdout);
@@ -43,7 +43,7 @@ public sealed class LinuxSetupTests : IDisposable
     var windowsHome = t.OverrideWindowsHome();
     t.Mise(["dotfiles", "apply", "--yes"], profile: "wsl");
     AssertLinksTo(t.At(".config/mise/conf.d/wsl.toml"),
-      Path.Combine(TestHome.Root, "linux/dotfiles/HOME/.config/mise/conf.d/wsl.toml"));
+      Path.Combine(TestHome.Root, "dotfiles/.config/mise/conf.d/wsl.toml"));
     AssertLinksTo(t.At(".aws/credentials"), Path.Combine(windowsHome, ".aws/credentials"));
     var tools = t.Run([TestHome.MiseBin, "ls", "--current", "--json"], cwd: t.Home);
     using var json = JsonDocument.Parse(tools.Stdout);
@@ -168,7 +168,7 @@ sealed class TestHome : IDisposable
   /// <summary>Windows ホームを一時ディレクトリに向ける mise.wsl.local.toml を置く。</summary>
   public string OverrideWindowsHome()
   {
-    var local = Path.Combine(Root, "linux/mise/conf.d/wsl/mise.wsl.local.toml");
+    var local = Path.Combine(Root, "ubuntu/mise/conf.d/wsl/mise.wsl.local.toml");
     if (File.Exists(local)) Assert.Skip($"{local} が存在するため上書きしません");
     var windowsHome = At("windows");
     string[] names = [".aws/credentials", ".kube/config"];
@@ -189,7 +189,7 @@ sealed class TestHome : IDisposable
   public RunResult Mise(string[] args, bool check = true, string? profile = null)
   {
     string[] environment = profile == null ? [] : ["-E", profile];
-    return Run([MiseBin, "-C", Path.Combine(Root, "linux"), .. environment, .. args], check);
+    return Run([MiseBin, "-C", Path.Combine(Root, "ubuntu"), .. environment, .. args], check);
   }
 
   public RunResult Run(string[] command, bool check = true, string? cwd = null)

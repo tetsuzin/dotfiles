@@ -4,16 +4,16 @@ on:
   push:
     branches: [main]
     paths:
-      - linux/**
-      - common/dotfiles/**
+      - ubuntu/**
+      - dotfiles/**
       - scripts/**
       - setup.sh
       - tests/**
       - .github/workflows/linux-setup.yml
   pull_request:
     paths:
-      - linux/**
-      - common/dotfiles/**
+      - ubuntu/**
+      - dotfiles/**
       - scripts/**
       - setup.sh
       - tests/**
@@ -38,7 +38,7 @@ jobs:
       - name: Check shell syntax
         run: |
           bash -n setup.sh
-          for script in linux/scripts/*.sh linux/dotfiles/HOME/.bash*; do
+          for script in ubuntu/scripts/*.sh dotfiles/.bash* dotfiles/.config/dotfiles/bashrc_base; do
             bash -n "$script"
           done
       - name: Test isolated configuration and dotfiles

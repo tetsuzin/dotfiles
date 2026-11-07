@@ -2,12 +2,12 @@
 # ~ は Windows のユーザープロファイル (C:\Users\<name>) に解決される。
 # シンボリックリンクの作成には開発者モードか管理者権限が必要。
 [dotfiles]
-"~/.config/act/actrc" = "../../../common/dotfiles/HOME/.config/act/actrc"
-"~/.config/git/config" = "../../../common/dotfiles/HOME/.config/git/config"
-"~/.config/mise/config.toml" = "../../../common/dotfiles/HOME/.config/mise/config.toml"
-"~/.config/mise/conf.d/windows.toml" = "../../dotfiles/HOME/.config/mise/conf.d/windows.toml"
-"~/.config/starship.toml" = "../../../common/dotfiles/HOME/.config/starship.toml"
-"~/.claude/settings.json" = "../../../common/dotfiles/HOME/.claude/settings.json"
-"~/.claude/CLAUDE.md" = "../../../common/dotfiles/HOME/.claude/CLAUDE.md"
-"~/.codex/AGENTS.md" = "../../../common/dotfiles/HOME/.codex/AGENTS.md"
-"~/Documents/PowerShell/Microsoft.PowerShell_profile.ps1" = "../../dotfiles/HOME/Documents/PowerShell/Microsoft.PowerShell_profile.ps1"
+"~/.config/act/actrc" = "../../../dotfiles/.config/act/actrc"
+"~/.config/git/config" = "../../../dotfiles/.config/git/config"
+"~/.config/mise/config.toml" = "../../../dotfiles/.config/mise/config.toml"
+"~/.config/mise/conf.d/windows.toml" = "../../../dotfiles/.config/mise/conf.d/windows.toml"
+"~/.config/starship.toml" = "../../../dotfiles/.config/starship.toml"
+"~/.claude/settings.json" = "../../../dotfiles/.claude/settings.json"
+"~/.claude/CLAUDE.md" = "../../../dotfiles/.claude/CLAUDE.md"
+"~/.codex/AGENTS.md" = "../../../dotfiles/.codex/AGENTS.md"
+"~/Documents/PowerShell/Microsoft.PowerShell_profile.ps1" = "../../../dotfiles/Documents/PowerShell/Microsoft.PowerShell_profile.ps1"

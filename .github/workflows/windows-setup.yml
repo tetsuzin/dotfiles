@@ -5,7 +5,7 @@ on:
     branches: [main]
     paths:
       - windows/**
-      - common/dotfiles/**
+      - dotfiles/**
       - scripts/**
       - setup.sh
       - setup.cmd
@@ -13,7 +13,7 @@ on:
   pull_request:
     paths:
       - windows/**
-      - common/dotfiles/**
+      - dotfiles/**
       - scripts/**
       - setup.sh
       - setup.cmd
@@ -46,7 +46,7 @@ jobs:
         shell: pwsh
         run: |
           $tokens = $null; $errors = $null
-          foreach ($file in 'windows/scripts/prepare.ps1', 'windows/dotfiles/HOME/Documents/PowerShell/Microsoft.PowerShell_profile.ps1') {
+          foreach ($file in 'windows/scripts/prepare.ps1', 'dotfiles/Documents/PowerShell/Microsoft.PowerShell_profile.ps1') {
             [System.Management.Automation.Language.Parser]::ParseFile($file, [ref]$tokens, [ref]$errors) | Out-Null
             if ($errors.Count -gt 0) { $errors | Out-String | Write-Error; exit 1 }
           }

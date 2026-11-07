@@ -1,6 +1,6 @@
 # mise bootstrap が導入する OS パッケージ。管理者権限は不要だが、
 # インストーラが UAC プロンプトを出すことがある。
-# 開発 CLI は dotfiles/HOME/.config/mise/conf.d/windows.toml の [tools] が担当する。
+# 開発 CLI は dotfiles/.config/mise/conf.d/windows.toml の [tools] が担当する。
 [bootstrap.packages]
 
 # WinGet:

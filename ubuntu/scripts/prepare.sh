@@ -15,7 +15,7 @@ sudo apt-get install -y ca-certificates curl git
 
 export PATH="${HOME}/.local/bin:${PATH}"
 # Nix 版が PATH にあっても、Nix を削除できる独立した mise を最新版で導入する。
-# 必要な最低バージョンは linux/mise.toml の min_version が検査する。
+# 必要な最低バージョンは ubuntu/mise.toml の min_version が検査する。
 if [[ -x "${HOME}/.local/bin/mise" ]]; then
   "${HOME}/.local/bin/mise" self-update --yes
 else
