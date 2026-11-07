@@ -5,14 +5,14 @@ on:
     branches: [master]
     paths:
       - mac/**
-      - common/dotfiles/**
+      - dotfiles/**
       - scripts/**
       - setup.sh
       - .github/workflows/mac-setup.yml
   pull_request:
     paths:
       - mac/**
-      - common/dotfiles/**
+      - dotfiles/**
       - scripts/**
       - setup.sh
       - .github/workflows/mac-setup.yml
@@ -41,7 +41,7 @@ jobs:
           for script in mac/scripts/*.sh; do
             bash -n "$script"
           done
-          for script in mac/dotfiles/HOME/.z*; do
+          for script in dotfiles/.z*; do
             zsh -n "$script"
           done
       - name: Load configuration

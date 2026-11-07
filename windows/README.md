@@ -32,9 +32,11 @@ cd dotfiles
 - `mise.toml`: 必要バージョンと共通ツール設定の読み込みだけ。`mise/conf.d/*.toml` は同じディレクトリの設定として自動で読み込まれ、このファイルの trust に含まれます。
 - `mise/conf.d/packages.toml`: OS パッケージ。winget は PowerShell 7、Windows Terminal、GUI アプリ。scoop は Git、7-Zip、less、sudo、zellij などユーザー領域の CLI と GUI ツール。extras バケットのものは `scoop:extras/<name>` と書きますが、scoop は名前だけで照合するためバケットは prepare.ps1 が追加します。
 - `mise/conf.d/dotfiles.toml`: ホームに配置するシンボリックリンク。`~` は `C:\Users\<name>` に解決され、リンク元の相対パスはこのファイルの位置が基準です。
-- `dotfiles/HOME/.config/mise/conf.d/windows.toml`: Windows の CLI ツール。ホームにも配置され、どのディレクトリでも利用できます。
-- `dotfiles/HOME/Documents/PowerShell/Microsoft.PowerShell_profile.ps1`: PowerShell 7 のプロファイル。mise の activate と starship の初期化を含みます。
-- `../common/dotfiles/HOME/.config/mise/config.toml`: 従来からの共通ランタイム・ツール。
+- `../dotfiles/.config/mise/conf.d/windows.toml`: Windows の CLI ツール。ホームにも配置され、どのディレクトリでも利用できます。
+- `../dotfiles/Documents/PowerShell/Microsoft.PowerShell_profile.ps1`: PowerShell 7 のプロファイル。mise の activate と starship の初期化を含みます。
+- `../dotfiles/.config/mise/config.toml`: 従来からの共通ランタイム・ツール。
+
+ホームに配置するファイルの実体は、OS を問わずリポジトリ直下の `dotfiles/` にホームと同じ構造で置きます。どの OS が何を使うかは各 OS の `mise/conf.d/dotfiles.toml` が決めます。
 
 PowerShell・Windows Terminal などシステム寄りの基盤は winget、Git や圧縮ツールなどユーザー領域の基盤は scoop、開発 CLI は mise が担当します。Windows 向けビルドが無いツール (btop、krew、aws-cli など) は Linux の設定にだけ置きます。mise は `[bootstrap.mise_shell_activate]` で PowerShell に対応していないため、activate はプロファイルに直接書いています。
 
@@ -66,4 +68,4 @@ mise は `~` を常に実際のユーザープロファイルに解決するた�
 
 ## 検証
 
-`.github/workflows/windows-setup.yml` は Windows ランナーで、シェルの構文チェック、設定ファイルの読み込み、ツールの導入 dry-run、dotfiles の dry-run を実行します。main への push と PR のときだけ動き、対象は windows、common/dotfiles、scripts、setup.sh とワークフロー自身の変更に限定しています。
+`.github/workflows/windows-setup.yml` は Windows ランナーで、シェルの構文チェック、設定ファイルの読み込み、ツールの導入 dry-run、dotfiles の dry-run を実行します。main への push と PR のときだけ動き、対象は windows、dotfiles、scripts、setup.sh とワークフロー自身の変更に限定しています。

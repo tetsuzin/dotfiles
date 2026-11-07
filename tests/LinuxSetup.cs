@@ -18,7 +18,7 @@ public sealed class LinuxSetupTests : IDisposable
     t.Mise("dotfiles", "apply", "--yes");
     t.Mise("dotfiles", "apply", "--yes");
     t.Mise("dotfiles", "status", "--missing");
-    AssertLinksTo(t.At(".bashrc"), Path.Combine(TestHome.Root, "linux/dotfiles/HOME/.bashrc"));
+    AssertLinksTo(t.At(".bashrc"), Path.Combine(TestHome.Root, "dotfiles/.bashrc"));
     Assert.True(!File.Exists(t.At(".config/mise/conf.d/wsl.toml")), "wsl.toml は WSL 以外で配置しない");
     var configs = t.Run([TestHome.MiseBin, "config", "ls", "--json"], cwd: t.Home);
     Assert.Contains("conf.d/linux.toml", configs.Stdout);
@@ -43,7 +43,7 @@ public sealed class LinuxSetupTests : IDisposable
     var windowsHome = t.OverrideWindowsHome();
     t.Mise(["dotfiles", "apply", "--yes"], profile: "wsl");
     AssertLinksTo(t.At(".config/mise/conf.d/wsl.toml"),
-      Path.Combine(TestHome.Root, "linux/dotfiles/HOME/.config/mise/conf.d/wsl.toml"));
+      Path.Combine(TestHome.Root, "dotfiles/.config/mise/conf.d/wsl.toml"));
     AssertLinksTo(t.At(".aws/credentials"), Path.Combine(windowsHome, ".aws/credentials"));
     var tools = t.Run([TestHome.MiseBin, "ls", "--current", "--json"], cwd: t.Home);
     using var json = JsonDocument.Parse(tools.Stdout);

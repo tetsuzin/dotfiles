@@ -18,7 +18,7 @@ macOS は従来どおり Nix (flake + nix-darwin + Home Manager) を使う。
 | 環境判定 | `linux/scripts/environment.sh`: Ubuntu 26 / 非 root / WSL 判定 |
 | 宣言 | `linux/mise.toml`: `min_version` と共通ツールの `include`。`linux/mise/conf.d/packages.toml`: `[bootstrap.packages]` (apt、sudo が必要) と `[bootstrap.repos]` (eza-themes / LazyVim starter、既定ブランチ追従)。`linux/mise/conf.d/dotfiles.toml`: `[dotfiles]`。`linux/mise/conf.d/tasks.toml`: `krew:install` タスク |
 | WSL 差分 | `linux/mise/conf.d/wsl/mise.wsl.toml` (フォルダフラグメント、`-E wsl` のみ): Windows ホームの `.aws/credentials` と `.kube/config` をリンク、`conf.d/wsl.toml` (wsl2-ssh-agent) を include |
-| ツール | `linux/dotfiles/HOME/.config/mise/conf.d/linux.toml` (Linux CLI)、`common/dotfiles/HOME/.config/mise/config.toml` (ランタイム) |
+| ツール | `dotfiles/.config/mise/conf.d/linux.toml` (Linux CLI)、`dotfiles/.config/mise/config.toml` (ランタイム) |
 | 検証 | `tests/LinuxSetup.cs` (.NET 10 ファイルベースアプリ + xUnit v3)、CI `.github/workflows/linux-setup.yml` (ubuntu-26.04) |
 
 必要バージョン: mise 2026.10.14 以上 (`linux/mise.toml` の `min_version` で管理)。
@@ -31,7 +31,7 @@ macOS は従来どおり Nix (flake + nix-darwin + Home Manager) を使う。
 2. **ローカルで検証できていない**
    この WSL の mise は Nix profile の 2026.9.18 で、`~/.local/bin/mise` は未導入。`mise bootstrap` サブコマンドや `[bootstrap.*]` セクションなど 2026.10 系の挙動は未確認。
 3. **無関係な差分が混在**
-   `common/dotfiles/HOME/.claude/settings.json` に `model: fable` と `modelSettings` を追加した未コミット差分がある。移行とは無関係。
+   `dotfiles/.claude/settings.json` に `model: fable` と `modelSettings` を追加した未コミット差分がある。移行とは無関係。
 4. **origin/main と共通祖先がない**
    `git merge-base HEAD origin/main` が空。`backup/monorepo-before-rebase-20260926` があるため履歴を書き換えた結果と思われる。PR の base をどうするか決める必要がある。
 5. **(修正済み 2026-10-30)** `mise.wsl.toml` の `{{ vars.windows_home }}` が展開されない (mise 2026.10.14 で確認)

@@ -23,9 +23,11 @@ exec zsh -l
 - `mise/conf.d/dotfiles.toml`: ホームに配置するシンボリックリンク。リンク元の相対パスはこのファイルの位置が基準です。
 - `mise/conf.d/macos.toml`: Dock と Finder の defaults、sudo の Touch ID 設定。
 - `mise/conf.d/tasks.toml`: `krew:install` タスク。`bootstrap` タスクから呼び出し、単独では `mise -C mac run krew:install` で実行できます。
-- `dotfiles/HOME/.config/mise/conf.d/mac.toml`: macOS の CLI ツール。ホームにも配置され、どのディレクトリでも利用できます。
-- `dotfiles/HOME/.zprofile`、`.zshrc`: Homebrew と mise の有効化。カスタム設定は `.zprofile_custom` と `.zshrc_custom` に書きます。
-- `../common/dotfiles/HOME/.config/mise/config.toml`: 従来からの共通ランタイム・ツール。
+- `../dotfiles/.config/mise/conf.d/mac.toml`: macOS の CLI ツール。ホームにも配置され、どのディレクトリでも利用できます。
+- `../dotfiles/.zprofile`、`.zshrc`: Homebrew と mise の有効化。カスタム設定は `.zprofile_custom` と `.zshrc_custom` に書きます。
+- `../dotfiles/.config/mise/config.toml`: 従来からの共通ランタイム・ツール。
+
+ホームに配置するファイルの実体は、OS を問わずリポジトリ直下の `dotfiles/` にホームと同じ構造で置きます。どの OS が何を使うかは各 OS の `mise/conf.d/dotfiles.toml` が決めます。
 
 Git・curl などの基盤と GUI アプリ、フォントは Homebrew、開発 CLI は mise が担当します。`nh` は Nix 専用のため導入しません。mise 本体は Homebrew ではなく公式スクリプトで入れるため、`brew install mise` は行いません。
 
@@ -55,4 +57,4 @@ Dock と Finder の defaults は書き込み後に `killall Dock Finder` で反�
 
 ## 検証
 
-`.github/workflows/mac-setup.yml` は macOS 15 (Apple Silicon) のランナーで、シェルの構文チェック、設定ファイルの読み込み、defaults とファイルの状態確認、ツールの導入 dry-run、dotfiles の dry-run を実行します。master への push と PR のときだけ動き、対象は mac、common/dotfiles、scripts、setup.sh とワークフロー自身の変更に限定しています。Homebrew パッケージの導入と macOS の設定変更は行いません。
+`.github/workflows/mac-setup.yml` は macOS 15 (Apple Silicon) のランナーで、シェルの構文チェック、設定ファイルの読み込み、defaults とファイルの状態確認、ツールの導入 dry-run、dotfiles の dry-run を実行します。master への push と PR のときだけ動き、対象は mac、dotfiles、scripts、setup.sh とワークフロー自身の変更に限定しています。Homebrew パッケージの導入と macOS の設定変更は行いません。
