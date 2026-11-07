@@ -10,25 +10,18 @@ function usage() {
 Usage: ./setup.sh <command> [args...]
 
 Commands:
-  prepare    ホストの準備 (Linux / Windows: mise, macOS: Nix)
-  bootstrap  Linux / Windows の環境適用と dotfiles の配置
-  switch     macOS の Nix 構成適用と dotfiles の配置
+  prepare    ホストの準備 (mise 本体。macOS は Homebrew、Windows は scoop も)
+  bootstrap  環境の適用と dotfiles の配置
 
 必要環境: Linux は mise 2026.10.14 以上、Windows は Git Bash と mise 2026.10.12 以上、
-macOS は Nix 2.26 以上
+macOS は Apple Silicon と mise 2026.11.2 以上
 Windows では setup.cmd <command> でも実行できます (prepare は PowerShell、他は Git Bash に転送)。
 
-Linux / Windows:
   ./setup.sh bootstrap
   ./setup.sh bootstrap --update
   ./setup.sh bootstrap --link-only
 
-macOS:
-  ./setup.sh switch
-  ./setup.sh switch --update
-  ./setup.sh switch --update-only  flake.lock の更新のみ
-
-どちらも --dry-run で変更予定を確認できます。
+どれも --dry-run で変更予定を確認できます。
 既存の dotfiles を置き換える場合は --link-force=y を指定します。
 OS (linux / mac / windows) は自動判定します。
 EOF
@@ -62,12 +55,10 @@ case "${command}" in
     exec "${SCRIPT_DIR}/${os_name}/scripts/prepare.sh" "$@"
     ;;
   bootstrap)
-    [[ "${os_name}" != mac ]] || fail "macOS では ./setup.sh switch を使ってください"
     exec "${SCRIPT_DIR}/${os_name}/scripts/bootstrap.sh" "$@"
     ;;
   switch)
-    [[ "${os_name}" == mac ]] || fail "Linux / Windows では ./setup.sh bootstrap を使ってください"
-    OS_NAME="${os_name}" exec "${SCRIPT_DIR}/scripts/switch.sh" "$@"
+    fail "switch は廃止しました。macOS でも ./setup.sh bootstrap を使ってください"
     ;;
   -h | --help)
     usage

@@ -1,6 +1,6 @@
 # Linux セットアップ
 
-Ubuntu 26 と、その WSL 環境を対象に、mise と apt で環境を構築します。Linux では Nix・Home Manager・DotfilesLinker は不要です。macOS は従来の Nix 構成を使います。
+Ubuntu 26 と、その WSL 環境を対象に、mise と apt で環境を構築します。Nix・Home Manager・DotfilesLinker は不要です。
 
 ## 初回セットアップ
 
@@ -38,11 +38,11 @@ Git・curl などの基盤と共有ライブラリは apt、開発 CLI は mise 
 ./setup.sh bootstrap --link-only
 ```
 
-通常の適用は不足しているパッケージを導入します。`--update` は宣言した apt パッケージと mise ツールを更新します。`--update-only` は macOS の flake.lock 更新用で、Linux では使用しません。
+通常の適用は不足しているパッケージを導入します。`--update` は宣言した apt パッケージと mise ツールを更新します。
 
 初回は外部リポジトリが存在せず、全体の dry-run がテーマ等のリンク元不足で停止することがあります。取得予定だけを確認する場合は `mise -C linux bootstrap --only packages,repos --dry-run` を使います。WSL では `mise -C linux -E wsl bootstrap --only packages,repos --dry-run` を使います。
 
-eza テーマと LazyVim starter は既定ブランチに追従し、`--update` で fast-forward されます。checkout 内に未コミットの変更があると更新は止まります。ツールの `latest` と apt の依存解決を含め、flake.lock と同じ固定・ロールバックは提供しません。
+eza テーマと LazyVim starter は既定ブランチに追従し、`--update` で fast-forward されます。checkout 内に未コミットの変更があると更新は止まります。ツールの `latest` と apt の依存解決を含め、Nix の flake.lock のような固定・ロールバックは提供しません。
 
 ## 既存の Home Manager 環境から移行
 

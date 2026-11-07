@@ -2,7 +2,6 @@
 /os/
 /.claude/
 .DS_Store
-result
 **/.ssh/config
 
 *.local.toml
