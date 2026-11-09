@@ -30,7 +30,7 @@ exec zsh -l
 
 ホームに配置するファイルの実体は、OS を問わずリポジトリ直下の `dotfiles/` にホームと同じ構造で置きます。どの OS が何を使うかは各 OS の `mise/conf.d/dotfiles.toml` が決めます。
 
-Git・curl などの基盤と GUI アプリ、フォントは Homebrew、開発 CLI は mise が担当します。`nh` は Nix 専用のため導入しません。mise 本体は Homebrew ではなく公式スクリプトで入れるため、`brew install mise` は行いません。
+Git・curl などの基盤と GUI アプリ、フォントは Homebrew、開発 CLI は mise が担当します。mise 本体は Homebrew ではなく公式スクリプトで入れるため、`brew install mise` は行いません。
 
 ## 更新と確認
 
@@ -47,14 +47,6 @@ Git・curl などの基盤と GUI アプリ、フォントは Homebrew、開発 
 Dock と Finder の defaults は書き込み後に `killall Dock Finder` で反映されます。mise は自動で再起動しません。状態は `mise -C mac bootstrap macos defaults status` で確認できます。
 
 初回は eza テーマのリポジトリが存在せず、全体の dry-run がリンク元不足で停止することがあります。取得予定だけを確認する場合は `mise -C mac bootstrap --only packages,repos --dry-run` を使います。
-
-## 既存の Nix 環境から移行
-
-1. `.zshrc`、`.zprofile`、`.config/eza/theme.yaml` などの既存設定を退避します。Home Manager が生成した `.zshrc` は Nix store を指すリンクなので、必要な内容はコピーして保存します。
-2. `./setup.sh prepare` で Nix に依存しない mise を導入します。nix-homebrew が入れた Homebrew は `brew` 本体が Nix store にあり git リポジトリも持たないため、`prepare` が公式インストーラで同じ `/opt/homebrew` に入れ直します。Cellar と Caskroom は保持されます。この手順は sudo を使うので Mac の前で実行します。
-3. `./setup.sh bootstrap --dry-run` で変更予定を確認し、`./setup.sh bootstrap` を実行します。競合するファイルは自動で上書きしません。退避後に必要な場合のみ `--link-force=y` を指定します。
-4. 新しいログインシェルで `command -v mise git node`、`dotnet --list-sdks`、`krew list` を確認します。shims が Nix 版 mise を指している場合は `mise reshim` を実行します。
-5. Nix が不要になったことを確認してから、nix-darwin と Nix を公式手順で別途アンインストールします。セットアップは Nix の削除や既存プロファイルの解除を行いません。nix-darwin が書いた `/etc/zshrc`、`/etc/zprofile`、`/etc/pam.d/sudo_local` の内容は、アンインストール後に `bootstrap` を再実行すると `sudo_local` だけ復元されます。
 
 ## 検証
 
