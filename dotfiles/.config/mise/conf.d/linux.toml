@@ -3,7 +3,6 @@
 aws-cli = "latest"
 aws-vault = "latest"
 btop = "latest"
-"npm:eclint" = "latest"
 fastfetch = "latest"
 gh = "latest"
 ghq = "latest"

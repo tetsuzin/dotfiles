@@ -2,7 +2,6 @@
 [tools]
 aws-cli = "latest"
 aws-vault = "latest"
-"npm:eclint" = "latest"
 fastfetch = "latest"
 gh = "latest"
 krew = "latest"
