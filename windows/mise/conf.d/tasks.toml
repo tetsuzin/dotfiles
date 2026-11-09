@@ -1,0 +1,20 @@
+# mise bootstrap の最後に実行する追加設定。
+[tasks.bootstrap]
+description = "ツール導入後の追加設定"
+depends = ["claude:git-bash-path"]
+
+# Claude Code は既定で C:\Program Files\Git の Git Bash を探す。
+# Git は scoop で入れているため、その bash.exe をユーザー環境変数で知らせる。
+# 反映には VS Code や Claude Code の再起動が必要。
+[tasks."claude:git-bash-path"]
+description = "Claude Code が scoop の Git Bash を使うようユーザー環境変数を設定"
+shell = "pwsh -NoProfile -Command"
+run = """
+$bash = Join-Path (scoop prefix git) 'bin\\bash.exe'
+if (-not (Test-Path $bash)) { throw "Git Bash が見つかりません: $bash" }
+$current = [Environment]::GetEnvironmentVariable('CLAUDE_CODE_GIT_BASH_PATH', 'User')
+if ($current -ne $bash) {
+  [Environment]::SetEnvironmentVariable('CLAUDE_CODE_GIT_BASH_PATH', $bash, 'User')
+  Write-Host "CLAUDE_CODE_GIT_BASH_PATH を設定しました: $bash"
+}
+"""
