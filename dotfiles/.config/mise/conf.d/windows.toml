@@ -1,15 +1,6 @@
-# Windows の共通 CLI。言語ランタイムは共通 config.toml で管理する。
+# Windows 固有の CLI。全 OS 共通のランタイムと CLI は config.toml で管理する。
 [tools]
-act = "latest"
-docker-cli = "latest"
-eza = "latest"
-fd = "latest"
 ghq = "latest"
-jq = "latest"
-lazygit = "latest"
 neovim = "latest"
 ripgrep = "latest"
-shfmt = "latest"
-starship = "latest"
 yazi = "latest"
-zoxide = "latest"

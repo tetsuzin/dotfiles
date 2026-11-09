@@ -24,8 +24,8 @@ exec bash -l
 - `mise/conf.d/tasks.toml`: 追加処理のタスク。
 - `mise/conf.d/wsl/mise.wsl.toml`: WSL の認証情報へのリンクと Windows ホームの指定。`-E wsl` のときだけ読み込まれます。フォルダは独立した config root のため bootstrap.sh が個別に trust します。
 - `../dotfiles/.config/mise/conf.d/wsl.toml`: WSL のみで使う SSH エージェント。
-- `../dotfiles/.config/mise/conf.d/linux.toml`: Linux の CLI ツール。ホームにも配置され、どのディレクトリでも利用できます。
-- `../dotfiles/.config/mise/config.toml`: 従来からの共通ランタイム・ツール。
+- `../dotfiles/.config/mise/conf.d/linux.toml`: Linux 固有の CLI ツール。ホームにも配置され、どのディレクトリでも利用できます。
+- `../dotfiles/.config/mise/config.toml`: 全 OS 共通のランタイムと CLI ツール。
 
 ホームに配置するファイルの実体は、OS を問わずリポジトリ直下の `dotfiles/` にホームと同じ構造で置きます。どの OS が何を使うかは各 OS の `mise/conf.d/dotfiles.toml` が決めます。
 - `mise/conf.d/tasks.toml` の `krew:install` タスク: 未導入の krew プラグインを導入。`bootstrap` タスクから呼び出し、単独では `mise -C ubuntu run krew:install` で実行できます。

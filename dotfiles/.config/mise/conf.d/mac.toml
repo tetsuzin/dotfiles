@@ -1,20 +1,11 @@
-# macOS の共通 CLI。言語ランタイムは共通 config.toml で管理する。
+# macOS 固有の CLI。全 OS 共通のランタイムと CLI は config.toml で管理する。
 [tools]
-act = "latest"
 aws-cli = "latest"
 aws-vault = "latest"
-docker-cli = "latest"
 "npm:eclint" = "latest"
-eza = "latest"
 fastfetch = "latest"
-fd = "latest"
 gh = "latest"
-jq = "latest"
 krew = "latest"
 kubectl = "latest"
 kubectx = "latest"
 kubens = "latest"
-lazygit = "latest"
-shfmt = "latest"
-starship = "latest"
-zoxide = "latest"

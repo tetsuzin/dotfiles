@@ -1,10 +1,24 @@
+# 全 OS 共通のランタイムと CLI。OS 固有のツールは conf.d/<os>.toml で管理する。
 [tools]
+act = "latest"
 bat = "latest"
 biome = "latest"
 claude = "latest"
 codex = "latest"
-dotnet = ["8", "10"]
+docker-cli = "latest"
+# Windows の dotnet は Visual Studio 側に任せる
+dotnet = [
+  { version = "8", os = ["linux", "macos"] },
+  { version = "10", os = ["linux", "macos"] },
+]
+eza = "latest"
+fd = "latest"
 fzf = "latest"
 go = "latest"
+jq = "latest"
+lazygit = "latest"
 node = "latest"
 python = "3"
+shfmt = "latest"
+starship = "latest"
+zoxide = "latest"
