@@ -1,4 +1,4 @@
-// Nix とネットワークを使わず、一時ホームで Linux の配置処理を検証する。
+// ネットワークを使わず、一時ホームで Linux の配置処理を検証する。
 // 実行: dotnet run tests/LinuxSetup.cs [-- -method "*Wsl*"]
 #:package xunit.v3@4.0.2
 #:property NoWarn=CA1416
@@ -74,7 +74,7 @@ public sealed class LinuxSetupTests : IDisposable
   }
 
   [Fact]
-  public void SetupEntrypointWithoutNix()
+  public void SetupEntrypointUsesLocalMise()
   {
     var bin = Directory.CreateDirectory(t.At(".local/bin")).FullName;
     File.CreateSymbolicLink(Path.Combine(bin, "mise"), TestHome.MiseBin);
@@ -94,12 +94,11 @@ public sealed class LinuxSetupTests : IDisposable
   [Fact]
   public void BootstrapRejectsIncompatibleFlags()
   {
-    string[][] cases = [["--update", "--dry-run"], ["--update", "--link-only"], ["--update-only"], ["--unknown"]];
+    string[][] cases = [["--update", "--dry-run"], ["--update", "--link-only"], ["--unknown"]];
     foreach (var flags in cases)
     {
       var result = t.Run(["bash", "setup.sh", "bootstrap", .. flags], check: false);
       Assert.True(result.ExitCode != 0, $"{string.Join(' ', flags)} が拒否されなかった");
-      Assert.True(!result.Stderr.Contains("Nix が見つかりません"), "Nix の有無を確認している");
     }
   }
 

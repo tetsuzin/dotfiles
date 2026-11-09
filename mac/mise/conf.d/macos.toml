@@ -1,4 +1,4 @@
-# macOS のシステム設定。nix-darwin の system.defaults と security.pam の置き換え。
+# macOS のシステム設定。defaults と sudo の PAM 設定。
 # defaults の反映には Dock と Finder の再起動が必要で、mise は自動では行わない。
 
 [bootstrap.macos.dock]
@@ -14,7 +14,7 @@ show_all_files = true
 "NSGlobalDomain" = { AppleShowAllExtensions = true }
 
 # sudo で Touch ID を使う。root 所有のため mise が sudo で書き込む。
-# nix-darwin 環境では /etc/static へのシンボリックリンクなので replace で実ファイルに置き換える。
+# 既存がシンボリックリンクでも replace で実ファイルに置き換える。
 [bootstrap.files."/etc/pam.d/sudo_local"]
 content = """
 auth       sufficient     pam_tid.so
