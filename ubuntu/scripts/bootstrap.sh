@@ -59,6 +59,8 @@ fi
 if [[ "${link_only}" == true ]]; then
   mise bootstrap --only dotfiles "${bootstrap_args[@]}"
 elif [[ "${update}" == true ]]; then
+  # プラグインの更新は含めない。clone が壊れていても本体の更新を止めないため。
+  mise self-update --yes --no-plugins
   mise bootstrap --update --skip task "${bootstrap_args[@]}"
   mise bootstrap packages upgrade --manager apt
   mise upgrade

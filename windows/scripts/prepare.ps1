@@ -21,11 +21,10 @@ if (-not (Test-Path "$scoopRoot\buckets\extras")) {
 }
 
 # Linux の prepare.sh と同じく、公式スクリプトで ~\.local\bin に独立した mise を導入する。
-# 導入済みなら self-update で最新版にする。スクリプトはユーザーの Path に ~\.local\bin を追加する。
+# 導入済みなら触らない。更新は bootstrap --update と self_update.auto が担う。
+# スクリプトはユーザーの Path に ~\.local\bin を追加する。
 $mise = "$env:USERPROFILE\.local\bin\mise.exe"
-if (Test-Path $mise) {
-  & $mise self-update --yes
-} else {
+if (-not (Test-Path $mise)) {
   Invoke-RestMethod -Uri 'https://mise.run/powershell' | Invoke-Expression
 }
 if (-not (Test-Path $mise)) { throw 'mise の導入に失敗しました' }

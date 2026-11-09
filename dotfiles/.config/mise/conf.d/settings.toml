@@ -1,0 +1,7 @@
+# mise 本体の設定。グローバル設定としてホームにだけ配置し、各 OS の mise.toml からは
+# include しない。settings は include されたファイルでは許可されないため。
+
+# 対話的に mise コマンドを実行したとき、7 日おきに本体を自動更新する。
+# CI、非対話、shell 統合 (activate / hook-env) では動かない。
+[settings.self_update]
+auto = true

@@ -16,11 +16,10 @@ if ! command -v curl &>/dev/null || ! command -v git &>/dev/null; then
 fi
 
 export PATH="${HOME}/.local/bin:${PATH}"
-# Nix 版が PATH にあっても、Nix を削除できる独立した mise を最新版で導入する。
+# Nix 版が PATH にあっても、Nix を削除できる独立した mise を導入する。
+# 導入済みなら触らない。更新は bootstrap --update と self_update.auto が担う。
 # 必要な最低バージョンは ubuntu/mise.toml の min_version が検査する。
-if [[ -x "${HOME}/.local/bin/mise" ]]; then
-  "${HOME}/.local/bin/mise" self-update --yes
-else
+if [[ ! -x "${HOME}/.local/bin/mise" ]]; then
   installer="$(mktemp)"
   trap 'rm -f "${installer}"' EXIT
   curl --proto '=https' --tlsv1.2 -fsSL https://mise.run -o "${installer}"

@@ -22,11 +22,10 @@ fi
 eval "$(/opt/homebrew/bin/brew shellenv)"
 
 export PATH="${HOME}/.local/bin:${PATH}"
-# Nix や Homebrew 版が PATH にあっても、独立した mise を最新版で導入する。
+# Nix や Homebrew 版が PATH にあっても、独立した mise を導入する。
+# 導入済みなら触らない。更新は bootstrap --update と self_update.auto が担う。
 # 必要な最低バージョンは mac/mise.toml の min_version が検査する。
-if [[ -x "${HOME}/.local/bin/mise" ]]; then
-  "${HOME}/.local/bin/mise" self-update --yes
-else
+if [[ ! -x "${HOME}/.local/bin/mise" ]]; then
   installer="$(mktemp)"
   trap 'rm -f "${installer}"' EXIT
   curl --proto '=https' --tlsv1.2 -fsSL https://mise.run -o "${installer}"

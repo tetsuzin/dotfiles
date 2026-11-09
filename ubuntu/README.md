@@ -12,7 +12,7 @@ Ubuntu 26 と、その WSL 環境を対象に、mise と apt で環境を構築�
 exec bash -l
 ```
 
-`prepare` は apt で取得用の最小限の依存を入れ、独立した mise の最新版を `~/.local/bin/mise` に導入します。導入済みなら `mise self-update` で更新します。必要バージョンは 2026.10.14 以上で、`mise.toml` の `min_version` が検査します。
+`prepare` は curl か git が無ければ apt で取得用の最小限の依存を入れ、独立した mise を `~/.local/bin/mise` に導入します。導入済みなら何もしないため、実行は初回だけで済みます。mise 本体の更新は `bootstrap --update` と共通設定の `self_update.auto` が担います。必要バージョンは 2026.10.14 以上で、`mise.toml` の `min_version` が検査します。
 
 `bootstrap` は Ubuntu 26 であることを確認し、WSL の場合は追加設定を選択します。apt パッケージ、外部リポジトリ、dotfiles、ツール、krew プラグインの順に適用します。apt の操作には sudo が必要です。リポジトリの設定はこの操作で mise に trust されます。
 
@@ -26,6 +26,7 @@ exec bash -l
 - `../dotfiles/.config/mise/conf.d/wsl.toml`: WSL のみで使う SSH エージェント。
 - `../dotfiles/.config/mise/conf.d/linux.toml`: Linux 固有の CLI ツール。ホームにも配置され、どのディレクトリでも利用できます。
 - `../dotfiles/.config/mise/config.toml`: 全 OS 共通のランタイムと CLI ツール。
+- `../dotfiles/.config/mise/conf.d/settings.toml`: mise 本体の設定 (`self_update.auto`)。ホームにだけ配置し、`mise.toml` からは include しません。
 
 ホームに配置するファイルの実体は、OS を問わずリポジトリ直下の `dotfiles/` にホームと同じ構造で置きます。どの OS が何を使うかは各 OS の `mise/conf.d/dotfiles.toml` が決めます。
 - `mise/conf.d/tasks.toml` の `krew:install` タスク: 未導入の krew プラグインを導入。`bootstrap` タスクから呼び出し、単独では `mise -C ubuntu run krew:install` で実行できます。
@@ -40,7 +41,7 @@ Git・curl などの基盤と共有ライブラリは apt、開発 CLI は mise 
 ./setup.sh bootstrap --link-only
 ```
 
-通常の適用は不足しているパッケージを導入します。`--update` は宣言した apt パッケージと mise ツールを更新します。
+通常の適用は不足しているパッケージを導入します。`--update` は mise 本体、宣言した apt パッケージ、mise ツールを更新します。
 
 初回は外部リポジトリが存在せず、全体の dry-run がテーマ等のリンク元不足で停止することがあります。取得予定だけを確認する場合は `mise -C ubuntu bootstrap --only packages,repos --dry-run` を使います。WSL では `mise -C ubuntu -E wsl bootstrap --only packages,repos --dry-run` を使います。
 

@@ -5,6 +5,7 @@
 "~/.config/act/actrc" = "../../../dotfiles/.config/act/actrc"
 "~/.config/git/config" = "../../../dotfiles/.config/git/config"
 "~/.config/mise/config.toml" = "../../../dotfiles/.config/mise/config.toml"
+"~/.config/mise/conf.d/settings.toml" = "../../../dotfiles/.config/mise/conf.d/settings.toml"
 "~/.config/mise/conf.d/windows.toml" = "../../../dotfiles/.config/mise/conf.d/windows.toml"
 "~/.config/starship.toml" = "../../../dotfiles/.config/starship.toml"
 "~/.claude/settings.json" = "../../../dotfiles/.claude/settings.json"

@@ -1,4 +1,6 @@
 # 全 OS 共通のランタイムと CLI。OS 固有のツールは conf.d/<os>.toml で管理する。
+# 各 OS の mise.toml からも include されるため、include で許可されないセクション
+# (settings など) は conf.d/settings.toml に書く。
 [tools]
 act = "latest"
 bat = "latest"
