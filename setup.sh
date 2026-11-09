@@ -57,9 +57,6 @@ case "${command}" in
   bootstrap)
     exec "${SCRIPT_DIR}/${os_name}/scripts/bootstrap.sh" "$@"
     ;;
-  switch)
-    fail "switch は廃止しました。macOS でも ./setup.sh bootstrap を使ってください"
-    ;;
   -h | --help)
     usage
     ;;

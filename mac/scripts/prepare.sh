@@ -14,9 +14,8 @@ if ! xcode-select -p &>/dev/null; then
 fi
 
 # OS パッケージの導入元。mise bootstrap は Homebrew 本体を入れないためここで行う。
-# nix-homebrew が入れた Homebrew は git リポジトリを持たず brew 本体が Nix store にあるため、
-# 公式インストーラで同じ prefix に入れ直す。Cellar と Caskroom は保持される。
-if [[ ! -d /opt/homebrew/.git ]]; then
+# 無ければ公式インストーラで導入する。
+if [[ ! -x /opt/homebrew/bin/brew ]]; then
   /bin/bash -c "$(curl --proto '=https' --tlsv1.2 -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 fi
 eval "$(/opt/homebrew/bin/brew shellenv)"

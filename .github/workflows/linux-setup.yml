@@ -2,7 +2,7 @@ name: Test Linux setup
 
 on:
   push:
-    branches: [main]
+    branches: [master]
     paths:
       - ubuntu/**
       - dotfiles/**
