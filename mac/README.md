@@ -1,6 +1,6 @@
 # macOS セットアップ
 
-Apple Silicon の macOS を対象に、mise と Homebrew で環境を構築します。Linux・Windows と同じ mise bootstrap の仕組みを使い、Nix・nix-darwin・Home Manager は不要です。
+Apple Silicon の macOS を対象に、mise と Homebrew で環境を構築します。Linux・Windows と同じ mise bootstrap の仕組みを使います。
 
 ## 初回セットアップ
 
@@ -40,7 +40,7 @@ Git・curl などの基盤と GUI アプリ、フォントは Homebrew、開発 
 ./setup.sh bootstrap --link-only
 ```
 
-通常の適用は不足しているパッケージを導入します。`--update` は mise 本体、宣言した Homebrew パッケージ、mise ツールを更新します。eza テーマは既定ブランチに追従し、`--update` で fast-forward されます。ツールの `latest` と Homebrew の依存解決を含め、Nix の flake.lock のような固定・ロールバックは提供しません。
+通常の適用は不足しているパッケージを導入します。`--update` は mise 本体、宣言した Homebrew パッケージ、mise ツールを更新します。eza テーマは既定ブランチに追従し、`--update` で fast-forward されます。ツールの `latest` と Homebrew の依存解決を含め、バージョンの固定・ロールバックは提供しません。
 
 旧構成の `cleanup = "zap"` に相当する「宣言にないパッケージの削除」は自動では行いません。`mise -C mac bootstrap packages prune --dry-run` で対象を確認してから `mise -C mac bootstrap packages prune` を実行します。formula は Homebrew で手動導入したものも対象になるため、必ず dry-run を先に見ます。
 

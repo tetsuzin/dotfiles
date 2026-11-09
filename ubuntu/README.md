@@ -1,6 +1,6 @@
 # Linux セットアップ
 
-Ubuntu 26 と、その WSL 環境を対象に、mise と apt で環境を構築します。Nix・Home Manager・DotfilesLinker は不要です。
+Ubuntu 26 と、その WSL 環境を対象に、mise と apt で環境を構築します。
 
 ## 初回セットアップ
 
@@ -45,7 +45,7 @@ Git・curl などの基盤と共有ライブラリは apt、開発 CLI は mise 
 
 初回は外部リポジトリが存在せず、全体の dry-run がテーマ等のリンク元不足で停止することがあります。取得予定だけを確認する場合は `mise -C ubuntu bootstrap --only packages,repos --dry-run` を使います。WSL では `mise -C ubuntu -E wsl bootstrap --only packages,repos --dry-run` を使います。
 
-eza テーマと LazyVim starter は既定ブランチに追従し、`--update` で fast-forward されます。checkout 内に未コミットの変更があると更新は止まります。ツールの `latest` と apt の依存解決を含め、Nix の flake.lock のような固定・ロールバックは提供しません。
+eza テーマと LazyVim starter は既定ブランチに追従し、`--update` で fast-forward されます。checkout 内に未コミットの変更があると更新は止まります。ツールの `latest` と apt の依存解決を含め、バージョンの固定・ロールバックは提供しません。
 
 WSL の Windows ホームは `/mnt/c/Users/tetsuzin` に固定しています。mise の `[dotfiles]` はリンク元でテンプレートや環境変数を展開しないためです。ユーザー名が異なる場合やリンクを除外する場合は、git 管理外の `ubuntu/mise/conf.d/wsl/mise.wsl.local.toml` に同じリンク先のエントリを書いて上書きします。例: `"~/.aws/credentials" = "/mnt/c/Users/<name>/.aws/credentials"`、除外は `"~/.kube/config" = { enabled = false }`。`.aws/credentials` と `.kube/config` を `[dotfiles]` で共有し、リンク元が存在しない場合はスキップせずエラーになります。既存ファイルとの競合は mise が検出し、`--link-force=y` を指定しない限り置き換えません。
 

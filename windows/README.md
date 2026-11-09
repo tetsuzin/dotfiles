@@ -1,6 +1,6 @@
 # Windows セットアップ
 
-Windows 11 を対象に、mise と winget、scoop で環境を構築します。Linux と同じ mise bootstrap の仕組みを使い、Nix は不要です。
+Windows 11 を対象に、mise と winget、scoop で環境を構築します。Linux と同じ mise bootstrap の仕組みを使います。
 
 ## 初回セットアップ
 
