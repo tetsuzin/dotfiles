@@ -8,10 +8,12 @@ source "${SCRIPT_DIR}/environment.sh"
 check_environment
 command -v sudo &>/dev/null || fail "sudo が必要です"
 
-# mise 自体の取得に必要な最小限のパッケージ。
-# その他の OS パッケージは mise bootstrap で導入する。
-sudo apt-get update
-sudo apt-get install -y ca-certificates curl git
+# mise 自体の取得に必要な最小限のパッケージ。導入済みなら apt には触らない。
+# これらを含む OS パッケージは mise bootstrap が packages.toml の宣言で管理する。
+if ! command -v curl &>/dev/null || ! command -v git &>/dev/null; then
+  sudo apt-get update
+  sudo apt-get install -y ca-certificates curl git
+fi
 
 export PATH="${HOME}/.local/bin:${PATH}"
 # Nix 版が PATH にあっても、Nix を削除できる独立した mise を最新版で導入する。
