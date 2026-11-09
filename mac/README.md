@@ -24,7 +24,7 @@ exec zsh -l
 - `mise/conf.d/macos.toml`: Dock と Finder の defaults、sudo の Touch ID 設定。
 - `mise/conf.d/tasks.toml`: `krew:install` タスク。`bootstrap` タスクから呼び出し、単独では `mise -C mac run krew:install` で実行できます。
 - `../dotfiles/.config/mise/conf.d/mac.toml`: macOS 固有の CLI ツール。ホームにも配置され、どのディレクトリでも利用できます。
-- `../dotfiles/.zprofile`、`.zshrc`: Homebrew と mise の有効化。カスタム設定は `.zprofile_custom` と `.zshrc_custom` に書きます。
+- `../dotfiles/.zprofile`、`.zshrc`: Homebrew と mise の有効化、補完、alias。
 - `../dotfiles/.config/mise/config.toml`: 全 OS 共通のランタイムと CLI ツール。
 - `../dotfiles/.config/mise/conf.d/settings.toml`: mise 本体の設定 (`self_update.auto`)。ホームにだけ配置し、`mise.toml` からは include しません。
 

@@ -83,11 +83,11 @@ public sealed class LinuxSetupTests : IDisposable
   }
 
   [Fact]
-  public void InteractiveBashHasMiseAndKrewPath()
+  public void LoginBashHasMiseAndKrewPath()
   {
     t.Mise("dotfiles", "apply", "--yes");
     t.WriteExecutable(".local/bin/mise", "#!/bin/bash\necho \"export TEST_MISE_ACTIVATED=yes\"\n");
-    t.Run(["bash", "--noprofile", "--rcfile", t.At(".bashrc"), "-ic",
+    t.Run(["bash", "--noprofile", "--rcfile", t.At(".bash_profile"), "-ic",
       "[[ \"$TEST_MISE_ACTIVATED\" == yes && \":$PATH:\" == *\":$HOME/.krew/bin:\"* ]]"]);
   }
 

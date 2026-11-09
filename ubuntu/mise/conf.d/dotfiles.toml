@@ -12,8 +12,5 @@
 "~/.codex/AGENTS.md" = "../../../dotfiles/.codex/AGENTS.md"
 "~/.bashrc" = "../../../dotfiles/.bashrc"
 "~/.bash_profile" = "../../../dotfiles/.bash_profile"
-"~/.bashrc_custom" = "../../../dotfiles/.bashrc_custom"
-"~/.bash_profile_custom" = "../../../dotfiles/.bash_profile_custom"
-"~/.config/dotfiles/bashrc_base" = "../../../dotfiles/.config/dotfiles/bashrc_base"
 "~/.config/eza/theme.yaml" = "~/.local/share/dotfiles/eza-themes/themes/tokyonight.yml"
 "~/.config/nvim" = "~/.local/share/dotfiles/lazyvim-starter"

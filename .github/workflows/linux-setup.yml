@@ -38,7 +38,7 @@ jobs:
       - name: Check shell syntax
         run: |
           bash -n setup.sh
-          for script in ubuntu/scripts/*.sh dotfiles/.bash* dotfiles/.config/dotfiles/bashrc_base; do
+          for script in ubuntu/scripts/*.sh dotfiles/.bash*; do
             bash -n "$script"
           done
       - name: Test isolated configuration and dotfiles
