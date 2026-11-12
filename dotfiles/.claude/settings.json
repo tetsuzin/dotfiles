@@ -1,8 +1,4 @@
 {
-  "theme": "auto",
-  "autoUpdatesChannel": "latest",
-  "effortLevel": "medium",
-  "model": "claude-fable-5-1",
   "attribution": {
     "commit": "",
     "pr": ""
@@ -21,6 +17,7 @@
       "Bash(wget *)"
     ]
   },
+  "model": "fable",
   "enabledPlugins": {
     "superpowers@claude-plugins-official": true,
     "ponytail@ponytail": true,
@@ -28,13 +25,25 @@
   },
   "extraKnownMarketplaces": {
     "claude-plugins-official": {
-      "source": { "source": "github", "repo": "anthropics/claude-plugins-official" }
+      "source": {
+        "source": "github",
+        "repo": "anthropics/claude-plugins-official"
+      }
     },
     "claude-community": {
-      "source": { "source": "github", "repo": "anthropics/claude-plugins-community" }
+      "source": {
+        "source": "github",
+        "repo": "anthropics/claude-plugins-community"
+      }
     },
     "ponytail": {
-      "source": { "source": "github", "repo": "DietrichGebert/ponytail" }
+      "source": {
+        "source": "github",
+        "repo": "DietrichGebert/ponytail"
+      }
     }
-  }
+  },
+  "effortLevel": "medium",
+  "autoUpdatesChannel": "latest",
+  "theme": "auto"
 }
