@@ -1,4 +1,17 @@
-format = '\[$username@$hostname $os $directory$dotnet$kubernetes\]$line_break$character'
+format = """
+\\[$username@$hostname $os\\] \
+$directory\
+($git_branch)\
+$fill\
+(\\[$dotnet$kubernetes\\] )\
+$cmd_duration\
+$time\
+$line_break\
+$character\
+"""
+
+[fill]
+symbol = " "
 
 [username]
 style_user = "yellow"
@@ -34,6 +47,14 @@ truncate_to_repo = false
 disabled = false
 success_symbol = "[>_](green)"
 error_symbol = "[>_](red)"
+
+[time]
+disabled = false
+format = '[$time]($style) '
+style = 'bright-black'
+
+[git_branch]
+format = 'on [$symbol$branch]($style) '
 
 [dotnet]
 disabled = false
