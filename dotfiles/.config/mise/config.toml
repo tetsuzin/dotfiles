@@ -10,8 +10,8 @@ codex = "latest"
 docker-cli = "latest"
 # Windows の dotnet は Visual Studio 側に任せる
 dotnet = [
-  { version = "8", os = ["linux", "macos"] },
   { version = "10", os = ["linux", "macos"] },
+  { version = "11", os = ["linux", "macos"] },
 ]
 eza = "latest"
 fd = "latest"
