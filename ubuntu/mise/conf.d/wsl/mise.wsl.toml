@@ -3,6 +3,10 @@ include = ["../../../../dotfiles/.config/mise/conf.d/wsl.toml"]
 # [dotfiles] のリンク元はテンプレートを展開しないため固定パスで書く。
 # Windows ユーザー名が異なる場合は同じフォルダの mise.wsl.local.toml で同じリンク先を上書きする。
 [dotfiles]
+
+# mise
 "~/.config/mise/conf.d/wsl.toml" = "../../../../dotfiles/.config/mise/conf.d/wsl.toml"
+
+# Cloud (Windows 側の認証情報を共有)
 "~/.aws/credentials" = "/mnt/c/Users/tetsuzin/.aws/credentials"
 "~/.kube/config" = "/mnt/c/Users/tetsuzin/.kube/config"

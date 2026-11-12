@@ -1,16 +1,24 @@
 # repo 内のファイルをホームにシンボリックリンクで配置する。
 # リンク元はテンプレートも環境変数も展開しない。
 [dotfiles]
-"~/.config/act/actrc" = "../../../dotfiles/.config/act/actrc"
-"~/.config/git/config" = "../../../dotfiles/.config/git/config"
+
+# mise
 "~/.config/mise/config.toml" = "../../../dotfiles/.config/mise/config.toml"
 "~/.config/mise/conf.d/settings.toml" = "../../../dotfiles/.config/mise/conf.d/settings.toml"
 "~/.config/mise/conf.d/mac.toml" = "../../../dotfiles/.config/mise/conf.d/mac.toml"
+
+# git
+"~/.config/git/config" = "../../../dotfiles/.config/git/config"
+"~/.config/act/actrc" = "../../../dotfiles/.config/act/actrc"
+
+# Terminal
 "~/.config/starship.toml" = "../../../dotfiles/.config/starship.toml"
-"~/.claude/settings.json" = "../../../dotfiles/.claude/settings.json"
-"~/.claude/CLAUDE.md" = "../../../dotfiles/.claude/CLAUDE.md"
-"~/.codex/AGENTS.md" = "../../../dotfiles/.codex/AGENTS.md"
 "~/.zshrc" = "../../../dotfiles/.zshrc"
 "~/.zprofile" = "../../../dotfiles/.zprofile"
 "~/.config/ghostty/config" = "../../../dotfiles/.config/ghostty/config"
 "~/.config/eza/theme.yaml" = "~/.local/share/dotfiles/eza-themes/themes/tokyonight.yml"
+
+# AI Agent
+"~/.claude/settings.json" = "../../../dotfiles/.claude/settings.json"
+"~/.claude/CLAUDE.md" = "../../../dotfiles/.claude/CLAUDE.md"
+"~/.codex/AGENTS.md" = "../../../dotfiles/.codex/AGENTS.md"
