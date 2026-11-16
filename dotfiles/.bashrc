@@ -67,14 +67,18 @@ if command -v starship &>/dev/null; then
   eval "$(starship init bash)"
 fi
 
-# alias
-alias ls='eza --group-directories-first'
-alias ll='eza -la --icons --group-directories-first --git'
-alias lt='eza --tree --level=2 --icons'
+# alias。ワーカーには eza も kubectl も無いので、ある場合だけ定義する。
+if command -v eza &>/dev/null; then
+  alias ls='eza --group-directories-first'
+  alias ll='eza -la --icons --group-directories-first --git'
+  alias lt='eza --tree --level=2 --icons'
+fi
 
-alias k='kubectl'
-alias kx='kubectx'
-alias kn='kubens'
+if command -v kubectl &>/dev/null; then
+  alias k='kubectl'
+  alias kx='kubectx'
+  alias kn='kubens'
+fi
 
 # 起動時に実行
 if command -v fastfetch &>/dev/null; then
