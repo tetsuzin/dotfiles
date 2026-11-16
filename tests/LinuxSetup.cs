@@ -25,6 +25,53 @@ public sealed class LinuxSetupTests : IDisposable
     Assert.Contains("config.toml", configs.Stdout);
     Assert.Contains("conf.d/workstation.toml", configs.Stdout);
     Assert.Contains("conf.d/linux-workstation.toml", configs.Stdout);
+    AssertLinksTo(t.At(".config/starship.toml"), Path.Combine(TestHome.Root, "dotfiles/.config/starship.toml"));
+  }
+
+  [Fact]
+  public void UbuntuCoversWorkerDotfiles()
+  {
+    // [dotfiles] は include できず両方に書いているため、ubuntu が最小構成のリンクを欠いていないか確認する。
+    using var workerHome = new TestHome();
+    workerHome.Mise(["dotfiles", "apply", "--yes"], dir: "ubuntu-worker");
+    var worker = LinkTargets(workerHome);
+    Assert.NotEmpty(worker);
+    t.Mise("dotfiles", "apply", "--yes");
+    var ubuntu = LinkTargets(t);
+    foreach (var (link, target) in worker) Assert.Equal(target, ubuntu.GetValueOrDefault(link));
+  }
+
+  /// <summary>一時ホームにあるシンボリックリンクと、その解決先。</summary>
+  static Dictionary<string, string> LinkTargets(TestHome home) =>
+    new DirectoryInfo(home.Home).EnumerateFileSystemInfos("*", new EnumerationOptions
+    {
+      RecurseSubdirectories = true,
+      AttributesToSkip = FileAttributes.None,
+    })
+      .Where(entry => entry.LinkTarget != null && !entry.FullName.Contains("/.local/"))
+      .ToDictionary(entry => Path.GetRelativePath(home.Home, entry.FullName),
+        entry => entry.ResolveLinkTarget(true)!.FullName);
+
+  [Fact]
+  public void WorkerDeploysOnlyMinimalSet()
+  {
+    t.Mise(["dotfiles", "apply", "--yes"], dir: "ubuntu-worker");
+    t.Mise(["dotfiles", "apply", "--yes"], dir: "ubuntu-worker");
+    t.Mise(["dotfiles", "status", "--missing"], dir: "ubuntu-worker");
+    AssertLinksTo(t.At(".bashrc"), Path.Combine(TestHome.Root, "dotfiles/.bashrc"));
+    AssertLinksTo(t.At(".claude/CLAUDE.md"), Path.Combine(TestHome.Root, "dotfiles/.claude/CLAUDE.md"));
+    Assert.True(!File.Exists(t.At(".config/starship.toml")), "starship.toml はワーカーに配置しない");
+    Assert.True(!Directory.Exists(t.At(".config/nvim")), "nvim の設定はワーカーに配置しない");
+
+    var configs = t.Run([TestHome.MiseBin, "config", "ls", "--json"], cwd: t.Home);
+    Assert.Contains("conf.d/linux.toml", configs.Stdout);
+    Assert.DoesNotContain("workstation", configs.Stdout);
+    Assert.DoesNotContain("workstation", t.Mise(["config", "ls", "--json"], dir: "ubuntu-worker").Stdout);
+
+    var packages = t.Mise(["bootstrap", "packages", "status", "--json"], dir: "ubuntu-worker");
+    Assert.Contains("libicu78", packages.Stdout);
+    Assert.DoesNotContain("bash-completion", packages.Stdout);
+    Assert.DoesNotContain("krew", t.Mise(["tasks", "ls"], dir: "ubuntu-worker").Stdout);
   }
 
   [Fact]
@@ -63,8 +110,10 @@ public sealed class LinuxSetupTests : IDisposable
   [Fact]
   public void UbuntuPackages()
   {
+    // libicu78 は ubuntu-worker から include した最小構成、bash-completion は ubuntu の追加分。
     var result = t.Mise("bootstrap", "packages", "status", "--json");
     Assert.Contains("libicu78", result.Stdout);
+    Assert.Contains("bash-completion", result.Stdout);
   }
 
   [Fact]
@@ -82,15 +131,21 @@ public sealed class LinuxSetupTests : IDisposable
     File.CreateSymbolicLink(Path.Combine(bin, "mise"), TestHome.MiseBin);
     t.Run(["bash", "ubuntu/run.sh", "bootstrap", "--link-only", "--dry-run"]);
     Assert.True(!File.Exists(t.At(".bashrc")), "dry-run で .bashrc が配置された");
+    t.Run(["bash", "ubuntu-worker/run.sh", "bootstrap", "--link-only"]);
+    Assert.True(File.Exists(t.At(".bashrc")), "ubuntu-worker で .bashrc が配置されていない");
+    Assert.True(!File.Exists(t.At(".config/starship.toml")), "ubuntu-worker で starship.toml が配置された");
   }
 
   [Fact]
   public void RunRejectsUnknownCommand()
   {
-    Assert.True(t.Run(["bash", "ubuntu/run.sh"], check: false).ExitCode != 0, "引数なしが拒否されなかった");
-    Assert.True(t.Run(["bash", "ubuntu/run.sh", "unknown"], check: false).ExitCode != 0,
-      "不明なコマンドが拒否されなかった");
-    t.Run(["bash", "ubuntu/run.sh", "--help"]);
+    foreach (var dir in (string[])["ubuntu", "ubuntu-worker"])
+    {
+      Assert.True(t.Run(["bash", $"{dir}/run.sh"], check: false).ExitCode != 0, $"{dir}: 引数なしが拒否されなかった");
+      Assert.True(t.Run(["bash", $"{dir}/run.sh", "unknown"], check: false).ExitCode != 0,
+        $"{dir}: 不明なコマンドが拒否されなかった");
+      t.Run(["bash", $"{dir}/run.sh", "--help"]);
+    }
   }
 
   [Fact]
@@ -196,10 +251,10 @@ sealed class TestHome : IDisposable
 
   public RunResult Mise(params string[] args) => Mise(args, check: true);
 
-  public RunResult Mise(string[] args, bool check = true, string? profile = null)
+  public RunResult Mise(string[] args, bool check = true, string? profile = null, string dir = "ubuntu")
   {
     string[] environment = profile == null ? [] : ["-E", profile];
-    return Run([MiseBin, "-C", Path.Combine(Root, "ubuntu"), .. environment, .. args], check);
+    return Run([MiseBin, "-C", Path.Combine(Root, dir), .. environment, .. args], check);
   }
 
   public RunResult Run(string[] command, bool check = true, string? cwd = null)

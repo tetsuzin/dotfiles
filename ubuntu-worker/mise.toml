@@ -1,0 +1,5 @@
+min_version = "2026.10.14"
+include = [
+  "../dotfiles/.config/mise/config.toml",
+  "../dotfiles/.config/mise/conf.d/linux.toml",
+]
