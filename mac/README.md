@@ -25,7 +25,8 @@ exec zsh -l
 - `mise/conf.d/tasks.toml`: `krew:install` タスク。`bootstrap` タスクから呼び出し、単独では `mise -C mac run krew:install` で実行できます。
 - `../dotfiles/.config/mise/conf.d/mac.toml`: macOS 固有の CLI ツール。ホームにも配置され、どのディレクトリでも利用できます。
 - `../dotfiles/.zprofile`、`.zshrc`: Homebrew と mise の有効化、補完、alias。
-- `../dotfiles/.config/mise/config.toml`: 全 OS 共通のランタイムと CLI ツール。
+- `../dotfiles/.config/mise/config.toml`: 全 OS 共通のランタイムと CLI ツールの最小構成。
+- `../dotfiles/.config/mise/conf.d/workstation.toml`: 人が使うマシン向けの全 OS 共通 CLI ツール。
 - `../dotfiles/.config/mise/conf.d/settings.toml`: mise 本体の設定 (`self_update.auto`)。ホームにだけ配置し、`mise.toml` からは include しません。
 
 ホームに配置するファイルの実体は、OS を問わずリポジトリ直下の `dotfiles/` にホームと同じ構造で置きます。どの OS が何を使うかは各 OS の `mise/conf.d/dotfiles.toml` が決めます。

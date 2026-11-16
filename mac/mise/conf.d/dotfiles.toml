@@ -5,7 +5,8 @@
 # mise
 "~/.config/mise/config.toml" = "../../../dotfiles/.config/mise/config.toml"
 "~/.config/mise/conf.d/settings.toml" = "../../../dotfiles/.config/mise/conf.d/settings.toml"
-"~/.config/mise/conf.d/mac.toml" = "../../../dotfiles/.config/mise/conf.d/mac.toml"
+"~/.config/mise/conf.d/workstation.toml" = "../../../dotfiles/.config/mise/conf.d/workstation.toml"
+"~/.config/mise/conf.d/mac.toml" ="../../../dotfiles/.config/mise/conf.d/mac.toml"
 
 # git
 "~/.config/git/config" = "../../../dotfiles/.config/git/config"

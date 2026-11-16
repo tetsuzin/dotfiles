@@ -23,6 +23,8 @@ public sealed class LinuxSetupTests : IDisposable
     var configs = t.Run([TestHome.MiseBin, "config", "ls", "--json"], cwd: t.Home);
     Assert.Contains("conf.d/linux.toml", configs.Stdout);
     Assert.Contains("config.toml", configs.Stdout);
+    Assert.Contains("conf.d/workstation.toml", configs.Stdout);
+    Assert.Contains("conf.d/linux-workstation.toml", configs.Stdout);
   }
 
   [Fact]

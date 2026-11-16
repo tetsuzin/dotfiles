@@ -24,8 +24,10 @@ exec bash -l
 - `mise/conf.d/tasks.toml`: 追加処理のタスク。
 - `mise/conf.d/wsl/mise.wsl.toml`: WSL の認証情報へのリンクと Windows ホームの指定。`-E wsl` のときだけ読み込まれます。フォルダは独立した config root のため bootstrap.sh が個別に trust します。
 - `../dotfiles/.config/mise/conf.d/wsl.toml`: WSL のみで使う SSH エージェント。
-- `../dotfiles/.config/mise/conf.d/linux.toml`: Linux 固有の CLI ツール。ホームにも配置され、どのディレクトリでも利用できます。
-- `../dotfiles/.config/mise/config.toml`: 全 OS 共通のランタイムと CLI ツール。
+- `../dotfiles/.config/mise/conf.d/linux.toml`: Linux 固有の CLI ツールの最小構成。ホームにも配置され、どのディレクトリでも利用できます。
+- `../dotfiles/.config/mise/conf.d/linux-workstation.toml`: 人が使う Linux マシン向けの CLI ツール。
+- `../dotfiles/.config/mise/config.toml`: 全 OS 共通のランタイムと CLI ツールの最小構成。
+- `../dotfiles/.config/mise/conf.d/workstation.toml`: 人が使うマシン向けの全 OS 共通 CLI ツール。
 - `../dotfiles/.config/mise/conf.d/settings.toml`: mise 本体の設定 (`self_update.auto`)。ホームにだけ配置し、`mise.toml` からは include しません。
 
 ホームに配置するファイルの実体は、OS を問わずリポジトリ直下の `dotfiles/` にホームと同じ構造で置きます。どの OS が何を使うかは各 OS の `mise/conf.d/dotfiles.toml` が決めます。

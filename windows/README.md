@@ -35,7 +35,8 @@ cd dotfiles
 - `mise/conf.d/tasks.toml`: `claude:git-bash-path` タスク。Claude Code が scoop の Git Bash を使えるよう、ユーザー環境変数 `CLAUDE_CODE_GIT_BASH_PATH` を設定します。`bootstrap` タスクから呼び出し、単独では `mise -C windows run claude:git-bash-path` で実行できます。反映には VS Code や Claude Code の再起動が必要です。
 - `../dotfiles/.config/mise/conf.d/windows.toml`: Windows 固有の CLI ツール。ホームにも配置され、どのディレクトリでも利用できます。
 - `../dotfiles/Documents/PowerShell/Microsoft.PowerShell_profile.ps1`: PowerShell 7 のプロファイル。mise の activate と starship の初期化を含みます。
-- `../dotfiles/.config/mise/config.toml`: 全 OS 共通のランタイムと CLI ツール。dotnet は Windows では Visual Studio 側に任せるため除外しています。
+- `../dotfiles/.config/mise/config.toml`: 全 OS 共通のランタイムと CLI ツールの最小構成。dotnet は Windows では Visual Studio 側に任せるため除外しています。
+- `../dotfiles/.config/mise/conf.d/workstation.toml`: 人が使うマシン向けの全 OS 共通 CLI ツール。
 - `../dotfiles/.config/mise/conf.d/settings.toml`: mise 本体の設定 (`self_update.auto`)。ホームにだけ配置し、`mise.toml` からは include しません。
 
 ホームに配置するファイルの実体は、OS を問わずリポジトリ直下の `dotfiles/` にホームと同じ構造で置きます。どの OS が何を使うかは各 OS の `mise/conf.d/dotfiles.toml` が決めます。
