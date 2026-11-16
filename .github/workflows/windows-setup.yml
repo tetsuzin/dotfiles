@@ -47,6 +47,11 @@ jobs:
             [System.Management.Automation.Language.Parser]::ParseFile($file, [ref]$tokens, [ref]$errors) | Out-Null
             if ($errors.Count -gt 0) { $errors | Out-String | Write-Error; exit 1 }
           }
+      # ランナーでは msstore ソースの規約が未同意で、mise が呼ぶ winget list が失敗する。
+      # packages.toml の winget パッケージは winget ソースだけで解決できるため、msstore を外す。
+      - name: Remove winget msstore source
+        shell: pwsh
+        run: winget source remove --name msstore
       - name: Load configuration
         shell: pwsh
         run: |
