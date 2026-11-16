@@ -4,11 +4,11 @@ Ubuntu 26 と、その WSL 環境を対象に、mise と apt で環境を構築�
 
 ## 初回セットアップ
 
-リポジトリを継続して置く場所へ clone し、一般ユーザーで実行します。
+リポジトリを継続して置く場所へ clone し、このディレクトリ (`ubuntu/`) で一般ユーザーとして実行します。
 
 ```bash
-./setup.sh prepare
-./setup.sh bootstrap
+./run.sh prepare
+./run.sh bootstrap
 exec bash -l
 ```
 
@@ -38,9 +38,9 @@ Git・curl などの基盤と共有ライブラリは apt、開発 CLI は mise 
 ## 更新と確認
 
 ```bash
-./setup.sh bootstrap --dry-run
-./setup.sh bootstrap --update
-./setup.sh bootstrap --link-only
+./run.sh bootstrap --dry-run
+./run.sh bootstrap --update
+./run.sh bootstrap --link-only
 ```
 
 通常の適用は不足しているパッケージを導入します。`--update` は mise 本体、宣言した apt パッケージ、mise ツールを更新します。
@@ -66,4 +66,4 @@ dotnet run tests/LinuxSetup.cs -- -method '*Wsl*'   # 名前で絞り込み
 
 テストは .NET 10 のファイルベースアプリとして 1 ファイルの C# で書き、`#:package` 指示子で xUnit v3 を使っています。dotnet は mise の共通ツールに含まれるため追加導入はなく、一時ホームの隔離と後始末、子プロセスの実行、JSON の読み取りは標準ライブラリで揃います。xUnit はテストごとにクラスのインスタンスを作って `Dispose` を呼ぶので、一時ホームの後始末もそれに任せています。
 
-`.github/workflows/linux-setup.yml` は Ubuntu 26.04 のランナーで、シェルの構文チェックと上記のテストを実行します。main への push と PR のときだけ動き、対象は linux、dotfiles、scripts、tests、setup.sh とワークフロー自身の変更に限定しています。作業ブランチへの push だけでは実行されません。
+`.github/workflows/linux-setup.yml` は Ubuntu 26.04 のランナーで、シェルの構文チェックと上記のテストを実行します。main への push と PR のときだけ動き、対象は linux、dotfiles、scripts、tests とワークフロー自身の変更に限定しています。作業ブランチへの push だけでは実行されません。

@@ -7,7 +7,7 @@ source "${SCRIPT_DIR}/environment.sh"
 
 function usage() {
   cat <<'HELP'
-Usage: ./setup.sh bootstrap [--debug] [--dry-run] [--link-force=y] [--update | --link-only]
+Usage: ./run.sh bootstrap [--debug] [--dry-run] [--link-force=y] [--update | --link-only]
 
   --dry-run       変更予定を表示する
   --update        宣言した Homebrew パッケージと mise ツールを更新して適用する
@@ -44,12 +44,12 @@ done
 [[ "${update}" != true || "${link_only}" != true ]] || fail "--update と --link-only は併用できません"
 
 check_environment
-[[ -x /opt/homebrew/bin/brew ]] || fail "Homebrew が見つかりません。先に ./setup.sh prepare を実行してください"
+[[ -x /opt/homebrew/bin/brew ]] || fail "Homebrew が見つかりません。先に ./run.sh prepare を実行してください"
 eval "$(/opt/homebrew/bin/brew shellenv)"
 export PATH="${HOME}/.local/bin:${PATH}"
-command -v mise &>/dev/null || fail "先に ./setup.sh prepare を実行してください"
+command -v mise &>/dev/null || fail "先に ./run.sh prepare を実行してください"
 
-# setup.sh の実行はこの checkout の設定を適用する明示的な操作。
+# run.sh の実行はこの checkout の設定を適用する明示的な操作。
 # dry-run でも trust 状態だけは記録するが、ホスト構成は変更しない。
 cd "${SCRIPT_DIR}/.."
 mise trust mise.toml

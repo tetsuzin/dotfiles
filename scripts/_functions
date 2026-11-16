@@ -4,5 +4,7 @@ DOTFILES_FUNCTIONS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/functions"
 
 # shellcheck disable=SC1091
 source "${DOTFILES_FUNCTIONS_DIR}/log.sh"
+# shellcheck disable=SC1091
+source "${DOTFILES_FUNCTIONS_DIR}/run.sh"
 
 unset DOTFILES_FUNCTIONS_DIR

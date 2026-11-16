@@ -2,7 +2,7 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "${SCRIPT_DIR}/../../scripts/_functions"
+source "${SCRIPT_DIR}/../_functions"
 source "${SCRIPT_DIR}/environment.sh"
 
 check_environment
@@ -18,7 +18,7 @@ fi
 export PATH="${HOME}/.local/bin:${PATH}"
 # パッケージマネージャ経由の mise が PATH にあっても、公式スクリプトの独立した mise を導入する。
 # 導入済みなら触らない。更新は bootstrap --update と self_update.auto が担う。
-# 必要な最低バージョンは ubuntu/mise.toml の min_version が検査する。
+# 必要な最低バージョンは 各環境の mise.toml の min_version が検査する。
 if [[ ! -x "${HOME}/.local/bin/mise" ]]; then
   installer="$(mktemp)"
   trap 'rm -f "${installer}"' EXIT
@@ -27,4 +27,4 @@ if [[ ! -x "${HOME}/.local/bin/mise" ]]; then
 fi
 hash -r
 
-log_info "準備が完了しました。続けて ./setup.sh bootstrap を実行してください"
+log_info "準備が完了しました。続けて ./run.sh bootstrap を実行してください"

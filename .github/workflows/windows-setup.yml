@@ -7,16 +7,12 @@ on:
       - windows/**
       - dotfiles/**
       - scripts/**
-      - setup.sh
-      - setup.cmd
       - .github/workflows/windows-setup.yml
   pull_request:
     paths:
       - windows/**
       - dotfiles/**
       - scripts/**
-      - setup.sh
-      - setup.cmd
       - .github/workflows/windows-setup.yml
 
 permissions:
@@ -40,8 +36,9 @@ jobs:
       - name: Check shell syntax
         shell: bash
         run: |
-          bash -n setup.sh
-          bash -n windows/scripts/bootstrap.sh
+          for script in windows/run.sh scripts/_functions scripts/functions/*.sh windows/scripts/bootstrap.sh; do
+            bash -n "$script"
+          done
       - name: Check PowerShell syntax
         shell: pwsh
         run: |
@@ -58,9 +55,11 @@ jobs:
       - name: Dry-run tools
         shell: pwsh
         run: mise -C windows install --dry-run
-      - name: Dry-run dotfiles via setup.sh
+      - name: Dry-run dotfiles via run.sh
         shell: bash
-        run: ./setup.sh bootstrap --link-only --dry-run
-      - name: Dry-run dotfiles via setup.cmd
+        working-directory: windows
+        run: ./run.sh bootstrap --link-only --dry-run
+      - name: Dry-run dotfiles via run.cmd
         shell: cmd
-        run: .\setup.cmd bootstrap --link-only --dry-run
+        working-directory: windows
+        run: .\run.cmd bootstrap --link-only --dry-run

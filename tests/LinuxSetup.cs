@@ -80,8 +80,17 @@ public sealed class LinuxSetupTests : IDisposable
   {
     var bin = Directory.CreateDirectory(t.At(".local/bin")).FullName;
     File.CreateSymbolicLink(Path.Combine(bin, "mise"), TestHome.MiseBin);
-    t.Run(["bash", "setup.sh", "bootstrap", "--link-only", "--dry-run"]);
+    t.Run(["bash", "ubuntu/run.sh", "bootstrap", "--link-only", "--dry-run"]);
     Assert.True(!File.Exists(t.At(".bashrc")), "dry-run で .bashrc が配置された");
+  }
+
+  [Fact]
+  public void RunRejectsUnknownCommand()
+  {
+    Assert.True(t.Run(["bash", "ubuntu/run.sh"], check: false).ExitCode != 0, "引数なしが拒否されなかった");
+    Assert.True(t.Run(["bash", "ubuntu/run.sh", "unknown"], check: false).ExitCode != 0,
+      "不明なコマンドが拒否されなかった");
+    t.Run(["bash", "ubuntu/run.sh", "--help"]);
   }
 
   [Fact]
@@ -99,7 +108,7 @@ public sealed class LinuxSetupTests : IDisposable
     string[][] cases = [["--update", "--dry-run"], ["--update", "--link-only"], ["--unknown"]];
     foreach (var flags in cases)
     {
-      var result = t.Run(["bash", "setup.sh", "bootstrap", .. flags], check: false);
+      var result = t.Run(["bash", "ubuntu/run.sh", "bootstrap", .. flags], check: false);
       Assert.True(result.ExitCode != 0, $"{string.Join(' ', flags)} が拒否されなかった");
     }
   }

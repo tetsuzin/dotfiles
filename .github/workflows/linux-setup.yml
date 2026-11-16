@@ -7,7 +7,6 @@ on:
       - ubuntu/**
       - dotfiles/**
       - scripts/**
-      - setup.sh
       - tests/**
       - .github/workflows/linux-setup.yml
   pull_request:
@@ -15,7 +14,6 @@ on:
       - ubuntu/**
       - dotfiles/**
       - scripts/**
-      - setup.sh
       - tests/**
       - .github/workflows/linux-setup.yml
 
@@ -37,8 +35,7 @@ jobs:
           echo "$HOME/.local/bin" >> "$GITHUB_PATH"
       - name: Check shell syntax
         run: |
-          bash -n setup.sh
-          for script in ubuntu/scripts/*.sh dotfiles/.bash*; do
+          for script in ubuntu/run.sh scripts/_functions scripts/functions/*.sh scripts/ubuntu/*.sh dotfiles/.bash*; do
             bash -n "$script"
           done
       - name: Test isolated configuration and dotfiles

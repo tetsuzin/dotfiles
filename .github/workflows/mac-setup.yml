@@ -7,14 +7,12 @@ on:
       - mac/**
       - dotfiles/**
       - scripts/**
-      - setup.sh
       - .github/workflows/mac-setup.yml
   pull_request:
     paths:
       - mac/**
       - dotfiles/**
       - scripts/**
-      - setup.sh
       - .github/workflows/mac-setup.yml
 
 permissions:
@@ -37,8 +35,7 @@ jobs:
           echo "$HOME/.local/bin" >> "$GITHUB_PATH"
       - name: Check shell syntax
         run: |
-          bash -n setup.sh
-          for script in mac/scripts/*.sh; do
+          for script in mac/run.sh scripts/_functions scripts/functions/*.sh mac/scripts/*.sh; do
             bash -n "$script"
           done
           for script in dotfiles/.z*; do
@@ -54,5 +51,6 @@ jobs:
         run: mise -C mac install --dry-run
       - name: Fetch external repositories
         run: mise -C mac bootstrap --only repos
-      - name: Dry-run dotfiles via setup.sh
-        run: ./setup.sh bootstrap --link-only --dry-run
+      - name: Dry-run dotfiles via run.sh
+        working-directory: mac
+        run: ./run.sh bootstrap --link-only --dry-run

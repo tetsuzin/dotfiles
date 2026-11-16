@@ -4,11 +4,11 @@ Apple Silicon の macOS を対象に、mise と Homebrew で環境を構築し�
 
 ## 初回セットアップ
 
-リポジトリを継続して置く場所へ clone し、一般ユーザーで実行します。
+リポジトリを継続して置く場所へ clone し、このディレクトリ (`mac/`) で一般ユーザーとして実行します。
 
 ```bash
-./setup.sh prepare
-./setup.sh bootstrap
+./run.sh prepare
+./run.sh bootstrap
 exec zsh -l
 ```
 
@@ -36,9 +36,9 @@ Git・curl などの基盤と GUI アプリ、フォントは Homebrew、開発 
 ## 更新と確認
 
 ```bash
-./setup.sh bootstrap --dry-run
-./setup.sh bootstrap --update
-./setup.sh bootstrap --link-only
+./run.sh bootstrap --dry-run
+./run.sh bootstrap --update
+./run.sh bootstrap --link-only
 ```
 
 通常の適用は不足しているパッケージを導入します。`--update` は mise 本体、宣言した Homebrew パッケージ、mise ツールを更新します。eza テーマは既定ブランチに追従し、`--update` で fast-forward されます。ツールの `latest` と Homebrew の依存解決を含め、バージョンの固定・ロールバックは提供しません。
@@ -51,4 +51,4 @@ Dock と Finder の defaults は書き込み後に `killall Dock Finder` で反�
 
 ## 検証
 
-`.github/workflows/mac-setup.yml` は macOS 15 (Apple Silicon) のランナーで、シェルの構文チェック、設定ファイルの読み込み、defaults とファイルの状態確認、ツールの導入 dry-run、dotfiles の dry-run を実行します。master への push と PR のときだけ動き、対象は mac、dotfiles、scripts、setup.sh とワークフロー自身の変更に限定しています。Homebrew パッケージの導入と macOS の設定変更は行いません。
+`.github/workflows/mac-setup.yml` は macOS 15 (Apple Silicon) のランナーで、シェルの構文チェック、設定ファイルの読み込み、defaults とファイルの状態確認、ツールの導入 dry-run、dotfiles の dry-run を実行します。master への push と PR のときだけ動き、対象は mac、dotfiles、scripts とワークフロー自身の変更に限定しています。Homebrew パッケージの導入と macOS の設定変更は行いません。

@@ -7,7 +7,7 @@ source "${SCRIPT_DIR}/../../scripts/_functions"
 
 function usage() {
   cat <<'HELP'
-Usage: ./setup.sh bootstrap [--debug] [--dry-run] [--link-force=y] [--update | --link-only]
+Usage: ./run.sh bootstrap [--debug] [--dry-run] [--link-force=y] [--update | --link-only]
 
   --dry-run       変更予定を表示する
   --update        宣言した winget / scoop パッケージと mise ツールを更新して適用する
@@ -47,9 +47,9 @@ case "$(uname -s)" in
   MINGW* | MSYS*) ;;
   *) fail "Windows の Git Bash で実行してください: $(uname -s)" ;;
 esac
-command -v mise &>/dev/null || fail "mise が見つかりません。先に ./setup.sh prepare を実行してください"
+command -v mise &>/dev/null || fail "mise が見つかりません。先に ./run.sh prepare を実行してください"
 
-# setup.sh の実行はこの checkout の設定を適用する明示的な操作。
+# run.sh の実行はこの checkout の設定を適用する明示的な操作。
 # dry-run でも trust 状態だけは記録するが、ホスト構成は変更しない。
 cd "${SCRIPT_DIR}/.."
 mise trust mise.toml

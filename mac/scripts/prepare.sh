@@ -32,4 +32,4 @@ if [[ ! -x "${HOME}/.local/bin/mise" ]]; then
 fi
 hash -r
 
-log_info "準備が完了しました。続けて ./setup.sh bootstrap を実行してください"
+log_info "準備が完了しました。続けて ./run.sh bootstrap を実行してください"

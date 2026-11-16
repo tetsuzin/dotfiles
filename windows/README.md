@@ -13,15 +13,15 @@ scoop install git
 git clone https://github.com/tetsuzin/dotfiles.git
 ```
 
-以降は `setup.cmd` を入口にします。cmd、PowerShell、Windows Terminal のどこからでも実行できます。
+以降は `windows\run.cmd` を入口にします。cmd、PowerShell、Windows Terminal のどこからでも実行できます。
 
 ```powershell
-cd dotfiles
-.\setup.cmd prepare
-.\setup.cmd bootstrap
+cd dotfiles\windows
+.\run.cmd prepare
+.\run.cmd bootstrap
 ```
 
-`setup.cmd` は `prepare` を PowerShell で実行し、それ以外のコマンドを Git Bash の `setup.sh` に転送します。Git Bash は `git --exec-path` から特定するため、WSL の bash が選ばれることはありません。Git Bash から直接 `./setup.sh prepare` や `./setup.sh bootstrap` を実行しても同じです。
+`run.cmd` は `prepare` を PowerShell で実行し、それ以外のコマンドを Git Bash の `run.sh` に転送します。Git Bash は `git --exec-path` から特定するため、WSL の bash が選ばれることはありません。Git Bash から直接 `./run.sh prepare` や `./run.sh bootstrap` を実行しても同じです。
 
 `prepare` は scoop 本体と extras バケットが無ければ導入し、Linux と同じく公式スクリプトで独立した mise を `~\.local\bin` に導入します。導入済みなら何もしないため、実行は初回だけで済みます。mise 本体の更新は `bootstrap --update` と共通設定の `self_update.auto` が担います。スクリプトはユーザーの Path に `~\.local\bin` を追加します。必要バージョンは 2026.10.12 以上で、`mise.toml` の `min_version` が検査します。
 
@@ -48,9 +48,9 @@ Git の設定は `~/.config/git/config` に配置します。`~/.gitconfig` が�
 ## 更新と確認
 
 ```powershell
-.\setup.cmd bootstrap --dry-run
-.\setup.cmd bootstrap --update
-.\setup.cmd bootstrap --link-only
+.\run.cmd bootstrap --dry-run
+.\run.cmd bootstrap --update
+.\run.cmd bootstrap --link-only
 ```
 
 通常の適用は不足しているパッケージを導入します。`--update` は mise 本体、宣言した winget / scoop パッケージ、mise ツールを更新します。scoop でバージョンを固定した項目は更新されません。
@@ -60,8 +60,8 @@ mise は `~` を常に実際のユーザープロファイルに解決するた�
 ## 既存の環境から移行
 
 1. `mise -C windows bootstrap status` で、winget / scoop パッケージと dotfiles の現状を確認します。scoop で入れたものは winget からは見えず、その逆も同じなので、宣言したマネージャと実際の導入元が違うものは二重に導入されます。先に整理するか、`packages.toml` の該当行を直します。
-2. `.\setup.cmd prepare` を実行します。scoop や winget で入れた mise が残っていると警告が出るので、`scoop uninstall mise` や `winget uninstall jdx.mise` で外し、1 つの導入方法に揃えます。導入済みのツールのデータ (`~\AppData\Local\mise`) は残るため再ダウンロードは不要です。
-3. `.\setup.cmd bootstrap --dry-run` で変更予定を確認し、`.\setup.cmd bootstrap` を実行します。`~/.config/starship.toml`、`~/.claude/settings.json`、`~/.config/mise/config.toml`、PowerShell プロファイルなどの既存ファイルは自動で上書きしません。退避後に必要な場合のみ `--link-force=y` を指定します。
+2. `.\run.cmd prepare` を実行します。scoop や winget で入れた mise が残っていると警告が出るので、`scoop uninstall mise` や `winget uninstall jdx.mise` で外し、1 つの導入方法に揃えます。導入済みのツールのデータ (`~\AppData\Local\mise`) は残るため再ダウンロードは不要です。
+3. `.\run.cmd bootstrap --dry-run` で変更予定を確認し、`.\run.cmd bootstrap` を実行します。`~/.config/starship.toml`、`~/.claude/settings.json`、`~/.config/mise/config.toml`、PowerShell プロファイルなどの既存ファイルは自動で上書きしません。退避後に必要な場合のみ `--link-force=y` を指定します。
 4. 新しい PowerShell で `Get-Command mise`、`mise doctor`、`mise ls` を確認します。shims が古い mise を指している場合は `mise reshim` を実行します。
 5. mise の `[tools]` に移したツール (act、gh、jq、shfmt、starship など) は scoop 側を `scoop uninstall` で外します。残したままでも動きますが、PATH の順序で古い方が実行されることがあります。
 
@@ -71,4 +71,4 @@ mise は `~` を常に実際のユーザープロファイルに解決するた�
 
 ## 検証
 
-`.github/workflows/windows-setup.yml` は Windows ランナーで、シェルの構文チェック、設定ファイルの読み込み、ツールの導入 dry-run、dotfiles の dry-run を実行します。main への push と PR のときだけ動き、対象は windows、dotfiles、scripts、setup.sh とワークフロー自身の変更に限定しています。
+`.github/workflows/windows-setup.yml` は Windows ランナーで、シェルの構文チェック、設定ファイルの読み込み、ツールの導入 dry-run、dotfiles の dry-run を実行します。main への push と PR のときだけ動き、対象は windows、dotfiles、scripts とワークフロー自身の変更に限定しています。
