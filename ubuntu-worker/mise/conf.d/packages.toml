@@ -7,6 +7,7 @@
 "apt:ca-certificates" = "latest"
 "apt:curl" = "latest"
 "apt:git" = "latest"
+"apt:git-lfs" = "latest"
 "apt:less" = "latest"
 "apt:libatomic1" = "latest"
 "apt:libicu78" = "latest"
