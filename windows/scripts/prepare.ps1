@@ -1,7 +1,7 @@
 ﻿#Requires -Version 5.1
 # Windows ホストの準備。scoop と mise (公式スクリプト) を導入する。
 # Git は clone の時点で必要なため、ここでは扱わず scoop の宣言 (packages.toml) で管理する。
-# 入口は setup.cmd prepare。直接実行する場合: powershell -ExecutionPolicy Bypass -File windows\scripts\prepare.ps1
+# 入口は windows\run.cmd prepare。直接実行する場合: powershell -ExecutionPolicy Bypass -File windows\scripts\prepare.ps1
 $ErrorActionPreference = 'Stop'
 
 
@@ -33,4 +33,4 @@ if ($other) {
   Write-Warning "別の方法で導入された mise が PATH にあります: $($other.Source)。1 台に 1 つの導入方法に揃えてください"
 }
 
-Write-Host '準備が完了しました。新しいターミナルを開き、.\setup.cmd bootstrap を実行してください'
+Write-Host '準備が完了しました。新しいターミナルを開き、windows\run.cmd bootstrap を実行してください'

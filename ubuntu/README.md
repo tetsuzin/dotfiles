@@ -4,11 +4,11 @@ Ubuntu 26 と、その WSL 環境を対象に、mise と apt で環境を構築�
 
 ## 初回セットアップ
 
-リポジトリを継続して置く場所へ clone し、一般ユーザーで実行します。
+リポジトリを継続して置く場所へ clone し、このディレクトリ (`ubuntu/`) で一般ユーザーとして実行します。AI エージェントのワーカーには `../ubuntu-worker/` を使います。
 
 ```bash
-./setup.sh prepare
-./setup.sh bootstrap
+./run.sh prepare
+./run.sh bootstrap
 exec bash -l
 ```
 
@@ -18,17 +18,24 @@ exec bash -l
 
 ## 設定の管理先
 
-- `mise.toml`: 必要バージョンと共通ツール設定の読み込みだけ。`mise/conf.d/*.toml` は同じディレクトリの設定として自動で読み込まれ、このファイルの trust に含まれます。
-- `mise/conf.d/packages.toml`: 外部から取得するもの。apt パッケージと外部リポジトリ。sudo が必要なのは apt パッケージだけです。
-- `mise/conf.d/dotfiles.toml`: ホームに配置するシンボリックリンク。リンク元の相対パスはこのファイルの位置が基準です。
+この環境は `../ubuntu-worker/` の最小構成に、人が使うマシン向けの追加分を重ねたものです。`prepare` と `bootstrap` の本体は `../scripts/ubuntu/` にあり、両方の環境の `run.sh` から呼びます。
+
+- `run.sh`: 入口。このディレクトリの設定を対象に `../scripts/ubuntu/` のスクリプトを実行します。
+- `mise.toml`: 必要バージョンと、最小構成の apt パッケージ、共通ツール設定の読み込み。`mise/conf.d/*.toml` は同じディレクトリの設定として自動で読み込まれ、このファイルの trust に含まれます。
+- `../ubuntu-worker/mise/conf.d/packages.toml`: 最小構成の apt パッケージ。`mise.toml` が include します。
+- `mise/conf.d/packages.toml`: 追加で取得するもの。外部リポジトリと追加の apt パッケージ。sudo が必要なのは apt パッケージだけです。
+- `mise/conf.d/dotfiles.toml`: ホームに配置するシンボリックリンク。リンク元の相対パスはこのファイルの位置が基準です。mise は `[dotfiles]` を include できないため、最小構成のリンクは `../ubuntu-worker/mise/conf.d/dotfiles.toml` と両方に書いています。食い違いはテストが検出します。
 - `mise/conf.d/tasks.toml`: 追加処理のタスク。
 - `mise/conf.d/wsl/mise.wsl.toml`: WSL の認証情報へのリンクと Windows ホームの指定。`-E wsl` のときだけ読み込まれます。フォルダは独立した config root のため bootstrap.sh が個別に trust します。
+- `../dotfiles/.config/mise/config.toml`: 全 OS 共通のランタイムと CLI ツールの最小構成。
+- `../dotfiles/.config/mise/conf.d/linux.toml`: Linux 固有の CLI ツールの最小構成。ホームにも配置され、どのディレクトリでも利用できます。
+- `../dotfiles/.config/mise/conf.d/workstation.toml`: 人が使うマシン向けの全 OS 共通 CLI ツール。
+- `../dotfiles/.config/mise/conf.d/linux-workstation.toml`: 人が使う Linux マシン向けの CLI ツール。
 - `../dotfiles/.config/mise/conf.d/wsl.toml`: WSL のみで使う SSH エージェント。
-- `../dotfiles/.config/mise/conf.d/linux.toml`: Linux 固有の CLI ツール。ホームにも配置され、どのディレクトリでも利用できます。
-- `../dotfiles/.config/mise/config.toml`: 全 OS 共通のランタイムと CLI ツール。
 - `../dotfiles/.config/mise/conf.d/settings.toml`: mise 本体の設定 (`self_update.auto`)。ホームにだけ配置し、`mise.toml` からは include しません。
 
-ホームに配置するファイルの実体は、OS を問わずリポジトリ直下の `dotfiles/` にホームと同じ構造で置きます。どの OS が何を使うかは各 OS の `mise/conf.d/dotfiles.toml` が決めます。
+ホームに配置するファイルの実体は、OS を問わずリポジトリ直下の `dotfiles/` にホームと同じ構造で置きます。どの環境が何を使うかは各環境の `mise/conf.d/dotfiles.toml` が決めます。
+
 - `mise/conf.d/tasks.toml` の `krew:install` タスク: 未導入の krew プラグインを導入。`bootstrap` タスクから呼び出し、単独では `mise -C ubuntu run krew:install` で実行できます。
 
 Git・curl などの基盤と共有ライブラリは apt、開発 CLI は mise が担当します。fastfetch は通常の配布バイナリを使います。
@@ -36,9 +43,9 @@ Git・curl などの基盤と共有ライブラリは apt、開発 CLI は mise 
 ## 更新と確認
 
 ```bash
-./setup.sh bootstrap --dry-run
-./setup.sh bootstrap --update
-./setup.sh bootstrap --link-only
+./run.sh bootstrap --dry-run
+./run.sh bootstrap --update
+./run.sh bootstrap --link-only
 ```
 
 通常の適用は不足しているパッケージを導入します。`--update` は mise 本体、宣言した apt パッケージ、mise ツールを更新します。
@@ -64,4 +71,4 @@ dotnet run tests/LinuxSetup.cs -- -method '*Wsl*'   # 名前で絞り込み
 
 テストは .NET 10 のファイルベースアプリとして 1 ファイルの C# で書き、`#:package` 指示子で xUnit v3 を使っています。dotnet は mise の共通ツールに含まれるため追加導入はなく、一時ホームの隔離と後始末、子プロセスの実行、JSON の読み取りは標準ライブラリで揃います。xUnit はテストごとにクラスのインスタンスを作って `Dispose` を呼ぶので、一時ホームの後始末もそれに任せています。
 
-`.github/workflows/linux-setup.yml` は Ubuntu 26.04 のランナーで、シェルの構文チェックと上記のテストを実行します。main への push と PR のときだけ動き、対象は linux、dotfiles、scripts、tests、setup.sh とワークフロー自身の変更に限定しています。作業ブランチへの push だけでは実行されません。
+`.github/workflows/linux-setup.yml` は Ubuntu 26.04 のランナーで、シェルの構文チェックと上記のテストを実行します。main への push と PR のときだけ動き、対象は ubuntu、ubuntu-worker、dotfiles、scripts、tests とワークフロー自身の変更に限定しています。作業ブランチへの push だけでは実行されません。

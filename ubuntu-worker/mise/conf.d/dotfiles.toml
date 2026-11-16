@@ -1,0 +1,21 @@
+# repo 内のファイルをホームにシンボリックリンクで配置する最小構成。
+# [dotfiles] は include できないため、ここを変えるときは ubuntu/mise/conf.d/dotfiles.toml も揃える。
+# リンク元はテンプレートも環境変数も展開しない。
+[dotfiles]
+
+# mise
+"~/.config/mise/config.toml" = "../../../dotfiles/.config/mise/config.toml"
+"~/.config/mise/conf.d/settings.toml" = "../../../dotfiles/.config/mise/conf.d/settings.toml"
+"~/.config/mise/conf.d/linux.toml" = "../../../dotfiles/.config/mise/conf.d/linux.toml"
+
+# git
+"~/.config/git/config" = "../../../dotfiles/.config/git/config"
+
+# Terminal
+"~/.bashrc" = "../../../dotfiles/.bashrc"
+"~/.bash_profile" = "../../../dotfiles/.bash_profile"
+
+# AI Agent
+"~/.claude/settings.json" = "../../../dotfiles/.claude/settings.json"
+"~/.claude/CLAUDE.md" = "../../../dotfiles/.claude/CLAUDE.md"
+"~/.codex/AGENTS.md" = "../../../dotfiles/.codex/AGENTS.md"

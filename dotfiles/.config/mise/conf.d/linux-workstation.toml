@@ -1,0 +1,15 @@
+# 人が使う Linux マシン向けの CLI。AI エージェントのワーカーには配置しない。
+[tools]
+aws-cli = "latest"
+aws-vault = "latest"
+btop = "latest"
+fastfetch = "latest"
+ghq = "latest"
+git-lfs = "latest"
+herdr = "latest"
+krew = "latest"
+kubectl = "latest"
+kubectx = "latest"
+kubens = "latest"
+neovim = "latest"
+yazi = "latest"

@@ -5,17 +5,17 @@ on:
     branches: [master]
     paths:
       - ubuntu/**
+      - ubuntu-worker/**
       - dotfiles/**
       - scripts/**
-      - setup.sh
       - tests/**
       - .github/workflows/linux-setup.yml
   pull_request:
     paths:
       - ubuntu/**
+      - ubuntu-worker/**
       - dotfiles/**
       - scripts/**
-      - setup.sh
       - tests/**
       - .github/workflows/linux-setup.yml
 
@@ -37,8 +37,7 @@ jobs:
           echo "$HOME/.local/bin" >> "$GITHUB_PATH"
       - name: Check shell syntax
         run: |
-          bash -n setup.sh
-          for script in ubuntu/scripts/*.sh dotfiles/.bash*; do
+          for script in ubuntu/run.sh ubuntu-worker/run.sh scripts/_functions scripts/functions/*.sh scripts/ubuntu/*.sh dotfiles/.bash*; do
             bash -n "$script"
           done
       - name: Test isolated configuration and dotfiles

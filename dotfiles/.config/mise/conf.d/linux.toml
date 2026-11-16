@@ -1,16 +1,4 @@
-# Linux 固有の CLI。全 OS 共通のランタイムと CLI は config.toml で管理する。
+# Linux 固有の CLI の最小構成。全 OS 共通のランタイムと CLI は config.toml で管理する。
+# 人が使うマシン向けの追加分は linux-workstation.toml に書く。
 [tools]
-aws-cli = "latest"
-aws-vault = "latest"
-btop = "latest"
-fastfetch = "latest"
 gh = "latest"
-ghq = "latest"
-git-lfs = "latest"
-herdr = "latest"
-krew = "latest"
-kubectl = "latest"
-kubectx = "latest"
-kubens = "latest"
-neovim = "latest"
-yazi = "latest"

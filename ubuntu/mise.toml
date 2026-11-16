@@ -1,5 +1,10 @@
 min_version = "2026.10.14"
+# ubuntu-worker の最小構成に、人が使うマシン向けの追加分を重ねる。
+# [dotfiles] は include できないため、最小構成のリンクは mise/conf.d/dotfiles.toml にも書く。
 include = [
+  "../ubuntu-worker/mise/conf.d/packages.toml",
   "../dotfiles/.config/mise/config.toml",
+  "../dotfiles/.config/mise/conf.d/workstation.toml",
   "../dotfiles/.config/mise/conf.d/linux.toml",
+  "../dotfiles/.config/mise/conf.d/linux-workstation.toml",
 ]

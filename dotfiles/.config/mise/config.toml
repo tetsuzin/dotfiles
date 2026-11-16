@@ -1,26 +1,16 @@
-# 全 OS 共通のランタイムと CLI。OS 固有のツールは conf.d/<os>.toml で管理する。
+# 全 OS 共通のランタイムと CLI の最小構成。AI エージェントのワーカーもこれだけを使う。
+# 人が使うマシン向けの追加分は conf.d/workstation.toml、OS 固有のツールは conf.d/<os>.toml で管理する。
 # 各 OS の mise.toml からも include されるため、include で許可されないセクション
 # (settings など) は conf.d/settings.toml に書く。
 [tools]
-act = "latest"
-bat = "latest"
-biome = "latest"
 claude = "latest"
 codex = "latest"
-docker-cli = "latest"
 # Windows の dotnet は Visual Studio 側に任せる
 dotnet = [
   { version = "10", os = ["linux", "macos"] },
   { version = "11", os = ["linux", "macos"] },
 ]
-eza = "latest"
 fd = "latest"
-fzf = "latest"
-go = "latest"
 jq = "latest"
-lazygit = "latest"
 node = "latest"
 python = "3"
-shfmt = "latest"
-starship = "latest"
-zoxide = "latest"

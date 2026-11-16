@@ -1,0 +1,13 @@
+# 人が使うマシン向けの全 OS 共通 CLI。AI エージェントのワーカーには配置しない。
+[tools]
+act = "latest"
+bat = "latest"
+biome = "latest"
+docker-cli = "latest"
+eza = "latest"
+fzf = "latest"
+go = "latest"
+lazygit = "latest"
+shfmt = "latest"
+starship = "latest"
+zoxide = "latest"

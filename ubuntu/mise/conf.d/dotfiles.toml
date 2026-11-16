@@ -1,11 +1,15 @@
 # repo 内のファイルをホームにシンボリックリンクで配置する。
 # リンク元はテンプレートも環境変数も展開しない。
+# [dotfiles] は include できないため、ubuntu-worker/mise/conf.d/dotfiles.toml のリンクをここにも書く。
+# 最小構成のリンクを変えるときは両方を揃える (tests/LinuxSetup.cs が食い違いを検出する)。
 [dotfiles]
 
 # mise
 "~/.config/mise/config.toml" = "../../../dotfiles/.config/mise/config.toml"
 "~/.config/mise/conf.d/settings.toml" = "../../../dotfiles/.config/mise/conf.d/settings.toml"
+"~/.config/mise/conf.d/workstation.toml" = "../../../dotfiles/.config/mise/conf.d/workstation.toml"
 "~/.config/mise/conf.d/linux.toml" = "../../../dotfiles/.config/mise/conf.d/linux.toml"
+"~/.config/mise/conf.d/linux-workstation.toml" = "../../../dotfiles/.config/mise/conf.d/linux-workstation.toml"
 
 # git
 "~/.config/git/config" = "../../../dotfiles/.config/git/config"

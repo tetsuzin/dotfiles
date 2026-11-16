@@ -1,5 +1,6 @@
 min_version = "2026.10.12"
 include = [
   "../dotfiles/.config/mise/config.toml",
+  "../dotfiles/.config/mise/conf.d/workstation.toml",
   "../dotfiles/.config/mise/conf.d/windows.toml",
 ]
