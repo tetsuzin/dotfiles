@@ -1,6 +1,7 @@
 name: Test macOS setup
 
 on:
+  workflow_dispatch:
   push:
     branches: [master]
     paths:
