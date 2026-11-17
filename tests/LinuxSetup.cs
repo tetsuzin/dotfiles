@@ -131,7 +131,9 @@ public sealed class LinuxSetupTests : IDisposable
     File.CreateSymbolicLink(Path.Combine(bin, "mise"), TestHome.MiseBin);
     t.Run(["bash", "ubuntu/run.sh", "bootstrap", "--link-only", "--dry-run"]);
     Assert.True(!File.Exists(t.At(".bashrc")), "dry-run で .bashrc が配置された");
-    t.Run(["bash", "ubuntu-worker/run.sh", "bootstrap", "--link-only"]);
+    t.Run(["bash", "ubuntu/run.sh", "link", "--dry-run"]);
+    Assert.True(!File.Exists(t.At(".bashrc")), "link の dry-run で .bashrc が配置された");
+    t.Run(["bash", "ubuntu-worker/run.sh", "link"]);
     Assert.True(File.Exists(t.At(".bashrc")), "ubuntu-worker で .bashrc が配置されていない");
     Assert.True(!File.Exists(t.At(".config/starship.toml")), "ubuntu-worker で starship.toml が配置された");
   }
@@ -158,13 +160,19 @@ public sealed class LinuxSetupTests : IDisposable
   }
 
   [Fact]
-  public void BootstrapRejectsIncompatibleFlags()
+  public void CommandsRejectUnsupportedFlags()
   {
-    string[][] cases = [["--update", "--dry-run"], ["--update", "--link-only"], ["--unknown"]];
-    foreach (var flags in cases)
+    // update は引数の検査で止まり、更新処理には進まない。
+    string[][] cases =
+    [
+      ["bootstrap", "--update"], ["bootstrap", "--unknown"], ["link", "--update"],
+      ["update", "--dry-run"], ["update", "--link-only"], ["update", "--unknown"],
+    ];
+    foreach (var args in cases)
     {
-      var result = t.Run(["bash", "ubuntu/run.sh", "bootstrap", .. flags], check: false);
-      Assert.True(result.ExitCode != 0, $"{string.Join(' ', flags)} が拒否されなかった");
+      var result = t.Run(["bash", "ubuntu/run.sh", .. args], check: false);
+      Assert.True(result.ExitCode != 0, $"{string.Join(' ', args)} が拒否されなかった");
+      Assert.Contains("不明な引数です", result.Stdout + result.Stderr);
     }
   }
 

@@ -36,7 +36,7 @@ jobs:
       - name: Check shell syntax
         shell: bash
         run: |
-          for script in windows/run.sh scripts/_functions scripts/functions/*.sh windows/scripts/bootstrap.sh; do
+          for script in windows/run.sh scripts/_functions scripts/functions/*.sh windows/scripts/*.sh; do
             bash -n "$script"
           done
       - name: Check PowerShell syntax
@@ -63,8 +63,8 @@ jobs:
       - name: Dry-run dotfiles via run.sh
         shell: bash
         working-directory: windows
-        run: ./run.sh bootstrap --link-only --dry-run
+        run: ./run.sh link --dry-run
       - name: Dry-run dotfiles via run.cmd
         shell: cmd
         working-directory: windows
-        run: .\run.cmd bootstrap --link-only --dry-run
+        run: .\run.cmd link --dry-run

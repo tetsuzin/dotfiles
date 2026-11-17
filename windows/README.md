@@ -23,7 +23,7 @@ cd dotfiles\windows
 
 `run.cmd` は `prepare` を PowerShell で実行し、それ以外のコマンドを Git Bash の `run.sh` に転送します。Git Bash は `git --exec-path` から特定するため、WSL の bash が選ばれることはありません。Git Bash から直接 `./run.sh prepare` や `./run.sh bootstrap` を実行しても同じです。
 
-`prepare` は scoop 本体と extras バケットが無ければ導入し、Linux と同じく公式スクリプトで独立した mise を `~\.local\bin` に導入します。導入済みなら何もしないため、実行は初回だけで済みます。mise 本体の更新は `bootstrap --update` と共通設定の `self_update.auto` が担います。スクリプトはユーザーの Path に `~\.local\bin` を追加します。必要バージョンは 2026.10.12 以上で、`mise.toml` の `min_version` が検査します。
+`prepare` は scoop 本体と extras バケットが無ければ導入し、Linux と同じく公式スクリプトで独立した mise を `~\.local\bin` に導入します。導入済みなら何もしないため、実行は初回だけで済みます。mise 本体の更新は `update` と共通設定の `self_update.auto` が担います。スクリプトはユーザーの Path に `~\.local\bin` を追加します。必要バージョンは 2026.10.12 以上で、`mise.toml` の `min_version` が検査します。
 
 `bootstrap` は winget / scoop パッケージ、dotfiles、ツール、`bootstrap` タスクの順に適用します。管理者権限は不要ですが、インストーラが UAC プロンプトを出すことがあります。dotfiles はシンボリックリンクで配置するため、開発者モード (設定 > システム > 開発者向け) を有効にしておきます。リポジトリの設定はこの操作で mise に trust されます。
 
@@ -49,11 +49,11 @@ Git の設定は `~/.config/git/config` に配置します。`~/.gitconfig` が�
 
 ```powershell
 .\run.cmd bootstrap --dry-run
-.\run.cmd bootstrap --update
-.\run.cmd bootstrap --link-only
+.\run.cmd update
+.\run.cmd link
 ```
 
-通常の適用は不足しているパッケージを導入します。`--update` は mise 本体、宣言した winget / scoop パッケージ、mise ツールを更新します。scoop でバージョンを固定した項目は更新されません。
+通常の適用は不足しているパッケージを導入します。`update` は mise 本体、宣言した winget / scoop パッケージ、mise ツールを更新して適用します。`link` は dotfiles の配置だけを行い、`bootstrap --link-only` と同じです。`--dry-run` は `bootstrap` と `link` で使えます。scoop でバージョンを固定した項目は更新されません。
 
 mise は `~` を常に実際のユーザープロファイルに解決するため、Linux のテストのような一時ホームでの隔離は行えません。変更内容は `--dry-run` か、`mise -C windows bootstrap status` と `mise -C windows dotfiles diff` で事前に確認します。
 

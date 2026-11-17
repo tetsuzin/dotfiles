@@ -1,6 +1,6 @@
 # mise bootstrap が外部から取得するもの。Homebrew の prefix が無い初回だけ sudo が必要。
 
-# 既定ブランチに追従し、bootstrap --update で fast-forward する。
+# 既定ブランチに追従し、update で fast-forward する。
 [bootstrap.repos]
 "~/.local/share/dotfiles/eza-themes" = { url = "https://github.com/eza-community/eza-themes.git" }
 

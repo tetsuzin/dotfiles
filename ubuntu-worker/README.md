@@ -12,7 +12,7 @@ Ubuntu 26 を対象に、AI エージェントを動かすための最小構成�
 exec bash -l
 ```
 
-`--dry-run`、`--update`、`--link-only`、`--link-force=y` の意味は `../ubuntu/README.md` と同じです。処理の本体は `../scripts/ubuntu/` にあり、`../ubuntu/` と共通です。
+`update`、`link` と、`--dry-run`、`--link-force=y` の意味は `../ubuntu/README.md` と同じです。処理の本体は `../scripts/ubuntu/` にあり、`../ubuntu/` と共通です。
 
 ## 入るもの
 
