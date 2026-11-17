@@ -49,9 +49,10 @@ jobs:
         run: mise -C ubuntu -E workstation install --dry-run
       - name: Fetch external repositories
         run: mise -C ubuntu -E workstation bootstrap --only repos
+      # ランナーには既定の ~/.bashrc と ~/.bash_profile があり、置き換えを許可しないと競合で止まる。
       - name: Dry-run workstation dotfiles via run.sh
         working-directory: ubuntu
-        run: ./run.sh link --dry-run
+        run: ./run.sh link --dry-run --link-force=y
       # ランナーは使い捨てなので実際に配置する。既定の ~/.bashrc などは置き換える。
       # ホームに mise の設定が入るため、最後に実行する。
       - name: Apply worker dotfiles
