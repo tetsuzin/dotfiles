@@ -1,8 +1,8 @@
 # Linux セットアップ
 
-Ubuntu 26 と、その WSL 環境を対象に、mise と apt で環境を構築します。構成は 2 つあり、`--env` で選びます。
+Ubuntu 26 と、その WSL 環境を対象に、mise と apt で環境を構築します。構成は 2 つあり、初回に `--env` で選びます。
 
-- `workstation` (既定): 人が使うマシン。最小構成に追加分を重ねます。WSL では WSL 用の設定も重ねます。
+- `workstation`: 人が使うマシン。最小構成に追加分を重ねます。WSL では WSL 用の設定も重ねます。
 - `worker`: AI エージェントを動かすワーカー。最小構成だけを入れます。
 
 ## 初回セットアップ
@@ -11,16 +11,16 @@ Ubuntu 26 と、その WSL 環境を対象に、mise と apt で環境を構築�
 
 ```bash
 ./run.sh prepare
-./run.sh bootstrap                # 人が使うマシン
-./run.sh bootstrap --env worker   # AI エージェントのワーカー
+./run.sh bootstrap --env workstation   # 人が使うマシン
+./run.sh bootstrap --env worker        # AI エージェントのワーカー
 exec bash -l
 ```
 
 `prepare` は curl か git が無ければ apt で取得用の最小限の依存を入れ、独立した mise を `~/.local/bin/mise` に導入します。導入済みなら何もしないため、実行は初回だけで済みます。mise 本体の更新は `update` と共通設定の `self_update.auto` が担います。必要バージョンは 2026.10.14 以上で、`mise.toml` の `min_version` が検査します。
 
-`bootstrap` は Ubuntu 26 であることを確認し、`--env` と WSL かどうかから読み込む設定を選びます。apt パッケージ、外部リポジトリ、dotfiles、ツール、krew プラグインの順に適用します。apt の操作には sudo が必要です。リポジトリの設定はこの操作で mise に trust されます。
+`bootstrap` は Ubuntu 26 であることを確認し、記録された構成に合わせて設定を読み込みます。apt パッケージ、外部リポジトリ、dotfiles、ツール、krew プラグインの順に適用します。apt の操作には sudo が必要です。リポジトリの設定はこの操作で mise に trust されます。
 
-`--env` は `bootstrap`、`update`、`link` で使えます。ワーカーでは毎回 `--env worker` を付けます。付け忘れると人が使うマシン向けの追加分も入ります。
+`--env` の指定は `~/.config/mise/miserc.local.toml` に記録され、2 回目からは省略できます。記録が無いマシンで省略するとエラーで止まります。構成を変えるときは `--env` を付けて実行し直します。
 
 ## worker に入るもの
 
@@ -32,7 +32,7 @@ k8s、AWS、Docker、エディタ、プロンプトや TUI などの対話用ツ
 
 ## 設定の管理先
 
-最小構成を土台にし、追加分は mise のプロファイルとして重ねます。`workstation` は `-E workstation`、WSL ではさらに `-E workstation,wsl` で読み込まれます。`worker` はプロファイルを指定しません。
+最小構成を土台にし、追加分は mise のプロファイルとして重ねます。どのプロファイルを使うかは `miserc.local.toml` の `env` に記録されるので、`run.sh` でも素の `mise` コマンドでも同じ設定が読み込まれます。`worker` はプロファイルなしです。
 
 - `run.sh`: 入口。Ubuntu 固有の処理を持ち、共通の流れは `../scripts/run.sh` を読み込みます。
 - `mise.toml`: 必要バージョンと、最小構成のツール設定の読み込み。`mise/conf.d/*.toml` は同じディレクトリの設定として自動で読み込まれ、このファイルの trust に含まれます。

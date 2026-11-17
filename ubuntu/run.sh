@@ -8,8 +8,9 @@ source "${ENV_DIR}/../scripts/run.sh"
 
 function os_usage() {
   cat <<'EOF'
-Ubuntu では bootstrap / update / link に --env で構成を指定できます。
-  --env workstation  人が使うマシン (既定)。WSL では WSL 用の設定も重ねる
+Ubuntu では初回の bootstrap に --env でこのマシンの構成を指定します。
+指定は ~/.config/mise/miserc.local.toml に記録され、以降は省略できます。
+  --env workstation  人が使うマシン。WSL では WSL 用の設定も重ねる
   --env worker       AI エージェントのワーカー。最小構成だけを適用する
 EOF
 }
@@ -38,9 +39,11 @@ function os_prepare() {
   fi
 }
 
-# ARGS から --env を取り出し、mise のプロファイルを決める。残りは mise bootstrap に渡る。
+# ARGS から --env を取り出し、このマシンの構成を記録する。残りは mise bootstrap に渡る。
+# 構成は mise がマシンごとに読む miserc.local.toml の env に書くので、指定は初回だけでよい。
+# 以降は run.sh でも素の mise コマンドでも同じプロファイルが有効になる。
 function os_enter() {
-  local env_name=workstation rest=()
+  local env_name="" rest=()
   set -- "${ARGS[@]}"
   while [[ $# -gt 0 ]]; do
     case "$1" in
@@ -56,22 +59,31 @@ function os_enter() {
   done
   ARGS=("${rest[@]}")
 
+  local role_file="${XDG_CONFIG_HOME:-${HOME}/.config}/mise/miserc.local.toml"
+  local envs
   case "${env_name}" in
+    "")
+      [[ -f "${role_file}" ]] ||
+        fail "このマシンの構成が未設定です。初回は --env workstation か --env worker を指定してください"
+      ;;
     workstation)
-      export MISE_ENV=workstation
+      envs='"workstation"'
       if grep -qi microsoft /proc/version; then
-        MISE_ENV+=",wsl"
+        envs+=', "wsl"'
       fi
       ;;
-    worker) unset MISE_ENV ;;
+    worker) envs="" ;;
     *) fail "不明な環境です: ${env_name} (workstation か worker を指定してください)" ;;
   esac
+  if [[ -n "${env_name}" ]]; then
+    # trust と同じく、dry-run でも記録する。ホスト構成は変更しない。
+    mkdir -p "$(dirname "${role_file}")"
+    printf '# ubuntu/run.sh --env %s が書いたこのマシンの構成。\nenv = [%s]\n' "${env_name}" "${envs}" >"${role_file}"
+  fi
 
   # プロファイルのフォルダは独立した config root なので個別に trust する。
-  local profile profiles="${MISE_ENV:-}"
-  for profile in ${profiles//,/ }; do
-    mise trust "mise/conf.d/${profile}/mise.${profile}.toml"
-  done
+  mise trust mise/conf.d/workstation/mise.workstation.toml
+  mise trust mise/conf.d/wsl/mise.wsl.toml
 }
 
 function os_upgrade_packages() {
