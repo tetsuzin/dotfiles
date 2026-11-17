@@ -21,7 +21,7 @@ cd dotfiles\windows
 .\run.cmd bootstrap
 ```
 
-`run.cmd` は `prepare` を PowerShell で実行し、それ以外のコマンドを Git Bash の `run.sh` に転送します。Git Bash は `git --exec-path` から特定するため、WSL の bash が選ばれることはありません。Git Bash から直接 `./run.sh prepare` や `./run.sh bootstrap` を実行しても同じです。
+`run.cmd` は同じディレクトリの `run.ps1` を PowerShell で実行します。PowerShell 7 があればそれを、無い初回は Windows PowerShell 5.1 を使います。
 
 `prepare` は scoop 本体と extras バケットが無ければ導入し、Linux と同じく公式スクリプトで独立した mise を `~\.local\bin` に導入します。導入済みなら何もしないため、実行は初回だけで済みます。mise 本体の更新は `update` と共通設定の `self_update.auto` が担います。スクリプトはユーザーの Path に `~\.local\bin` を追加します。必要バージョンは 2026.10.12 以上で、`mise.toml` の `min_version` が検査します。
 
@@ -30,7 +30,7 @@ cd dotfiles\windows
 ## 設定の管理先
 
 - `mise.toml`: 必要バージョンと共通ツール設定の読み込みだけ。`mise/conf.d/*.toml` は同じディレクトリの設定として自動で読み込まれ、このファイルの trust に含まれます。
-- `mise/conf.d/packages.toml`: OS パッケージ。winget は PowerShell 7、Windows Terminal、GUI アプリ。scoop は Git、7-Zip、less、sudo、zellij などユーザー領域の CLI と GUI ツール。extras バケットのものは `scoop:extras/<name>` と書きますが、scoop は名前だけで照合するためバケットは prepare.ps1 が追加します。
+- `mise/conf.d/packages.toml`: OS パッケージ。winget は PowerShell 7、Windows Terminal、GUI アプリ。scoop は Git、7-Zip、less、sudo、zellij などユーザー領域の CLI と GUI ツール。extras バケットのものは `scoop:extras/<name>` と書きますが、scoop は名前だけで照合するためバケットは `run.cmd prepare` が追加します。
 - `mise/conf.d/dotfiles.toml`: ホームに配置するシンボリックリンク。`~` は `C:\Users\<name>` に解決され、リンク元の相対パスはこのファイルの位置が基準です。
 - `mise/conf.d/tasks.toml`: `claude:git-bash-path` タスク。Claude Code が scoop の Git Bash を使えるよう、ユーザー環境変数 `CLAUDE_CODE_GIT_BASH_PATH` を設定します。`bootstrap` タスクから呼び出し、単独では `mise -C windows run claude:git-bash-path` で実行できます。反映には VS Code や Claude Code の再起動が必要です。
 - `../dotfiles/.config/mise/config.windows.toml`: Windows 固有の CLI ツール。ホームにも配置され、`miserc.toml` の `auto_env` により Windows でだけ読み込まれます。
@@ -54,7 +54,7 @@ Git の設定は `~/.config/git/config` に配置します。`~/.gitconfig` が�
 .\run.cmd link
 ```
 
-通常の適用は不足しているパッケージを導入します。`update` は mise 本体、宣言した winget / scoop パッケージ、mise ツールを更新して適用します。`link` は dotfiles の配置だけを行い、`bootstrap --link-only` と同じです。`--dry-run` は `bootstrap` と `link` で使えます。scoop でバージョンを固定した項目は更新されません。
+通常の適用は不足しているパッケージを導入します。`update` は mise 本体、宣言した winget / scoop パッケージ、mise ツールを更新して適用します。`link` は dotfiles の配置だけを行います。コマンドの後ろの引数は `mise bootstrap` にそのまま渡すので、`--dry-run` で変更予定を確認できます。scoop でバージョンを固定した項目は更新されません。
 
 変更内容は `--dry-run` か、`mise -C windows bootstrap status` と `mise -C windows dotfiles diff` で事前に確認します。
 
@@ -62,7 +62,7 @@ Git の設定は `~/.config/git/config` に配置します。`~/.gitconfig` が�
 
 1. `mise -C windows bootstrap status` で、winget / scoop パッケージと dotfiles の現状を確認します。scoop で入れたものは winget からは見えず、その逆も同じなので、宣言したマネージャと実際の導入元が違うものは二重に導入されます。先に整理するか、`packages.toml` の該当行を直します。
 2. `.\run.cmd prepare` を実行します。scoop や winget で入れた mise が残っていると警告が出るので、`scoop uninstall mise` や `winget uninstall jdx.mise` で外し、1 つの導入方法に揃えます。導入済みのツールのデータ (`~\AppData\Local\mise`) は残るため再ダウンロードは不要です。
-3. `.\run.cmd bootstrap --dry-run` で変更予定を確認し、`.\run.cmd bootstrap` を実行します。`~/.config/starship.toml`、`~/.claude/settings.json`、`~/.config/mise/config.toml`、PowerShell プロファイルなどの既存ファイルは自動で上書きしません。退避後に必要な場合のみ `--link-force=y` を指定します。
+3. `.\run.cmd bootstrap --dry-run` で変更予定を確認し、`.\run.cmd bootstrap` を実行します。`~/.config/starship.toml`、`~/.claude/settings.json`、`~/.config/mise/config.toml`、PowerShell プロファイルなどの既存ファイルは自動で上書きしません。退避後に必要な場合のみ `--force-dotfiles` を指定します。
 4. 新しい PowerShell で `Get-Command mise`、`mise doctor`、`mise ls` を確認します。shims が古い mise を指している場合は `mise reshim` を実行します。
 5. mise の `[tools]` に移したツール (act、gh、jq、shfmt、starship など) は scoop 側を `scoop uninstall` で外します。残したままでも動きますが、PATH の順序で古い方が実行されることがあります。
 
@@ -72,4 +72,4 @@ Git の設定は `~/.config/git/config` に配置します。`~/.gitconfig` が�
 
 ## 検証
 
-`.github/workflows/windows-setup.yml` は Windows ランナーで、シェルの構文チェック、設定ファイルの読み込み、ツールの導入 dry-run、dotfiles の dry-run を実行します。master への push と PR のときだけ動き、対象は windows、dotfiles、scripts とワークフロー自身の変更に限定しています。
+`.github/workflows/windows-setup.yml` は Windows ランナーで、PowerShell の構文チェック、設定ファイルの読み込み、ツールの導入 dry-run、dotfiles の dry-run を実行します。master への push と PR のときだけ動き、対象は windows、dotfiles とワークフロー自身の変更に限定しています。
