@@ -34,7 +34,7 @@ exec bash -l
 
 ## worker に入るもの
 
-- mise ツール: claude、codex、dotnet、node、python、gh、fd、jq
+- mise ツール: claude、codex、dotnet、go、node、python、biome、shfmt、gh、fd、jq
 - apt パッケージ: ビルド、dotnet の依存ライブラリ、git、ripgrep、SSH 接続の受け付けに必要なもの
 - dotfiles: mise、git、bash、Claude Code、Codex の設定
 
