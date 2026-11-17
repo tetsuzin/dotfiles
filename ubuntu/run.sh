@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# 人が使う Ubuntu マシン (WSL を含む) の入口。スクリプトは ubuntu-worker からも使う。
+# Ubuntu (WSL を含む) の入口。人が使うマシンと AI エージェントのワーカーは --env で選ぶ。
 set -euo pipefail
 
 ENV_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"

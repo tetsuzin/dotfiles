@@ -5,14 +5,12 @@ on:
     branches: [master]
     paths:
       - ubuntu/**
-      - ubuntu-worker/**
       - dotfiles/**
       - scripts/**
       - .github/workflows/linux-setup.yml
   pull_request:
     paths:
       - ubuntu/**
-      - ubuntu-worker/**
       - dotfiles/**
       - scripts/**
       - .github/workflows/linux-setup.yml
@@ -37,36 +35,28 @@ jobs:
           echo "$HOME/.local/bin" >> "$GITHUB_PATH"
       - name: Check shell syntax
         run: |
-          for script in ubuntu/run.sh ubuntu-worker/run.sh scripts/_functions scripts/functions/*.sh ubuntu/scripts/*.sh dotfiles/.bash*; do
+          for script in ubuntu/run.sh scripts/_functions scripts/functions/*.sh ubuntu/scripts/*.sh dotfiles/.bash*; do
             bash -n "$script"
           done
-      # [dotfiles] は include できず両方に書いているため、ubuntu が最小構成のリンクを欠いていないか確認する。
-      - name: Check ubuntu covers ubuntu-worker dotfiles
-        run: |
-          missing="$(grep -Fvxf ubuntu/mise/conf.d/dotfiles.toml <(grep '^"' ubuntu-worker/mise/conf.d/dotfiles.toml) || true)"
-          if [[ -n "$missing" ]]; then
-            echo "ubuntu/mise/conf.d/dotfiles.toml に無いリンク:"
-            echo "$missing"
-            exit 1
-          fi
+      # 最小構成 (worker) と、workstation を重ねた構成の両方を読み込む。
       - name: Load configuration
         run: |
-          for dir in ubuntu ubuntu-worker; do
-            mise -C "$dir" config ls
-            mise -C "$dir" bootstrap packages status
-          done
+          mise -C ubuntu config ls
+          mise -C ubuntu bootstrap packages status
+          mise -C ubuntu -E workstation config ls
+          mise -C ubuntu -E workstation bootstrap packages status
       - name: Dry-run tools
-        run: mise -C ubuntu install --dry-run
+        run: mise -C ubuntu -E workstation install --dry-run
       - name: Fetch external repositories
-        run: mise -C ubuntu bootstrap --only repos
-      - name: Dry-run dotfiles via run.sh
+        run: mise -C ubuntu -E workstation bootstrap --only repos
+      - name: Dry-run workstation dotfiles via run.sh
         working-directory: ubuntu
         run: ./run.sh link --dry-run
       # ランナーは使い捨てなので実際に配置する。既定の ~/.bashrc などは置き換える。
       # ホームに mise の設定が入るため、最後に実行する。
-      - name: Apply ubuntu-worker dotfiles
-        working-directory: ubuntu-worker
+      - name: Apply worker dotfiles
+        working-directory: ubuntu
         run: |
-          ./run.sh link --link-force=y
+          ./run.sh link --env worker --link-force=y
           [[ -L ~/.bashrc && -L ~/.claude/CLAUDE.md ]]
           [[ ! -e ~/.config/starship.toml && ! -e ~/.config/nvim ]]

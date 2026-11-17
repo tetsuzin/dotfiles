@@ -4,7 +4,7 @@ function _run_usage() {
   cat <<'EOF'
 Usage: ./run.sh <command> [args...]
 
-適用したい環境のディレクトリ (ubuntu / ubuntu-worker / mac / windows) で実行します。
+適用したい環境のディレクトリ (ubuntu / mac / windows) で実行します。
 
 Commands:
   prepare    ホストの準備 (mise 本体。macOS は Homebrew、Windows は scoop も)
@@ -14,6 +14,7 @@ Commands:
 
 bootstrap と link は --dry-run で変更予定を確認できます。
 既存の dotfiles を置き換える場合は --link-force=y を指定します。
+ubuntu は --env worker で AI エージェントのワーカー用の最小構成を適用します。
 EOF
 }
 
