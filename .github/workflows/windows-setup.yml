@@ -26,9 +26,9 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Install mise
         shell: pwsh
-        env:
-          MISE_VERSION: 2026.10.12
         run: |
+          # 対応する最低バージョンで確かめる。値は mise.toml の min_version だけに書く。
+          $env:MISE_VERSION = (Select-String -Path windows/mise.toml -Pattern '^min_version = "(.*)"').Matches[0].Groups[1].Value
           irm https://mise.run/powershell | iex
           Add-Content $env:GITHUB_PATH "$HOME\.local\bin"
       - name: Check PowerShell syntax

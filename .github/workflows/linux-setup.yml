@@ -27,9 +27,9 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Install mise
-        env:
-          MISE_VERSION: 2026.10.14
         run: |
+          # 対応する最低バージョンで確かめる。値は mise.toml の min_version だけに書く。
+          export MISE_VERSION="$(sed -n 's/^min_version = "\(.*\)"/\1/p' ubuntu/mise.toml)"
           curl -fsSL https://mise.run -o "$RUNNER_TEMP/install-mise.sh"
           sh "$RUNNER_TEMP/install-mise.sh"
           echo "$HOME/.local/bin" >> "$GITHUB_PATH"

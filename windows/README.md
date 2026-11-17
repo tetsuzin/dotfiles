@@ -1,10 +1,10 @@
 # Windows セットアップ
 
-Windows 11 を対象に、mise と winget、scoop で環境を構築します。Linux と同じ mise bootstrap の仕組みを使います。
+Windows 11 を対象に、mise と winget、scoop で環境を構築します。コマンドの一覧と全体の構成は [../README.md](../README.md) にあります。
 
 ## 初回セットアップ
 
-Git が無い状態では、PowerShell から scoop と Git を入れてリポジトリを clone します。Git は以降も scoop の宣言 (`packages.toml`) で管理します。
+Git が無い状態では、PowerShell から scoop と Git を入れてリポジトリを clone します。Git は以降も scoop の宣言 (`mise/conf.d/packages.toml`) で管理します。
 
 ```powershell
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
@@ -13,7 +13,7 @@ scoop install git
 git clone https://github.com/tetsuzin/dotfiles.git
 ```
 
-以降は `windows\run.cmd` を入口にします。cmd、PowerShell、Windows Terminal のどこからでも実行できます。
+以降は `run.cmd` を入口にします。cmd、PowerShell、Windows Terminal のどこからでも実行できます。
 
 ```powershell
 cd dotfiles\windows
@@ -21,55 +21,29 @@ cd dotfiles\windows
 .\run.cmd bootstrap
 ```
 
-`run.cmd` は同じディレクトリの `run.ps1` を PowerShell で実行します。PowerShell 7 があればそれを、無い初回は Windows PowerShell 5.1 を使います。
+`prepare` は scoop 本体と extras バケット、mise 本体を入れ、ユーザーの Path に `~\.local\bin` を追加します。実行後は新しいターミナルを開きます。
 
-`prepare` は scoop 本体と extras バケットが無ければ導入し、Linux と同じく公式スクリプトで独立した mise を `~\.local\bin` に導入します。導入済みなら何もしないため、実行は初回だけで済みます。mise 本体の更新は `update` と共通設定の `self_update.auto` が担います。スクリプトはユーザーの Path に `~\.local\bin` を追加します。必要バージョンは 2026.10.12 以上で、`mise.toml` の `min_version` が検査します。
+`bootstrap` に管理者権限は不要ですが、インストーラが UAC プロンプトを出すことがあります。dotfiles はシンボリックリンクで配置するため、開発者モード (設定 > システム > 開発者向け) を有効にしておきます。
 
-`bootstrap` は winget / scoop パッケージ、dotfiles、ツール、`bootstrap` タスクの順に適用します。管理者権限は不要ですが、インストーラが UAC プロンプトを出すことがあります。dotfiles はシンボリックリンクで配置するため、開発者モード (設定 > システム > 開発者向け) を有効にしておきます。リポジトリの設定はこの操作で mise に trust されます。
+## 役割分担
 
-## 設定の管理先
+PowerShell・Windows Terminal などシステム寄りの基盤は winget、Git や圧縮ツールなどユーザー領域の基盤は scoop、開発 CLI は mise が担当します。
 
-- `mise.toml`: 必要バージョンと共通ツール設定の読み込みだけ。`mise/conf.d/*.toml` は同じディレクトリの設定として自動で読み込まれ、このファイルの trust に含まれます。
-- `mise/conf.d/packages.toml`: OS パッケージ。winget は PowerShell 7、Windows Terminal、GUI アプリ。scoop は Git、7-Zip、less、sudo、zellij などユーザー領域の CLI と GUI ツール。extras バケットのものは `scoop:extras/<name>` と書きますが、scoop は名前だけで照合するためバケットは `run.cmd prepare` が追加します。
-- `mise/conf.d/dotfiles.toml`: ホームに配置するシンボリックリンク。`~` は `C:\Users\<name>` に解決され、リンク元の相対パスはこのファイルの位置が基準です。
-- `mise/conf.d/tasks.toml`: `claude:git-bash-path` タスク。Claude Code が scoop の Git Bash を使えるよう、ユーザー環境変数 `CLAUDE_CODE_GIT_BASH_PATH` を設定します。`bootstrap` タスクから呼び出し、単独では `mise -C windows run claude:git-bash-path` で実行できます。反映には VS Code や Claude Code の再起動が必要です。
-- `../dotfiles/.config/mise/config.windows.toml`: Windows 固有の CLI ツール。ホームにも配置され、`miserc.toml` の `auto_env` により Windows でだけ読み込まれます。
-- `../dotfiles/Documents/PowerShell/Microsoft.PowerShell_profile.ps1`: PowerShell 7 のプロファイル。mise の activate と starship の初期化を含みます。
-- `../dotfiles/.config/mise/config.toml`: 全マシン共通のランタイムと CLI ツールの最小構成。dotnet は Windows では Visual Studio 側に任せるため除外しています。
-- `../dotfiles/.config/mise/conf.d/workstation.toml`: 人が使うマシン向けの全 OS 共通 CLI ツール。
-- `../dotfiles/.config/mise/conf.d/settings.toml`: mise 本体の設定 (`self_update.auto`)。ホームにだけ配置し、`mise.toml` からは include しません。
-- `../dotfiles/.config/mise/miserc.toml`: mise が設定を探す前に読む設定 (`auto_env`)。ホームにだけ配置します。
+## 注意点
 
-ホームに配置するファイルの実体は、OS を問わずリポジトリ直下の `dotfiles/` にホームと同じ構造で置きます。どの OS が何を使うかは各 OS の `mise/conf.d/dotfiles.toml` が決めます。
-
-PowerShell・Windows Terminal などシステム寄りの基盤は winget、Git や圧縮ツールなどユーザー領域の基盤は scoop、開発 CLI は mise が担当します。Windows 向けビルドが無いツール (btop、krew、aws-cli など) は Linux の設定にだけ置きます。mise は `[bootstrap.mise_shell_activate]` で PowerShell に対応していないため、activate はプロファイルに直接書いています。
-
-Git の設定は `~/.config/git/config` に配置します。`~/.gitconfig` が既にある場合は両方が読まれ、重複する項目は `~/.gitconfig` が優先されます。マシン固有の設定 (ghq の root や safe.directory など) はそのまま `~/.gitconfig` に残せます。
-
-## 更新と確認
-
-```powershell
-.\run.cmd bootstrap --dry-run
-.\run.cmd update
-.\run.cmd link
-```
-
-通常の適用は不足しているパッケージを導入します。`update` は mise 本体、宣言した winget / scoop パッケージ、mise ツールを更新して適用します。`link` は dotfiles の配置だけを行います。コマンドの後ろの引数は `mise bootstrap` にそのまま渡すので、`--dry-run` で変更予定を確認できます。scoop でバージョンを固定した項目は更新されません。
-
-変更内容は `--dry-run` か、`mise -C windows bootstrap status` と `mise -C windows dotfiles diff` で事前に確認します。
+- **Git の設定**: `~/.config/git/config` に配置します。`~/.gitconfig` が既にある場合は両方が読まれ、重複する項目は `~/.gitconfig` が優先されます。マシン固有の設定 (ghq の root や safe.directory など) は `~/.gitconfig` に残せます。
+- **scoop のバージョン固定**: 固定した項目は `update` でも更新されません。
+- **変更内容の確認**: `--dry-run` のほか、`mise -C windows bootstrap status` と `mise -C windows dotfiles diff` で事前に確認できます。
+- **Claude Code と Git Bash**: `bootstrap` はユーザー環境変数 `CLAUDE_CODE_GIT_BASH_PATH` に scoop の Git Bash を設定します。反映には VS Code や Claude Code の再起動が必要です。
 
 ## 既存の環境から移行
 
 1. `mise -C windows bootstrap status` で、winget / scoop パッケージと dotfiles の現状を確認します。scoop で入れたものは winget からは見えず、その逆も同じなので、宣言したマネージャと実際の導入元が違うものは二重に導入されます。先に整理するか、`packages.toml` の該当行を直します。
 2. `.\run.cmd prepare` を実行します。scoop や winget で入れた mise が残っていると警告が出るので、`scoop uninstall mise` や `winget uninstall jdx.mise` で外し、1 つの導入方法に揃えます。導入済みのツールのデータ (`~\AppData\Local\mise`) は残るため再ダウンロードは不要です。
-3. `.\run.cmd bootstrap --dry-run` で変更予定を確認し、`.\run.cmd bootstrap` を実行します。`~/.config/starship.toml`、`~/.claude/settings.json`、`~/.config/mise/config.toml`、PowerShell プロファイルなどの既存ファイルは自動で上書きしません。退避後に必要な場合のみ `--force-dotfiles` を指定します。
+3. `.\run.cmd bootstrap --dry-run` で変更予定を確認し、`.\run.cmd bootstrap` を実行します。既存ファイルは自動で上書きしません。退避後に必要な場合のみ `--force-dotfiles` を指定します。
 4. 新しい PowerShell で `Get-Command mise`、`mise doctor`、`mise ls` を確認します。shims が古い mise を指している場合は `mise reshim` を実行します。
-5. mise の `[tools]` に移したツール (act、gh、jq、shfmt、starship など) は scoop 側を `scoop uninstall` で外します。残したままでも動きますが、PATH の順序で古い方が実行されることがあります。
+5. mise の `[tools]` に移したツール (act、jq、shfmt、starship など) は scoop 側を `scoop uninstall` で外します。残したままでも動きますが、PATH の順序で古い方が実行されることがあります。
 
 ## mise のアンインストール
 
 セットアップは mise の削除を行いません。`mise implode --dry-run` で削除対象を確認してから `mise implode` を実行すると、本体 (`~\.local\bin\mise.exe`)、導入したツール、状態、キャッシュが消えます。`~\.config\mise` はリポジトリへのリンクなので残します。PowerShell プロファイルの `mise activate` の行と、ユーザーの Path に追加された `~\.local\bin` は手で外します。
-
-## 検証
-
-`.github/workflows/windows-setup.yml` は Windows ランナーで、PowerShell の構文チェック、設定ファイルの読み込み、ツールの導入 dry-run、dotfiles の dry-run を実行します。master への push と PR のときだけ動き、対象は windows、dotfiles とワークフロー自身の変更に限定しています。
