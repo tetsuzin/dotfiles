@@ -53,4 +53,4 @@ jobs:
         run: mise -C mac bootstrap --only repos
       - name: Dry-run dotfiles via run.sh
         working-directory: mac
-        run: ./run.sh bootstrap --link-only --dry-run
+        run: ./run.sh link --dry-run

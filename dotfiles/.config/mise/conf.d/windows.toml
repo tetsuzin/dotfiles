@@ -1,6 +1,0 @@
-# Windows 固有の CLI。全 OS 共通のランタイムと CLI は config.toml で管理する。
-[tools]
-ghq = "latest"
-neovim = "latest"
-ripgrep = "latest"
-yazi = "latest"

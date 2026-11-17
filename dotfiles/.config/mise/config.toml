@@ -1,5 +1,7 @@
-# 全 OS 共通のランタイムと CLI の最小構成。AI エージェントのワーカーもこれだけを使う。
-# 人が使うマシン向けの追加分は conf.d/workstation.toml、OS 固有のツールは conf.d/<os>.toml で管理する。
+# 全マシン共通のランタイムと CLI の最小構成。AI エージェントのワーカーはこれだけを使う。
+# これ以外のファイルは人が使うマシンにだけ配置する。
+#   conf.d/workstation.toml  全 OS 共通の追加分
+#   config.<os>.toml         OS 固有の追加分。miserc.toml の auto_env が OS に合うものを読み込む
 # 各 OS の mise.toml からも include されるため、include で許可されないセクション
 # (settings など) は conf.d/settings.toml に書く。
 [tools]
@@ -11,6 +13,8 @@ dotnet = [
   { version = "11", os = ["linux", "macos"] },
 ]
 fd = "latest"
+# Windows の gh は scoop / winget 側に任せる
+gh = { version = "latest", os = ["linux", "macos"] }
 jq = "latest"
 node = "latest"
 python = "3"

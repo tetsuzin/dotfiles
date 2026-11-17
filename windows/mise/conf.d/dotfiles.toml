@@ -5,9 +5,10 @@
 
 # mise
 "~/.config/mise/config.toml" = "../../../dotfiles/.config/mise/config.toml"
+"~/.config/mise/miserc.toml" = "../../../dotfiles/.config/mise/miserc.toml"
 "~/.config/mise/conf.d/settings.toml" = "../../../dotfiles/.config/mise/conf.d/settings.toml"
 "~/.config/mise/conf.d/workstation.toml" = "../../../dotfiles/.config/mise/conf.d/workstation.toml"
-"~/.config/mise/conf.d/windows.toml" ="../../../dotfiles/.config/mise/conf.d/windows.toml"
+"~/.config/mise/config.windows.toml" = "../../../dotfiles/.config/mise/config.windows.toml"
 
 # git
 "~/.config/git/config" = "../../../dotfiles/.config/git/config"

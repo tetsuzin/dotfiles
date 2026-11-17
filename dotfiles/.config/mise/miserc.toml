@@ -1,0 +1,3 @@
+# mise が設定ファイルを探す前に読む設定。全マシンのホームに配置する。
+# OS に合う config.<os>.toml (linux / macos / windows) を自動で読み込む。
+auto_env = true

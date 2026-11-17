@@ -12,7 +12,7 @@ Apple Silicon の macOS を対象に、mise と Homebrew で環境を構築し�
 exec zsh -l
 ```
 
-`prepare` は Xcode Command Line Tools を確認し、Homebrew が無ければ公式スクリプトで導入し、独立した mise を `~/.local/bin/mise` に導入します。導入済みなら何もしないため、実行は初回だけで済みます。mise 本体の更新は `bootstrap --update` と共通設定の `self_update.auto` が担います。必要バージョンは 2026.11.2 以上で、`mise.toml` の `min_version` が検査します。
+`prepare` は Xcode Command Line Tools を確認し、Homebrew が無ければ公式スクリプトで導入し、独立した mise を `~/.local/bin/mise` に導入します。導入済みなら何もしないため、実行は初回だけで済みます。mise 本体の更新は `update` と共通設定の `self_update.auto` が担います。必要バージョンは 2026.11.2 以上で、`mise.toml` の `min_version` が検査します。
 
 `bootstrap` は Homebrew パッケージ、`/etc/pam.d/sudo_local`、外部リポジトリ、dotfiles、macOS の defaults、ツール、krew プラグインの順に適用します。sudo が必要なのは `sudo_local` の書き込みだけです。リポジトリの設定はこの操作で mise に trust されます。
 
@@ -23,11 +23,12 @@ exec zsh -l
 - `mise/conf.d/dotfiles.toml`: ホームに配置するシンボリックリンク。リンク元の相対パスはこのファイルの位置が基準です。
 - `mise/conf.d/macos.toml`: Dock と Finder の defaults、sudo の Touch ID 設定。
 - `mise/conf.d/tasks.toml`: `krew:install` タスク。`bootstrap` タスクから呼び出し、単独では `mise -C mac run krew:install` で実行できます。
-- `../dotfiles/.config/mise/conf.d/mac.toml`: macOS 固有の CLI ツール。ホームにも配置され、どのディレクトリでも利用できます。
+- `../dotfiles/.config/mise/config.macos.toml`: macOS 固有の CLI ツール。ホームにも配置され、`miserc.toml` の `auto_env` により macOS でだけ読み込まれます。
 - `../dotfiles/.zprofile`、`.zshrc`: Homebrew と mise の有効化、補完、alias。
-- `../dotfiles/.config/mise/config.toml`: 全 OS 共通のランタイムと CLI ツールの最小構成。
+- `../dotfiles/.config/mise/config.toml`: 全マシン共通のランタイムと CLI ツールの最小構成。
 - `../dotfiles/.config/mise/conf.d/workstation.toml`: 人が使うマシン向けの全 OS 共通 CLI ツール。
 - `../dotfiles/.config/mise/conf.d/settings.toml`: mise 本体の設定 (`self_update.auto`)。ホームにだけ配置し、`mise.toml` からは include しません。
+- `../dotfiles/.config/mise/miserc.toml`: mise が設定を探す前に読む設定 (`auto_env`)。ホームにだけ配置します。
 
 ホームに配置するファイルの実体は、OS を問わずリポジトリ直下の `dotfiles/` にホームと同じ構造で置きます。どの OS が何を使うかは各 OS の `mise/conf.d/dotfiles.toml` が決めます。
 
@@ -37,11 +38,11 @@ Git・curl などの基盤と GUI アプリ、フォントは Homebrew、開発 
 
 ```bash
 ./run.sh bootstrap --dry-run
-./run.sh bootstrap --update
-./run.sh bootstrap --link-only
+./run.sh update
+./run.sh link
 ```
 
-通常の適用は不足しているパッケージを導入します。`--update` は mise 本体、宣言した Homebrew パッケージ、mise ツールを更新します。eza テーマは既定ブランチに追従し、`--update` で fast-forward されます。ツールの `latest` と Homebrew の依存解決を含め、バージョンの固定・ロールバックは提供しません。
+通常の適用は不足しているパッケージを導入します。`update` は mise 本体、宣言した Homebrew パッケージ、mise ツールを更新して適用します。`link` は dotfiles の配置だけを行い、`bootstrap --link-only` と同じです。`--dry-run` は `bootstrap` と `link` で使えます。eza テーマは既定ブランチに追従し、`update` で fast-forward されます。ツールの `latest` と Homebrew の依存解決を含め、バージョンの固定・ロールバックは提供しません。
 
 旧構成の `cleanup = "zap"` に相当する「宣言にないパッケージの削除」は自動では行いません。`mise -C mac bootstrap packages prune --dry-run` で対象を確認してから `mise -C mac bootstrap packages prune` を実行します。formula は Homebrew で手動導入したものも対象になるため、必ず dry-run を先に見ます。
 

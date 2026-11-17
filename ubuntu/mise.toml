@@ -1,10 +1,7 @@
 min_version = "2026.10.14"
-# ubuntu-worker の最小構成に、人が使うマシン向けの追加分を重ねる。
-# [dotfiles] は include できないため、最小構成のリンクは mise/conf.d/dotfiles.toml にも書く。
+# 最小構成。AI エージェントのワーカー (--env worker) はこれだけを使う。
+# 人が使うマシン向けの追加分は mise/conf.d/workstation/、WSL の追加分は mise/conf.d/wsl/ にあり、
+# それぞれ -E workstation、-E wsl のときだけ読み込まれる。
 include = [
-  "../ubuntu-worker/mise/conf.d/packages.toml",
   "../dotfiles/.config/mise/config.toml",
-  "../dotfiles/.config/mise/conf.d/workstation.toml",
-  "../dotfiles/.config/mise/conf.d/linux.toml",
-  "../dotfiles/.config/mise/conf.d/linux-workstation.toml",
 ]

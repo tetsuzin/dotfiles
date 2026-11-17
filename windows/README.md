@@ -23,7 +23,7 @@ cd dotfiles\windows
 
 `run.cmd` は `prepare` を PowerShell で実行し、それ以外のコマンドを Git Bash の `run.sh` に転送します。Git Bash は `git --exec-path` から特定するため、WSL の bash が選ばれることはありません。Git Bash から直接 `./run.sh prepare` や `./run.sh bootstrap` を実行しても同じです。
 
-`prepare` は scoop 本体と extras バケットが無ければ導入し、Linux と同じく公式スクリプトで独立した mise を `~\.local\bin` に導入します。導入済みなら何もしないため、実行は初回だけで済みます。mise 本体の更新は `bootstrap --update` と共通設定の `self_update.auto` が担います。スクリプトはユーザーの Path に `~\.local\bin` を追加します。必要バージョンは 2026.10.12 以上で、`mise.toml` の `min_version` が検査します。
+`prepare` は scoop 本体と extras バケットが無ければ導入し、Linux と同じく公式スクリプトで独立した mise を `~\.local\bin` に導入します。導入済みなら何もしないため、実行は初回だけで済みます。mise 本体の更新は `update` と共通設定の `self_update.auto` が担います。スクリプトはユーザーの Path に `~\.local\bin` を追加します。必要バージョンは 2026.10.12 以上で、`mise.toml` の `min_version` が検査します。
 
 `bootstrap` は winget / scoop パッケージ、dotfiles、ツール、`bootstrap` タスクの順に適用します。管理者権限は不要ですが、インストーラが UAC プロンプトを出すことがあります。dotfiles はシンボリックリンクで配置するため、開発者モード (設定 > システム > 開発者向け) を有効にしておきます。リポジトリの設定はこの操作で mise に trust されます。
 
@@ -33,11 +33,12 @@ cd dotfiles\windows
 - `mise/conf.d/packages.toml`: OS パッケージ。winget は PowerShell 7、Windows Terminal、GUI アプリ。scoop は Git、7-Zip、less、sudo、zellij などユーザー領域の CLI と GUI ツール。extras バケットのものは `scoop:extras/<name>` と書きますが、scoop は名前だけで照合するためバケットは prepare.ps1 が追加します。
 - `mise/conf.d/dotfiles.toml`: ホームに配置するシンボリックリンク。`~` は `C:\Users\<name>` に解決され、リンク元の相対パスはこのファイルの位置が基準です。
 - `mise/conf.d/tasks.toml`: `claude:git-bash-path` タスク。Claude Code が scoop の Git Bash を使えるよう、ユーザー環境変数 `CLAUDE_CODE_GIT_BASH_PATH` を設定します。`bootstrap` タスクから呼び出し、単独では `mise -C windows run claude:git-bash-path` で実行できます。反映には VS Code や Claude Code の再起動が必要です。
-- `../dotfiles/.config/mise/conf.d/windows.toml`: Windows 固有の CLI ツール。ホームにも配置され、どのディレクトリでも利用できます。
+- `../dotfiles/.config/mise/config.windows.toml`: Windows 固有の CLI ツール。ホームにも配置され、`miserc.toml` の `auto_env` により Windows でだけ読み込まれます。
 - `../dotfiles/Documents/PowerShell/Microsoft.PowerShell_profile.ps1`: PowerShell 7 のプロファイル。mise の activate と starship の初期化を含みます。
-- `../dotfiles/.config/mise/config.toml`: 全 OS 共通のランタイムと CLI ツールの最小構成。dotnet は Windows では Visual Studio 側に任せるため除外しています。
+- `../dotfiles/.config/mise/config.toml`: 全マシン共通のランタイムと CLI ツールの最小構成。dotnet は Windows では Visual Studio 側に任せるため除外しています。
 - `../dotfiles/.config/mise/conf.d/workstation.toml`: 人が使うマシン向けの全 OS 共通 CLI ツール。
 - `../dotfiles/.config/mise/conf.d/settings.toml`: mise 本体の設定 (`self_update.auto`)。ホームにだけ配置し、`mise.toml` からは include しません。
+- `../dotfiles/.config/mise/miserc.toml`: mise が設定を探す前に読む設定 (`auto_env`)。ホームにだけ配置します。
 
 ホームに配置するファイルの実体は、OS を問わずリポジトリ直下の `dotfiles/` にホームと同じ構造で置きます。どの OS が何を使うかは各 OS の `mise/conf.d/dotfiles.toml` が決めます。
 
@@ -49,13 +50,13 @@ Git の設定は `~/.config/git/config` に配置します。`~/.gitconfig` が�
 
 ```powershell
 .\run.cmd bootstrap --dry-run
-.\run.cmd bootstrap --update
-.\run.cmd bootstrap --link-only
+.\run.cmd update
+.\run.cmd link
 ```
 
-通常の適用は不足しているパッケージを導入します。`--update` は mise 本体、宣言した winget / scoop パッケージ、mise ツールを更新します。scoop でバージョンを固定した項目は更新されません。
+通常の適用は不足しているパッケージを導入します。`update` は mise 本体、宣言した winget / scoop パッケージ、mise ツールを更新して適用します。`link` は dotfiles の配置だけを行い、`bootstrap --link-only` と同じです。`--dry-run` は `bootstrap` と `link` で使えます。scoop でバージョンを固定した項目は更新されません。
 
-mise は `~` を常に実際のユーザープロファイルに解決するため、Linux のテストのような一時ホームでの隔離は行えません。変更内容は `--dry-run` か、`mise -C windows bootstrap status` と `mise -C windows dotfiles diff` で事前に確認します。
+変更内容は `--dry-run` か、`mise -C windows bootstrap status` と `mise -C windows dotfiles diff` で事前に確認します。
 
 ## 既存の環境から移行
 
@@ -71,4 +72,4 @@ mise は `~` を常に実際のユーザープロファイルに解決するた�
 
 ## 検証
 
-`.github/workflows/windows-setup.yml` は Windows ランナーで、シェルの構文チェック、設定ファイルの読み込み、ツールの導入 dry-run、dotfiles の dry-run を実行します。main への push と PR のときだけ動き、対象は windows、dotfiles、scripts とワークフロー自身の変更に限定しています。
+`.github/workflows/windows-setup.yml` は Windows ランナーで、シェルの構文チェック、設定ファイルの読み込み、ツールの導入 dry-run、dotfiles の dry-run を実行します。master への push と PR のときだけ動き、対象は windows、dotfiles、scripts とワークフロー自身の変更に限定しています。
