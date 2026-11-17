@@ -1,7 +1,7 @@
 # 人が使うマシン向けに、最小構成へ重ねる追加分。-E workstation のときだけ読み込まれる。
 include = [
   "../../../../dotfiles/.config/mise/conf.d/workstation.toml",
-  "../../../../dotfiles/.config/mise/conf.d/linux-workstation.toml",
+  "../../../../dotfiles/.config/mise/config.linux.toml",
 ]
 
 # 既定ブランチに追従し、update で fast-forward する。
@@ -19,7 +19,7 @@ include = [
 
 # mise
 "~/.config/mise/conf.d/workstation.toml" = "../../../../dotfiles/.config/mise/conf.d/workstation.toml"
-"~/.config/mise/conf.d/linux-workstation.toml" = "../../../../dotfiles/.config/mise/conf.d/linux-workstation.toml"
+"~/.config/mise/config.linux.toml" = "../../../../dotfiles/.config/mise/config.linux.toml"
 
 # git
 "~/.config/act/actrc" = "../../../../dotfiles/.config/act/actrc"

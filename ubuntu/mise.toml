@@ -4,5 +4,4 @@ min_version = "2026.10.14"
 # それぞれ -E workstation、-E wsl のときだけ読み込まれる。
 include = [
   "../dotfiles/.config/mise/config.toml",
-  "../dotfiles/.config/mise/conf.d/linux.toml",
 ]

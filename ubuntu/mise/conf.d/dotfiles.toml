@@ -5,8 +5,8 @@
 
 # mise
 "~/.config/mise/config.toml" = "../../../dotfiles/.config/mise/config.toml"
+"~/.config/mise/miserc.toml" = "../../../dotfiles/.config/mise/miserc.toml"
 "~/.config/mise/conf.d/settings.toml" = "../../../dotfiles/.config/mise/conf.d/settings.toml"
-"~/.config/mise/conf.d/linux.toml" = "../../../dotfiles/.config/mise/conf.d/linux.toml"
 
 # git
 "~/.config/git/config" = "../../../dotfiles/.config/git/config"

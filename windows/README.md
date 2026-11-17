@@ -33,11 +33,12 @@ cd dotfiles\windows
 - `mise/conf.d/packages.toml`: OS パッケージ。winget は PowerShell 7、Windows Terminal、GUI アプリ。scoop は Git、7-Zip、less、sudo、zellij などユーザー領域の CLI と GUI ツール。extras バケットのものは `scoop:extras/<name>` と書きますが、scoop は名前だけで照合するためバケットは prepare.ps1 が追加します。
 - `mise/conf.d/dotfiles.toml`: ホームに配置するシンボリックリンク。`~` は `C:\Users\<name>` に解決され、リンク元の相対パスはこのファイルの位置が基準です。
 - `mise/conf.d/tasks.toml`: `claude:git-bash-path` タスク。Claude Code が scoop の Git Bash を使えるよう、ユーザー環境変数 `CLAUDE_CODE_GIT_BASH_PATH` を設定します。`bootstrap` タスクから呼び出し、単独では `mise -C windows run claude:git-bash-path` で実行できます。反映には VS Code や Claude Code の再起動が必要です。
-- `../dotfiles/.config/mise/conf.d/windows.toml`: Windows 固有の CLI ツール。ホームにも配置され、どのディレクトリでも利用できます。
+- `../dotfiles/.config/mise/config.windows.toml`: Windows 固有の CLI ツール。ホームにも配置され、`miserc.toml` の `auto_env` により Windows でだけ読み込まれます。
 - `../dotfiles/Documents/PowerShell/Microsoft.PowerShell_profile.ps1`: PowerShell 7 のプロファイル。mise の activate と starship の初期化を含みます。
-- `../dotfiles/.config/mise/config.toml`: 全 OS 共通のランタイムと CLI ツールの最小構成。dotnet は Windows では Visual Studio 側に任せるため除外しています。
+- `../dotfiles/.config/mise/config.toml`: 全マシン共通のランタイムと CLI ツールの最小構成。dotnet は Windows では Visual Studio 側に任せるため除外しています。
 - `../dotfiles/.config/mise/conf.d/workstation.toml`: 人が使うマシン向けの全 OS 共通 CLI ツール。
 - `../dotfiles/.config/mise/conf.d/settings.toml`: mise 本体の設定 (`self_update.auto`)。ホームにだけ配置し、`mise.toml` からは include しません。
+- `../dotfiles/.config/mise/miserc.toml`: mise が設定を探す前に読む設定 (`auto_env`)。ホームにだけ配置します。
 
 ホームに配置するファイルの実体は、OS を問わずリポジトリ直下の `dotfiles/` にホームと同じ構造で置きます。どの OS が何を使うかは各 OS の `mise/conf.d/dotfiles.toml` が決めます。
 

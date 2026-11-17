@@ -1,4 +1,0 @@
-# Linux 固有の CLI の最小構成。全 OS 共通のランタイムと CLI は config.toml で管理する。
-# 人が使うマシン向けの追加分は linux-workstation.toml に書く。
-[tools]
-gh = "latest"

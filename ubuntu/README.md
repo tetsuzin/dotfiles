@@ -24,11 +24,11 @@ exec bash -l
 
 ## worker に入るもの
 
-- mise ツール: claude、codex、dotnet、node、python、gh、fd、jq
+- mise ツール: claude、codex、dotnet、node、python、gh、fd、jq (`../dotfiles/.config/mise/config.toml`)
 - apt パッケージ: ビルド、dotnet の依存ライブラリ、git、ripgrep、SSH 接続の受け付けに必要なもの
 - dotfiles: mise、git、bash、Claude Code、Codex の設定
 
-k8s、AWS、Docker、エディタ、プロンプトや TUI などの対話用ツールと、外部リポジトリの取得、krew タスク、WSL 用の設定は含みません。ワーカーにツールを足すときは、下の最小構成のファイルに書きます。`workstation` にも同じものが入ります。
+k8s、AWS、Docker、エディタ、プロンプトや TUI などの対話用ツールと、外部リポジトリの取得、krew タスク、WSL 用の設定は含みません。ワーカーにツールを足すときは `../dotfiles/.config/mise/config.toml` に書きます。`workstation` にも同じものが入ります。
 
 ## 設定の管理先
 
@@ -40,12 +40,12 @@ k8s、AWS、Docker、エディタ、プロンプトや TUI などの対話用ツ
 - `mise/conf.d/dotfiles.toml`: 最小構成でホームに配置するシンボリックリンク。リンク元の相対パスはこのファイルの位置が基準です。
 - `mise/conf.d/workstation/mise.workstation.toml`: 人が使うマシン向けの追加分。ツール設定の読み込み、外部リポジトリ、追加の apt パッケージ、追加のリンク、krew タスク。
 - `mise/conf.d/wsl/mise.wsl.toml`: WSL の認証情報へのリンクと Windows ホームの指定。
-- `../dotfiles/.config/mise/config.toml`: 全 OS 共通のランタイムと CLI ツールの最小構成。
-- `../dotfiles/.config/mise/conf.d/linux.toml`: Linux 固有の CLI ツールの最小構成。ホームにも配置され、どのディレクトリでも利用できます。
+- `../dotfiles/.config/mise/config.toml`: 全マシン共通のランタイムと CLI ツールの最小構成。ホームにも配置され、どのディレクトリでも利用できます。
 - `../dotfiles/.config/mise/conf.d/workstation.toml`: 人が使うマシン向けの全 OS 共通 CLI ツール。
-- `../dotfiles/.config/mise/conf.d/linux-workstation.toml`: 人が使う Linux マシン向けの CLI ツール。
+- `../dotfiles/.config/mise/config.linux.toml`: 人が使う Linux マシン向けの CLI ツール。ホームでは `miserc.toml` の `auto_env` により Linux でだけ読み込まれます。
 - `../dotfiles/.config/mise/conf.d/wsl.toml`: WSL のみで使う SSH エージェント。
 - `../dotfiles/.config/mise/conf.d/settings.toml`: mise 本体の設定 (`self_update.auto`)。ホームにだけ配置し、`mise.toml` からは include しません。
+- `../dotfiles/.config/mise/miserc.toml`: mise が設定を探す前に読む設定 (`auto_env`)。ホームにだけ配置します。
 
 プロファイルのフォルダは独立した config root のため、`scripts/environment.sh` が個別に trust します。
 
