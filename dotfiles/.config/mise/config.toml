@@ -5,6 +5,7 @@
 # 各 OS の mise.toml からも include されるため、include で許可されないセクション
 # (settings など) は conf.d/settings.toml に書く。
 [tools]
+biome = "latest"
 claude = "latest"
 codex = "latest"
 # Windows の dotnet は Visual Studio 側に任せる
@@ -15,6 +16,8 @@ dotnet = [
 fd = "latest"
 # Windows の gh は scoop / winget 側に任せる
 gh = { version = "latest", os = ["linux", "macos"] }
+go = "latest"
 jq = "latest"
 node = "latest"
 python = "3"
+shfmt = "latest"

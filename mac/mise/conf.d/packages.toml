@@ -4,7 +4,7 @@
 [bootstrap.repos]
 "~/.local/share/dotfiles/eza-themes" = { url = "https://github.com/eza-community/eza-themes.git" }
 
-# Homebrew で導入する OS パッケージ。mise 本体は prepare.sh が公式スクリプトで入れるためここには書かない。
+# Homebrew で導入する OS パッケージ。mise 本体は run.sh prepare が公式スクリプトで入れるためここには書かない。
 # Homebrew はバージョン固定に対応しないため、値は常に "latest"。
 [bootstrap.packages]
 
