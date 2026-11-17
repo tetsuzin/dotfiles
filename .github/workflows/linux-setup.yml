@@ -35,7 +35,7 @@ jobs:
           echo "$HOME/.local/bin" >> "$GITHUB_PATH"
       - name: Check shell syntax
         run: |
-          for script in ubuntu/run.sh scripts/_functions scripts/functions/*.sh ubuntu/scripts/*.sh dotfiles/.bash*; do
+          for script in ubuntu/run.sh scripts/run.sh dotfiles/.bash*; do
             bash -n "$script"
           done
       # 最小構成 (worker) と、workstation を重ねた構成の両方を読み込む。
@@ -52,12 +52,12 @@ jobs:
       # ランナーには既定の ~/.bashrc と ~/.bash_profile があり、置き換えを許可しないと競合で止まる。
       - name: Dry-run workstation dotfiles via run.sh
         working-directory: ubuntu
-        run: ./run.sh link --dry-run --link-force=y
+        run: ./run.sh link --dry-run --force-dotfiles
       # ランナーは使い捨てなので実際に配置する。既定の ~/.bashrc などは置き換える。
       # ホームに mise の設定が入るため、最後に実行する。
       - name: Apply worker dotfiles
         working-directory: ubuntu
         run: |
-          ./run.sh link --env worker --link-force=y
+          ./run.sh link --env worker --force-dotfiles
           [[ -L ~/.bashrc && -L ~/.claude/CLAUDE.md ]]
           [[ ! -e ~/.config/starship.toml && ! -e ~/.config/nvim ]]

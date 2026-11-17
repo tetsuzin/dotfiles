@@ -34,7 +34,7 @@ k8s、AWS、Docker、エディタ、プロンプトや TUI などの対話用ツ
 
 最小構成を土台にし、追加分は mise のプロファイルとして重ねます。`workstation` は `-E workstation`、WSL ではさらに `-E workstation,wsl` で読み込まれます。`worker` はプロファイルを指定しません。
 
-- `run.sh`: 入口。このディレクトリの設定を対象に `scripts/` のスクリプトを実行します。
+- `run.sh`: 入口。Ubuntu 固有の処理を持ち、共通の流れは `../scripts/run.sh` を読み込みます。
 - `mise.toml`: 必要バージョンと、最小構成のツール設定の読み込み。`mise/conf.d/*.toml` は同じディレクトリの設定として自動で読み込まれ、このファイルの trust に含まれます。
 - `mise/conf.d/packages.toml`: 最小構成の apt パッケージ。
 - `mise/conf.d/dotfiles.toml`: 最小構成でホームに配置するシンボリックリンク。リンク元の相対パスはこのファイルの位置が基準です。
@@ -47,7 +47,7 @@ k8s、AWS、Docker、エディタ、プロンプトや TUI などの対話用ツ
 - `../dotfiles/.config/mise/conf.d/settings.toml`: mise 本体の設定 (`self_update.auto`)。ホームにだけ配置し、`mise.toml` からは include しません。
 - `../dotfiles/.config/mise/miserc.toml`: mise が設定を探す前に読む設定 (`auto_env`)。ホームにだけ配置します。
 
-プロファイルのフォルダは独立した config root のため、`scripts/environment.sh` が個別に trust します。
+プロファイルのフォルダは独立した config root のため、`run.sh` が個別に trust します。
 
 ホームに配置するファイルの実体は、OS を問わずリポジトリ直下の `dotfiles/` にホームと同じ構造で置きます。どの環境が何を使うかは各環境の `[dotfiles]` が決めます。
 
@@ -63,13 +63,13 @@ Git・curl などの基盤と共有ライブラリは apt、開発 CLI は mise 
 ./run.sh link
 ```
 
-通常の適用は不足しているパッケージを導入します。`update` は mise 本体、宣言した apt パッケージ、mise ツールを更新して適用します。`link` は dotfiles の配置だけを行い、`bootstrap --link-only` と同じです。`--dry-run` は `bootstrap` と `link` で使えます。
+通常の適用は不足しているパッケージを導入します。`update` は mise 本体、宣言した apt パッケージ、mise ツールを更新して適用します。`link` は dotfiles の配置だけを行います。コマンドの後ろの引数は `mise bootstrap` にそのまま渡すので、`--dry-run` で変更予定を確認できます。
 
 初回は外部リポジトリが存在せず、全体の dry-run がテーマ等のリンク元不足で停止することがあります。取得予定だけを確認する場合は `mise -C ubuntu -E workstation bootstrap --only packages,repos --dry-run` を使います。WSL では `-E workstation,wsl` を指定します。
 
 eza テーマと LazyVim starter は既定ブランチに追従し、`update` で fast-forward されます。checkout 内に未コミットの変更があると更新は止まります。ツールの `latest` と apt の依存解決を含め、バージョンの固定・ロールバックは提供しません。
 
-WSL の Windows ホームは `/mnt/c/Users/tetsuzin` に固定しています。mise の `[dotfiles]` はリンク元でテンプレートや環境変数を展開しないためです。ユーザー名が異なる場合やリンクを除外する場合は、git 管理外の `ubuntu/mise/conf.d/wsl/mise.wsl.local.toml` に同じリンク先のエントリを書いて上書きします。例: `"~/.aws/credentials" = "/mnt/c/Users/<name>/.aws/credentials"`、除外は `"~/.kube/config" = { enabled = false }`。`.aws/credentials` と `.kube/config` を `[dotfiles]` で共有し、リンク元が存在しない場合はスキップせずエラーになります。既存ファイルとの競合は mise が検出し、`--link-force=y` を指定しない限り置き換えません。
+WSL の Windows ホームは `/mnt/c/Users/tetsuzin` に固定しています。mise の `[dotfiles]` はリンク元でテンプレートや環境変数を展開しないためです。ユーザー名が異なる場合やリンクを除外する場合は、git 管理外の `ubuntu/mise/conf.d/wsl/mise.wsl.local.toml` に同じリンク先のエントリを書いて上書きします。例: `"~/.aws/credentials" = "/mnt/c/Users/<name>/.aws/credentials"`、除外は `"~/.kube/config" = { enabled = false }`。`.aws/credentials` と `.kube/config` を `[dotfiles]` で共有し、リンク元が存在しない場合はスキップせずエラーになります。既存ファイルとの競合は mise が検出し、`--force-dotfiles` を指定しない限り置き換えません。
 
 リンクは `link` や `--dry-run`、mise の dotfiles status の対象になります。krew タスクの dry-run はスクリプトを表示し、個々のプラグインの導入状態までは確認しません。
 

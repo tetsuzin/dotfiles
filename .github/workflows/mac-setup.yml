@@ -35,7 +35,7 @@ jobs:
           echo "$HOME/.local/bin" >> "$GITHUB_PATH"
       - name: Check shell syntax
         run: |
-          for script in mac/run.sh scripts/_functions scripts/functions/*.sh mac/scripts/*.sh; do
+          for script in mac/run.sh scripts/run.sh; do
             bash -n "$script"
           done
           for script in dotfiles/.z*; do
