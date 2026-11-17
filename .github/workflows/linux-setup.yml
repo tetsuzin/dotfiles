@@ -37,7 +37,7 @@ jobs:
           echo "$HOME/.local/bin" >> "$GITHUB_PATH"
       - name: Check shell syntax
         run: |
-          for script in ubuntu/run.sh ubuntu-worker/run.sh scripts/_functions scripts/functions/*.sh scripts/ubuntu/*.sh dotfiles/.bash*; do
+          for script in ubuntu/run.sh ubuntu-worker/run.sh scripts/_functions scripts/functions/*.sh ubuntu/scripts/*.sh dotfiles/.bash*; do
             bash -n "$script"
           done
       - name: Test isolated configuration and dotfiles

@@ -12,7 +12,7 @@ Ubuntu 26 を対象に、AI エージェントを動かすための最小構成�
 exec bash -l
 ```
 
-`update`、`link` と、`--dry-run`、`--link-force=y` の意味は `../ubuntu/README.md` と同じです。処理の本体は `../scripts/ubuntu/` にあり、`../ubuntu/` と共通です。
+`update`、`link` と、`--dry-run`、`--link-force=y` の意味は `../ubuntu/README.md` と同じです。処理の本体は `../ubuntu/scripts/` にあり、`../ubuntu/` と共通です。
 
 ## 入るもの
 
@@ -24,7 +24,7 @@ k8s、AWS、Docker、エディタ、プロンプトや TUI などの対話用ツ
 
 ## 設定の管理先
 
-- `run.sh`: 入口。このディレクトリの設定を対象に `../scripts/ubuntu/` のスクリプトを実行します。
+- `run.sh`: 入口。このディレクトリの設定を対象に `../ubuntu/scripts/` のスクリプトを実行します。
 - `mise.toml`: 必要バージョンと最小構成のツール設定の読み込み。
 - `mise/conf.d/packages.toml`: apt パッケージ。`../ubuntu/mise.toml` からも include されます。
 - `mise/conf.d/dotfiles.toml`: ホームに配置するシンボリックリンク。mise は `[dotfiles]` を include できないため、変えるときは `../ubuntu/mise/conf.d/dotfiles.toml` も揃えます。食い違いはテストが検出します。

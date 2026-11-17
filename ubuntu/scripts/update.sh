@@ -2,7 +2,7 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "${SCRIPT_DIR}/../_functions"
+source "${SCRIPT_DIR}/../../scripts/_functions"
 source "${SCRIPT_DIR}/environment.sh"
 
 function usage() {

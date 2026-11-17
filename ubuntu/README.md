@@ -18,15 +18,15 @@ exec bash -l
 
 ## 設定の管理先
 
-この環境は `../ubuntu-worker/` の最小構成に、人が使うマシン向けの追加分を重ねたものです。`prepare`、`bootstrap`、`update` の本体は `../scripts/ubuntu/` にあり、両方の環境の `run.sh` から呼びます。
+この環境は `../ubuntu-worker/` の最小構成に、人が使うマシン向けの追加分を重ねたものです。`prepare`、`bootstrap`、`update` の本体は `scripts/` にあり、`../ubuntu-worker/` の `run.sh` からも呼びます。
 
-- `run.sh`: 入口。このディレクトリの設定を対象に `../scripts/ubuntu/` のスクリプトを実行します。
+- `run.sh`: 入口。このディレクトリの設定を対象に `scripts/` のスクリプトを実行します。
 - `mise.toml`: 必要バージョンと、最小構成の apt パッケージ、共通ツール設定の読み込み。`mise/conf.d/*.toml` は同じディレクトリの設定として自動で読み込まれ、このファイルの trust に含まれます。
 - `../ubuntu-worker/mise/conf.d/packages.toml`: 最小構成の apt パッケージ。`mise.toml` が include します。
 - `mise/conf.d/packages.toml`: 追加で取得するもの。外部リポジトリと追加の apt パッケージ。sudo が必要なのは apt パッケージだけです。
 - `mise/conf.d/dotfiles.toml`: ホームに配置するシンボリックリンク。リンク元の相対パスはこのファイルの位置が基準です。mise は `[dotfiles]` を include できないため、最小構成のリンクは `../ubuntu-worker/mise/conf.d/dotfiles.toml` と両方に書いています。食い違いはテストが検出します。
 - `mise/conf.d/tasks.toml`: 追加処理のタスク。
-- `mise/conf.d/wsl/mise.wsl.toml`: WSL の認証情報へのリンクと Windows ホームの指定。`-E wsl` のときだけ読み込まれます。フォルダは独立した config root のため `../scripts/ubuntu/environment.sh` が個別に trust します。
+- `mise/conf.d/wsl/mise.wsl.toml`: WSL の認証情報へのリンクと Windows ホームの指定。`-E wsl` のときだけ読み込まれます。フォルダは独立した config root のため `scripts/environment.sh` が個別に trust します。
 - `../dotfiles/.config/mise/config.toml`: 全 OS 共通のランタイムと CLI ツールの最小構成。
 - `../dotfiles/.config/mise/conf.d/linux.toml`: Linux 固有の CLI ツールの最小構成。ホームにも配置され、どのディレクトリでも利用できます。
 - `../dotfiles/.config/mise/conf.d/workstation.toml`: 人が使うマシン向けの全 OS 共通 CLI ツール。
