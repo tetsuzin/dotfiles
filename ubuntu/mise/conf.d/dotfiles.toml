@@ -1,7 +1,7 @@
 # repo 内のファイルをホームにシンボリックリンクで配置する。
 # リンク元はテンプレートも環境変数も展開しない。
 # [dotfiles] は include できないため、ubuntu-worker/mise/conf.d/dotfiles.toml のリンクをここにも書く。
-# 最小構成のリンクを変えるときは両方を揃える (tests/LinuxSetup.cs が食い違いを検出する)。
+# 最小構成のリンクを変えるときは両方を揃える (欠けは .github/workflows/linux-setup.yml が検出する)。
 [dotfiles]
 
 # mise

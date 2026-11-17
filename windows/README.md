@@ -55,7 +55,7 @@ Git の設定は `~/.config/git/config` に配置します。`~/.gitconfig` が�
 
 通常の適用は不足しているパッケージを導入します。`update` は mise 本体、宣言した winget / scoop パッケージ、mise ツールを更新して適用します。`link` は dotfiles の配置だけを行い、`bootstrap --link-only` と同じです。`--dry-run` は `bootstrap` と `link` で使えます。scoop でバージョンを固定した項目は更新されません。
 
-mise は `~` を常に実際のユーザープロファイルに解決するため、Linux のテストのような一時ホームでの隔離は行えません。変更内容は `--dry-run` か、`mise -C windows bootstrap status` と `mise -C windows dotfiles diff` で事前に確認します。
+変更内容は `--dry-run` か、`mise -C windows bootstrap status` と `mise -C windows dotfiles diff` で事前に確認します。
 
 ## 既存の環境から移行
 

@@ -27,7 +27,7 @@ k8s、AWS、Docker、エディタ、プロンプトや TUI などの対話用ツ
 - `run.sh`: 入口。このディレクトリの設定を対象に `../ubuntu/scripts/` のスクリプトを実行します。
 - `mise.toml`: 必要バージョンと最小構成のツール設定の読み込み。
 - `mise/conf.d/packages.toml`: apt パッケージ。`../ubuntu/mise.toml` からも include されます。
-- `mise/conf.d/dotfiles.toml`: ホームに配置するシンボリックリンク。mise は `[dotfiles]` を include できないため、変えるときは `../ubuntu/mise/conf.d/dotfiles.toml` も揃えます。食い違いはテストが検出します。
+- `mise/conf.d/dotfiles.toml`: ホームに配置するシンボリックリンク。mise は `[dotfiles]` を include できないため、変えるときは `../ubuntu/mise/conf.d/dotfiles.toml` も揃えます。`../ubuntu/` 側の欠けは CI が検出します。
 - `../dotfiles/.config/mise/config.toml`: 全 OS 共通のランタイムと CLI ツールの最小構成。
 - `../dotfiles/.config/mise/conf.d/linux.toml`: Linux 固有の CLI ツールの最小構成。
 
@@ -35,4 +35,4 @@ k8s、AWS、Docker、エディタ、プロンプトや TUI などの対話用ツ
 
 ## 検証
 
-`dotnet run tests/LinuxSetup.cs` が `ubuntu` と合わせてこの環境も確認します。詳細は `../ubuntu/README.md` を参照してください。
+`.github/workflows/linux-setup.yml` が `ubuntu` と合わせてこの環境も確認します。詳細は `../ubuntu/README.md` を参照してください。

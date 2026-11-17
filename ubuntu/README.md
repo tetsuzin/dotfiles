@@ -24,7 +24,7 @@ exec bash -l
 - `mise.toml`: 必要バージョンと、最小構成の apt パッケージ、共通ツール設定の読み込み。`mise/conf.d/*.toml` は同じディレクトリの設定として自動で読み込まれ、このファイルの trust に含まれます。
 - `../ubuntu-worker/mise/conf.d/packages.toml`: 最小構成の apt パッケージ。`mise.toml` が include します。
 - `mise/conf.d/packages.toml`: 追加で取得するもの。外部リポジトリと追加の apt パッケージ。sudo が必要なのは apt パッケージだけです。
-- `mise/conf.d/dotfiles.toml`: ホームに配置するシンボリックリンク。リンク元の相対パスはこのファイルの位置が基準です。mise は `[dotfiles]` を include できないため、最小構成のリンクは `../ubuntu-worker/mise/conf.d/dotfiles.toml` と両方に書いています。食い違いはテストが検出します。
+- `mise/conf.d/dotfiles.toml`: ホームに配置するシンボリックリンク。リンク元の相対パスはこのファイルの位置が基準です。mise は `[dotfiles]` を include できないため、最小構成のリンクは `../ubuntu-worker/mise/conf.d/dotfiles.toml` と両方に書いています。最小構成のリンクの欠けは CI が検出します。
 - `mise/conf.d/tasks.toml`: 追加処理のタスク。
 - `mise/conf.d/wsl/mise.wsl.toml`: WSL の認証情報へのリンクと Windows ホームの指定。`-E wsl` のときだけ読み込まれます。フォルダは独立した config root のため `scripts/environment.sh` が個別に trust します。
 - `../dotfiles/.config/mise/config.toml`: 全 OS 共通のランタイムと CLI ツールの最小構成。
@@ -60,15 +60,12 @@ WSL の Windows ホームは `/mnt/c/Users/tetsuzin` に固定しています。
 
 ## 検証
 
-```bash
-dotnet run tests/LinuxSetup.cs
-dotnet run tests/LinuxSetup.cs -- -method '*Wsl*'   # 名前で絞り込み
-```
+`.github/workflows/linux-setup.yml` が Ubuntu 26.04 のランナーで次を確認します。手元で流すテストはありません。
 
-.NET 10 SDK のファイルベースアプリとして実行します。初回は xUnit の NuGet 復元が必要です。mise 2026.10.14 以上を PATH に置くか、`TEST_MISE_BIN` に実行ファイルを指定します。テストは一時ホームで配置・再適用・競合保護・Ubuntu の依存パッケージと WSL 設定を確認します。apt の適用やツールのダウンロードは行いません。
+- シェルの構文チェック
+- `ubuntu` の `[dotfiles]` が `ubuntu-worker` のリンクをすべて含むこと
+- `ubuntu` と `ubuntu-worker` の設定ファイルの読み込み、ツールの導入 dry-run
+- `ubuntu` の `./run.sh link --dry-run`
+- `ubuntu-worker` の `./run.sh link` の実適用と、人が使うマシン向けの設定が配置されないこと
 
-`tests/LinuxSetup.cs` は、設定ファイルとスクリプトの論理が壊れていないかを確認する回帰テストです。一時ディレクトリを HOME にし、`MISE_OFFLINE=true` でネットワークを遮断した上で `mise -C ubuntu` を直接呼び出します。eza テーマと LazyVim starter はダミーで代用し、krew や grep などの外部コマンドは PATH 先頭に置いたスタブで差し替えます。本番に近い環境で bootstrap を通す確認ではありません。
-
-テストは .NET 10 のファイルベースアプリとして 1 ファイルの C# で書き、`#:package` 指示子で xUnit v3 を使っています。dotnet は mise の共通ツールに含まれるため追加導入はなく、一時ホームの隔離と後始末、子プロセスの実行、JSON の読み取りは標準ライブラリで揃います。xUnit はテストごとにクラスのインスタンスを作って `Dispose` を呼ぶので、一時ホームの後始末もそれに任せています。
-
-`.github/workflows/linux-setup.yml` は Ubuntu 26.04 のランナーで、シェルの構文チェックと上記のテストを実行します。main への push と PR のときだけ動き、対象は ubuntu、ubuntu-worker、dotfiles、scripts、tests とワークフロー自身の変更に限定しています。作業ブランチへの push だけでは実行されません。
+master への push と PR のときだけ動き、対象は ubuntu、ubuntu-worker、dotfiles、scripts とワークフロー自身の変更に限定しています。作業ブランチへの push だけでは実行されません。apt パッケージの適用とツールのダウンロードは行いません。WSL の設定は対象外で、実機の `./run.sh bootstrap --dry-run` で確認します。

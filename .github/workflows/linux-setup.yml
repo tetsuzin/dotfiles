@@ -8,7 +8,6 @@ on:
       - ubuntu-worker/**
       - dotfiles/**
       - scripts/**
-      - tests/**
       - .github/workflows/linux-setup.yml
   pull_request:
     paths:
@@ -16,7 +15,6 @@ on:
       - ubuntu-worker/**
       - dotfiles/**
       - scripts/**
-      - tests/**
       - .github/workflows/linux-setup.yml
 
 permissions:
@@ -26,6 +24,8 @@ jobs:
   test:
     runs-on: ubuntu-26.04
     timeout-minutes: 10
+    env:
+      MISE_TRUSTED_CONFIG_PATHS: ${{ github.workspace }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Install mise
@@ -40,5 +40,33 @@ jobs:
           for script in ubuntu/run.sh ubuntu-worker/run.sh scripts/_functions scripts/functions/*.sh ubuntu/scripts/*.sh dotfiles/.bash*; do
             bash -n "$script"
           done
-      - name: Test isolated configuration and dotfiles
-        run: mise exec dotnet@10 -- dotnet run tests/LinuxSetup.cs
+      # [dotfiles] は include できず両方に書いているため、ubuntu が最小構成のリンクを欠いていないか確認する。
+      - name: Check ubuntu covers ubuntu-worker dotfiles
+        run: |
+          missing="$(grep -Fvxf ubuntu/mise/conf.d/dotfiles.toml <(grep '^"' ubuntu-worker/mise/conf.d/dotfiles.toml) || true)"
+          if [[ -n "$missing" ]]; then
+            echo "ubuntu/mise/conf.d/dotfiles.toml に無いリンク:"
+            echo "$missing"
+            exit 1
+          fi
+      - name: Load configuration
+        run: |
+          for dir in ubuntu ubuntu-worker; do
+            mise -C "$dir" config ls
+            mise -C "$dir" bootstrap packages status
+          done
+      - name: Dry-run tools
+        run: mise -C ubuntu install --dry-run
+      - name: Fetch external repositories
+        run: mise -C ubuntu bootstrap --only repos
+      - name: Dry-run dotfiles via run.sh
+        working-directory: ubuntu
+        run: ./run.sh link --dry-run
+      # ランナーは使い捨てなので実際に配置する。既定の ~/.bashrc などは置き換える。
+      # ホームに mise の設定が入るため、最後に実行する。
+      - name: Apply ubuntu-worker dotfiles
+        working-directory: ubuntu-worker
+        run: |
+          ./run.sh link --link-force=y
+          [[ -L ~/.bashrc && -L ~/.claude/CLAUDE.md ]]
+          [[ ! -e ~/.config/starship.toml && ! -e ~/.config/nvim ]]
