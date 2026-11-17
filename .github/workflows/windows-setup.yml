@@ -2,7 +2,7 @@ name: Test Windows setup
 
 on:
   push:
-    branches: [main]
+    branches: [master]
     paths:
       - windows/**
       - dotfiles/**

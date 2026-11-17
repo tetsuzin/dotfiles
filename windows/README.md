@@ -71,4 +71,4 @@ Git の設定は `~/.config/git/config` に配置します。`~/.gitconfig` が�
 
 ## 検証
 
-`.github/workflows/windows-setup.yml` は Windows ランナーで、シェルの構文チェック、設定ファイルの読み込み、ツールの導入 dry-run、dotfiles の dry-run を実行します。main への push と PR のときだけ動き、対象は windows、dotfiles、scripts とワークフロー自身の変更に限定しています。
+`.github/workflows/windows-setup.yml` は Windows ランナーで、シェルの構文チェック、設定ファイルの読み込み、ツールの導入 dry-run、dotfiles の dry-run を実行します。master への push と PR のときだけ動き、対象は windows、dotfiles、scripts とワークフロー自身の変更に限定しています。
